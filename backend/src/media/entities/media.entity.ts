@@ -1,9 +1,11 @@
+import { DetailService } from 'src/detail-service/entities/detail-service.entity';
 import { TypeMedia } from 'src/shared/enums/TypeMedia';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -21,6 +23,9 @@ export class Media {
 
   @Column({ type: 'boolean', default: false })
   isCover: boolean;
+
+  @ManyToOne(() => DetailService, (detailService) => detailService.media)
+  detailService: DetailService;
 
   @CreateDateColumn()
   createdAt: Date;

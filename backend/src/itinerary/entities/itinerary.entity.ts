@@ -1,8 +1,10 @@
+import { DetailService } from 'src/detail-service/entities/detail-service.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -17,6 +19,9 @@ export class Itinerary {
 
   @Column('text')
   description: string;
+
+  @ManyToOne(() => DetailService, (detailService) => detailService.itinerary)
+  detailService: DetailService;
 
   @CreateDateColumn()
   createdAt: Date;

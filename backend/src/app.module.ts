@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ItineraryModule } from './itinerary/itinerary.module';
 import { MediaModule } from './media/media.module';
 import { DataModule } from './data/data.module';
+import { DetailServiceModule } from './detail-service/detail-service.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,6 +23,7 @@ import { DataModule } from './data/data.module';
     ItineraryModule,
     MediaModule,
     DataModule,
+    DetailServiceModule,
   ],
   controllers: [],
   providers: [],
