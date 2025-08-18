@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Itinerary {
@@ -21,6 +22,7 @@ export class Itinerary {
   description: string;
 
   @ManyToOne(() => DetailService, (detailService) => detailService.itinerary)
+  @Exclude()
   detailService: DetailService;
 
   @CreateDateColumn()

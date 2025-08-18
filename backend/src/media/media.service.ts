@@ -23,18 +23,12 @@ export class MediaService {
   }
 
   async findOne(id: string) {
-    return await this.mediaRepository.findOne({
-      where: { id },
-      select: ['id', 'type', 'url', 'isCover'],
-    });
+    return await this.mediaRepository.findOneBy({ id });
   }
 
   async update(id: string, updateMediaDto: UpdateMediaDto) {
     await this.mediaRepository.update(id, updateMediaDto);
-    return await this.mediaRepository.findOne({
-      where: { id },
-      select: ['id', 'type', 'url', 'isCover'],
-    });
+    return this.findOne(id);
   }
 
   async remove(id: string) {

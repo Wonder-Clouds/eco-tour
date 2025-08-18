@@ -21,10 +21,7 @@ export class ItineraryService {
   }
 
   async findOne(id: string) {
-    return await this.itineraryRepository.findOne({
-      where: { id },
-      select: ['id', 'title', 'description'],
-    });
+    return await this.itineraryRepository.findOneBy({ id });
   }
 
   async update(id: string, updateItineraryDto: UpdateItineraryDto) {

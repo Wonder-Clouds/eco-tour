@@ -17,22 +17,16 @@ export class DataService {
   }
 
   async findAll() {
-    return await this.dataRepository.find({ select: ['title', 'description'] });
+    return await this.dataRepository.find();
   }
 
   async findOne(id: string) {
-    return await this.dataRepository.findOne({
-      where: { id },
-      select: ['title', 'description'],
-    });
+    return await this.dataRepository.findOneBy({ id });
   }
 
   async update(id: string, updateDatumDto: UpdateDatumDto) {
     await this.dataRepository.update(id, updateDatumDto);
-    return this.dataRepository.findOne({
-      where: { id },
-      select: ['title', 'description'],
-    });
+    return this.dataRepository.findOneBy({ id });
   }
 
   async remove(id: string) {

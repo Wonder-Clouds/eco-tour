@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsString, ValidateNested } from 'class-validator';
 import { CreateDatumDto } from 'src/data/dto/create-datum.dto';
+import { CreateItineraryDto } from 'src/itinerary/dto/create-itinerary.dto';
+import { CreateMediaDto } from 'src/media/dto/create-media.dto';
 
 export class CreateDetailServiceDto {
   @ApiProperty({ example: 'Machu Picchu' })
@@ -13,7 +15,7 @@ export class CreateDetailServiceDto {
   duration: string;
 
   @ApiProperty({
-    example: [{ duration: 'Altitude', description: '3552 msnm.' }],
+    example: [{ title: 'Altitude', description: '3552 msnm.' }],
   })
   @IsArray()
   @ValidateNested({ each: true })
@@ -31,4 +33,26 @@ export class CreateDetailServiceDto {
   @ApiProperty({ example: 'Not Included' })
   @IsString()
   notIncludes: string;
+
+  @ApiProperty({
+    example: [
+      { day: 1, title: 'Arrival', description: 'Arrive at the destination.' },
+    ],
+  })
+  @ValidateNested({ each: true })
+  @Type(() => CreateItineraryDto)
+  itinerary: CreateItineraryDto[];
+
+  @ApiProperty({
+    example: [
+      {
+        type: 'image',
+        url: 'https://example.com/image.jpg',
+        isCover: false,
+      },
+    ],
+  })
+  @ValidateNested({ each: true })
+  @Type(() => CreateMediaDto)
+  media: CreateMediaDto[];
 }
