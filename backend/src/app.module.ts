@@ -5,6 +5,7 @@ import { ItineraryModule } from './itinerary/itinerary.module';
 import { MediaModule } from './media/media.module';
 import { DataModule } from './data/data.module';
 import { DetailServiceModule } from './detail-service/detail-service.module';
+import { ParametersModule } from './parameters/parameters.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,6 +25,7 @@ import { DetailServiceModule } from './detail-service/detail-service.module';
     MediaModule,
     DataModule,
     DetailServiceModule,
+    ParametersModule,
   ],
   controllers: [],
   providers: [],

@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Media {
@@ -25,6 +26,7 @@ export class Media {
   isCover: boolean;
 
   @ManyToOne(() => DetailService, (detailService) => detailService.media)
+  @Exclude()
   detailService: DetailService;
 
   @CreateDateColumn()

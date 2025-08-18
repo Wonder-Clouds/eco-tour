@@ -7,13 +7,13 @@ import {
   DeleteDateColumn,
   Entity,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class DetailService {
-  @PrimaryColumn('uuid')
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'text' })
@@ -29,7 +29,7 @@ export class DetailService {
   data: Datum[];
 
   @Column({ type: 'text' })
-  sumary: string;
+  summary: string;
 
   @Column({ type: 'text' })
   includes: string;

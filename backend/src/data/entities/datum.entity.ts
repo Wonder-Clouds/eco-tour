@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Datum {
@@ -23,6 +24,7 @@ export class Datum {
   @ManyToOne(() => DetailService, (detailService) => detailService.data, {
     onDelete: 'CASCADE',
   })
+  @Exclude()
   detailService: DetailService;
 
   @CreateDateColumn()
