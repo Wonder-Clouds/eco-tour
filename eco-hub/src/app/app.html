@@ -1,3 +1,15 @@
-<!-- <app-sidebar></app-sidebar>
-<app-header></app-header> -->
-<router-outlet />
+<main class="flex h-screen">
+  <!-- Sidebar fijo -->
+  <app-sidebar class="w-64"></app-sidebar>
+
+  <!-- Contenido -->
+  <section
+    class="flex flex-col flex-1 border border-gray-400 rounded-lg m-4 main"
+  >
+    <app-header></app-header>
+
+    <div class="p-4 overflow-y-auto flex-1">
+      <router-outlet></router-outlet>
+    </div>
+  </section>
+</main>
