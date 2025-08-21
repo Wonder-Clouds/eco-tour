@@ -1,18 +1,78 @@
-<div class="sidebar">
+<div class="sidebar" [class.collapsed]="isCollapsed">
+  <!-- Header -->
+  <div class="sidebar-header">
+    <div class="logo-container">
+      <mat-icon class="logo-icon">eco</mat-icon>
+      <h1 class="logo-text" *ngIf="!isCollapsed">ECO HUB</h1>
+    </div>
+    <button
+      mat-icon-button
+      class="collapse-btn"
+      (click)="toggleSidebar()"
+      [matTooltip]="isCollapsed ? 'Expandir' : 'Colapsar'"
+    >
+      <mat-icon>{{ isCollapsed ? "menu_open" : "menu" }}</mat-icon>
+    </button>
+  </div>
+
+  <!-- Navigation -->
   <nav class="sidebar-nav">
     <ul class="nav-list">
-      <li class="nav-item">
-        <mat-icon aria-hidden="false" fontIcon="dashboard"></mat-icon>
-        <a routerLink="/">Home</a>
-      </li>
-      <li>
-        <mat-icon aria-hidden="false" fontIcon="storefront"></mat-icon>
-        <a routerLink="/servicios">Servicios</a>
-      </li>
-      <li>
-        <mat-icon aria-hidden="false" fontIcon="monitoring"></mat-icon>
-        <a routerLink="/servicios">Reportes</a>
+      <li class="nav-item" *ngFor="let item of navItems">
+        <a
+          [routerLink]="item.route"
+          class="nav-link"
+          [class.active]="isActiveRoute(item.route)"
+          [matTooltip]="isCollapsed ? item.label : ''"
+          matTooltipPosition="right"
+        >
+          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+          <span class="nav-text" *ngIf="!isCollapsed">{{ item.label }}</span>
+          <span class="nav-badge" *ngIf="item.badge && !isCollapsed">{{
+            item.badge
+          }}</span>
+        </a>
       </li>
     </ul>
+
+    <mat-divider class="divider"></mat-divider>
+
+    <!-- Settings Section -->
+    <div class="settings-section">
+      <h3 class="section-title" *ngIf="!isCollapsed">Configuración</h3>
+      <ul class="nav-list">
+        <li class="nav-item" *ngFor="let item of settingsItems">
+          <a
+            [routerLink]="item.route"
+            class="nav-link"
+            [class.active]="isActiveRoute(item.route)"
+            [matTooltip]="isCollapsed ? item.label : ''"
+            matTooltipPosition="right"
+          >
+            <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+            <span class="nav-text" *ngIf="!isCollapsed">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
   </nav>
+
+  <!-- User Profile -->
+  <div class="user-profile">
+    <div class="user-avatar">
+      <mat-icon>account_circle</mat-icon>
+    </div>
+    <div class="user-info" *ngIf="!isCollapsed">
+      <span class="user-name">Usuario</span>
+      <span class="user-role">Administrador</span>
+    </div>
+    <button
+      mat-icon-button
+      class="logout-btn"
+      [matTooltip]="isCollapsed ? 'Cerrar sesión' : ''"
+      matTooltipPosition="right"
+    >
+      <mat-icon>logout</mat-icon>
+    </button>
+  </div>
 </div>
