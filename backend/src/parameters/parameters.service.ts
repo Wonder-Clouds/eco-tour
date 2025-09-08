@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateParameterDto } from './dto/create-parameter.dto';
-import { UpdateParameterDto } from './dto/update-parameter.dto';
 
 @Injectable()
 export class ParametersService {
-  create(createParameterDto: CreateParameterDto) {
+  create() {
     return 'This action adds a new parameter';
   }
 
@@ -16,7 +14,7 @@ export class ParametersService {
     return `This action returns a #${id} parameter`;
   }
 
-  update(id: number, updateParameterDto: UpdateParameterDto) {
+  update(id: number) {
     return `This action updates a #${id} parameter`;
   }
 

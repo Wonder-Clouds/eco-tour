@@ -1,23 +1,13 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Delete } from '@nestjs/common';
 import { ParametersService } from './parameters.service';
-import { CreateParameterDto } from './dto/create-parameter.dto';
-import { UpdateParameterDto } from './dto/update-parameter.dto';
 
 @Controller('parameters')
 export class ParametersController {
   constructor(private readonly parametersService: ParametersService) {}
 
   @Post()
-  create(@Body() createParameterDto: CreateParameterDto) {
-    return this.parametersService.create(createParameterDto);
+  create() {
+    return this.parametersService.create();
   }
 
   @Get()
@@ -31,11 +21,8 @@ export class ParametersController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateParameterDto: UpdateParameterDto,
-  ) {
-    return this.parametersService.update(+id, updateParameterDto);
+  update(@Param('id') id: string) {
+    return this.parametersService.update(+id);
   }
 
   @Delete(':id')

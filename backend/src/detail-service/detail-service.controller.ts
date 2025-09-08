@@ -48,25 +48,6 @@ export class DetailServiceController {
     }
   }
 
-  @Patch(':id/transaction')
-  async updateWithTransaction(
-    @Param('id') id: string,
-    @Body() updateDetailServiceDto: UpdateDetailServiceDto,
-  ) {
-    try {
-      return await this.detailServiceService.updateWithTransaction(
-        id,
-        updateDetailServiceDto,
-      );
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Error updating detail service';
-      throw new HttpException(message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.detailServiceService.remove(id);

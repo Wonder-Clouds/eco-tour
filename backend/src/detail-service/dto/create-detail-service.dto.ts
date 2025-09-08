@@ -1,58 +1,73 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsString, ValidateNested, IsOptional } from 'class-validator';
 import { CreateDatumDto } from 'src/data/dto/create-datum.dto';
 import { CreateItineraryDto } from 'src/itinerary/dto/create-itinerary.dto';
 import { CreateMediaDto } from 'src/media/dto/create-media.dto';
 
 export class CreateDetailServiceDto {
-  @ApiProperty({ example: 'Machu Picchu' })
+  @ApiProperty({ example: 'Machu Picchu Full Day Tour' })
   @IsString()
   title: string;
 
-  @ApiProperty({ example: '5 days' })
+  @ApiProperty({ example: '12 hours' })
   @IsString()
   duration: string;
 
   @ApiProperty({
-    example: [{ title: 'Altitude', description: '3552 msnm.' }],
+    example: 'Discover the wonder of Machu Picchu with expert guides',
   })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateDatumDto)
-  data: CreateDatumDto[];
-
-  @ApiProperty({ example: 'A beautiful place to visit.' })
   @IsString()
   summary: string;
 
-  @ApiProperty({ example: 'Inclusions' })
+  @ApiProperty({ example: 'Transportation, guide, entrance fees' })
   @IsString()
   includes: string;
 
-  @ApiProperty({ example: 'Not Included' })
+  @ApiProperty({ example: 'Meals, personal expenses' })
   @IsString()
   notIncludes: string;
 
   @ApiProperty({
     example: [
-      { day: 1, title: 'Arrival', description: 'Arrive at the destination.' },
+      { title: 'Altitude', description: '2,430 meters above sea level' },
     ],
+    required: false,
   })
+  @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateItineraryDto)
-  itinerary: CreateItineraryDto[];
+  @Type(() => CreateDatumDto)
+  @IsOptional()
+  data?: CreateDatumDto[];
 
   @ApiProperty({
     example: [
       {
-        type: 'image',
-        url: 'https://example.com/image.jpg',
-        isCover: false,
+        title: 'Day 1: Journey to Machu Picchu',
+        description: 'Early morning departure...',
       },
     ],
+    required: false,
   })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateItineraryDto)
+  @IsOptional()
+  itinerary?: CreateItineraryDto[];
+
+  @ApiProperty({
+    example: [
+      {
+        type: 'COVER',
+        url: 'https://example.com/machu-picchu.jpg',
+        isCover: true,
+      },
+    ],
+    required: false,
+  })
+  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateMediaDto)
-  media: CreateMediaDto[];
+  @IsOptional()
+  media?: CreateMediaDto[];
 }
