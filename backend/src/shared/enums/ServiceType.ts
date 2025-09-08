@@ -1,0 +1,5 @@
+export enum ServiceType {
+  GROUP = 'GROUP',
+  FORMULA_PRIVATE = 'FORMULA_PRIVATE',
+  ARBITRARY = 'ARBITRARY',
+}

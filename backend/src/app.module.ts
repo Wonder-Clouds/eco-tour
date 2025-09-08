@@ -6,6 +6,9 @@ import { MediaModule } from './media/media.module';
 import { DataModule } from './data/data.module';
 import { DetailServiceModule } from './detail-service/detail-service.module';
 import { ParametersModule } from './parameters/parameters.module';
+import { ServiceModule } from './service/service.module';
+import { PackageModule } from './package/package.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,6 +29,8 @@ import { ParametersModule } from './parameters/parameters.module';
     DataModule,
     DetailServiceModule,
     ParametersModule,
+    ServiceModule,
+    PackageModule,
   ],
   controllers: [],
   providers: [],
