@@ -1,4 +1,4 @@
-export interface DetailService {
+export interface ServiceDetail {
   title: string;
   subtitle: string;
   duration: string;

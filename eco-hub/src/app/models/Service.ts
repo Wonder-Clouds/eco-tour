@@ -1,8 +1,13 @@
 import { DetailPrice } from './DetailPrice';
-import { DetailService } from './DetailService';
+import { ServiceDetail } from './ServiceDetail';
 
 export interface Service {
-  isActive: boolean;
   detailPrice: DetailPrice;
-  detailService: DetailService;
+  detailService: ServiceDetail;
+  feeSupplier: number;
+  commissionByService: number;
+  commissionCard: number;
+  finalPrice: 0;
+  isActive: boolean;
+  serviceType: string;
 }
