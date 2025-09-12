@@ -1,8 +1,22 @@
+/* main-layout.component.scss */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  align-items: flex-start;
+}
+
+.sidebar {
+  width: 16rem;
+  flex-shrink: 0;
+}
+
 .main {
+  flex: 1;
   background-color: white;
-  margin: 1rem 2rem;
-  padding: 1rem;
-  width: 100%;
+  margin: 2rem;
+  padding: 2rem;
   border: 1px solid #f3f3f3;
   border-radius: 1rem;
+  height: auto;
+  overflow: visible;
 }

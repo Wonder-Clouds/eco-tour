@@ -5,14 +5,14 @@
       <mat-icon class="logo-icon">eco</mat-icon>
       <h1 class="logo-text" *ngIf="!isCollapsed">ECO HUB</h1>
     </div>
-    <button
+    <!-- <button
       mat-icon-button
       class="collapse-btn"
       (click)="toggleSidebar()"
       [matTooltip]="isCollapsed ? 'Expandir' : 'Colapsar'"
     >
       <mat-icon>{{ isCollapsed ? "menu_open" : "menu" }}</mat-icon>
-    </button>
+    </button> -->
   </div>
 
   <!-- Navigation -->
@@ -36,25 +36,6 @@
     </ul>
 
     <mat-divider class="divider"></mat-divider>
-
-    <!-- Settings Section -->
-    <div class="settings-section">
-      <h3 class="section-title" *ngIf="!isCollapsed">Configuración</h3>
-      <ul class="nav-list">
-        <li class="nav-item" *ngFor="let item of settingsItems">
-          <a
-            [routerLink]="item.route"
-            class="nav-link"
-            [class.active]="isActiveRoute(item.route)"
-            [matTooltip]="isCollapsed ? item.label : ''"
-            matTooltipPosition="right"
-          >
-            <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
-            <span class="nav-text" *ngIf="!isCollapsed">{{ item.label }}</span>
-          </a>
-        </li>
-      </ul>
-    </div>
   </nav>
 
   <!-- User Profile -->
@@ -71,6 +52,7 @@
       class="logout-btn"
       [matTooltip]="isCollapsed ? 'Cerrar sesión' : ''"
       matTooltipPosition="right"
+      (click)="logout()"
     >
       <mat-icon>logout</mat-icon>
     </button>

@@ -2,30 +2,37 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ServiceDetail } from '../../../../models/ServiceDetail';
 import { ServiceDetailCard } from '../../components/service-detail-card/service-detail-card';
+import { ServiceApi } from '../../api/service-api';
+import { Service } from '../../../../models/Service';
+import { Header } from '../../../../layouts/header/header';
 
 @Component({
   selector: 'app-service-detail',
   standalone: true,
-  imports: [ServiceDetailCard],
+  imports: [ServiceDetailCard, Header],
   templateUrl: './service-detail.html',
   styleUrl: './service-detail.scss',
 })
 export class ServiceDetailPage implements OnInit {
-  service!: ServiceDetail;
+  services: Service[] = [];
+  loading = true;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private serviceApi: ServiceApi) {}
 
   ngOnInit(): void {
-    const serviceId = Number(this.route.snapshot.paramMap.get('id'));
+    this.getAllServicesDetail();
+  }
 
-    // Simulación de fetch (aquí podrías llamar a un Service con HttpClient)
-    this.service = {
-      title: 'Amazon Rainforest Adventure',
-      subtitle:
-        'Un tour de 4 días explorando la selva amazónica con guías locales.',
-      duration: '3 noches y 4 días',
-      data: 'string',
-      summary: 'string',
-    };
+  getAllServicesDetail() {
+    this.serviceApi.getServices().subscribe({
+      next: (data) => {
+        this.services = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar servicios', err);
+        this.loading = false;
+      },
+    });
   }
 }

@@ -1,15 +1,105 @@
-<div class="card">
-  @if (imageUrl) {
-  <img [src]="imageUrl" alt="Imagen del servicio" class="card-image" />
+<div class="service-card" [class.inactive]="!service.isActive">
+  @if (coverImage) {
+  <div class="card-image-container">
+    <img
+      [src]="coverImage"
+      [alt]="service.detailService.title"
+      class="card-image"
+    />
+    <div class="service-type-badge">{{ service.serviceType }}</div>
+    @if (!service.isActive) {
+    <div class="inactive-overlay">
+      <span>No disponible</span>
+    </div>
+    }
+  </div>
   }
 
   <div class="card-content">
-    <h3 class="card-title">{{ title }}</h3>
+    <!-- Título y duración -->
+    <div class="card-header">
+      <h3 class="card-title">{{ service.detailService.title }}</h3>
+      <span class="duration-badge">{{ service.detailService.duration }}</span>
+    </div>
 
-    @if (subtitle) {
-    <p class="card-subtitle">{{ subtitle }}</p>
-    } @if (description) {
-    <p class="card-description">{{ description }}</p>
+    <!-- Resumen -->
+    <p class="card-summary">{{ service.detailService.summary }}</p>
+
+    <!-- Datos del servicio (Altitud, Clima, etc.) -->
+    @if (service.detailService.data && service.detailService.data.length > 0) {
+    <div class="service-data">
+      @for (dataItem of service.detailService.data; track dataItem.id) {
+      <div class="data-item">
+        <span class="data-label">{{ dataItem.title }}:</span>
+        <span class="data-value">{{ dataItem.description }}</span>
+      </div>
+      }
+    </div>
     }
+
+    <!-- Incluye/No incluye -->
+    <div class="includes-section">
+      <div class="includes">
+        <h4>✓ Incluye:</h4>
+        <p>{{ service.detailService.includes }}</p>
+      </div>
+      <div class="not-includes">
+        <h4>✗ No incluye:</h4>
+        <p>{{ service.detailService.notIncludes }}</p>
+      </div>
+    </div>
+
+    <!-- Itinerario resumido -->
+    @if (service.detailService.itinerary &&
+    service.detailService.itinerary.length > 0) {
+    <div class="itinerary-preview">
+      <h4>Itinerario ({{ service.detailService.itinerary.length }} días)</h4>
+      <div class="itinerary-items">
+        @for (day of service.detailService.itinerary.slice(0, 2); track day.id)
+        {
+        <div class="itinerary-item">
+          <span class="day-title">{{ day.title }}</span>
+          <span class="day-description">{{ day.description }}</span>
+        </div>
+        } @if (service.detailService.itinerary.length > 2) {
+        <div class="more-days">
+          +{{ service.detailService.itinerary.length - 2 }} días más...
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    <!-- Precios -->
+    <div class="pricing-section">
+      <div class="price-breakdown">
+        <div class="price-item">
+          <span>Proveedor:</span>
+          <span>${{ service.feeSupplier }}</span>
+        </div>
+        <div class="price-item">
+          <span>Comisión servicio:</span>
+          <span>${{ service.commissionByService }}</span>
+        </div>
+        <div class="price-item">
+          <span>Comisión card:</span>
+          <span>${{ service.commissionCard }}</span>
+        </div>
+      </div>
+      <div class="total-price">
+        <span>Total: ${{ totalPrice }}</span>
+      </div>
+    </div>
+
+    <!-- Botón de acción -->
+    <div class="card-actions">
+      <button
+        class="action-button"
+        [disabled]="!service.isActive"
+        [class.disabled]="!service.isActive"
+      >
+        {{ service.isActive ? "Ver detalles" : "No disponible" }}
+      </button>
+    </div>
   </div>
 </div>

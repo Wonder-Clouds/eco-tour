@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,14 +34,6 @@ export class Sidebar implements OnInit {
   navItems: NavItem[] = [
     { label: 'Panel general', route: '/', icon: 'dashboard' },
     { label: 'Servicios', route: '/servicios', icon: 'business_center' },
-    { label: 'Finanzas', route: '/finanzas', icon: 'account_balance' },
-    { label: 'Reportes', route: '/reportes', icon: 'analytics' },
-    { label: 'Clientes', route: '/clientes', icon: 'people' },
-  ];
-
-  settingsItems: NavItem[] = [
-    { label: 'Configuración', route: '/configuracion', icon: 'settings' },
-    { label: 'Ayuda', route: '/ayuda', icon: 'help_outline' },
   ];
 
   constructor(private router: Router) {}
@@ -49,9 +41,7 @@ export class Sidebar implements OnInit {
   ngOnInit() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        // Lógica adicional si es necesaria
-      });
+      .subscribe(() => {});
   }
 
   toggleSidebar() {
@@ -60,5 +50,9 @@ export class Sidebar implements OnInit {
 
   isActiveRoute(route: string): boolean {
     return this.router.url === route || this.router.url.startsWith(route + '/');
+  }
+
+  logout() {
+    this.router.navigate(['/login']);
   }
 }

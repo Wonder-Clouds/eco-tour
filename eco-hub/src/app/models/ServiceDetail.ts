@@ -1,7 +1,14 @@
+import { Itinerary } from './Itinerary';
+import { Media } from './Media';
+
 export interface ServiceDetail {
   title: string;
   subtitle: string;
   duration: string;
-  data: string;
+  data: ServiceData[];
   summary: string;
+  media: Media[];
+  itinerary: Itinerary[];
+  includes: string;
+  notIncludes: string;
 }
