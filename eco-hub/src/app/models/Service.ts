@@ -2,7 +2,6 @@ import { DetailPrice } from './DetailPrice';
 import { ServiceDetail } from './ServiceDetail';
 
 export interface Service {
-  detailPrice: DetailPrice;
   detailService: ServiceDetail;
   feeSupplier: number;
   commissionByService: number;

@@ -1,0 +1,25 @@
+.service-detail-page {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+  padding: 24px 0;
+  width: 100%;
+
+  app-service-detail-card {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .service-detail-page {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 16px;
+  }
+}
