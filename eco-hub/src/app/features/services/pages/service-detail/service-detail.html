@@ -1,6 +1,239 @@
-<app-header />
-<div class="service-detail-page">
-  @for (service of services; track $index) {
-  <app-service-detail-card [service]="service" />
+<!-- Loading State -->
+@if(isLoading()) {
+<div>
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Cargando información del servicio...</p>
+  </div>
+</div>
+} @else {
+<!-- Main Content -->
+<div>
+  @if(detailService) {
+  <div>
+    <div class="service-detail-container">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-image-wrapper">
+          <img
+            [src]="getCoverImage()"
+            [alt]="detailService?.title"
+            class="hero-image"
+            onerror="this.src='/images/ecotourcuscologo.svg'"
+          />
+          <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content">
+          <div class="container">
+            <h1 class="hero-title">{{ detailService?.title }}</h1>
+            <p class="hero-summary">{{ detailService?.summary }}</p>
+            <div class="hero-badges">
+              <span class="badge duration">
+                <i class="icon-clock"></i>
+                {{ detailService?.duration }}
+              </span>
+              <span class="badge service-type">
+                <i class="icon-group"></i>
+                {{ serviceData()?.serviceType }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container main-content">
+        <!-- Info Cards -->
+        <div class="info-cards-section">
+          <div class="info-cards-grid">
+            @for (info of detailService?.data; track $index) {
+            <div class="info-card">
+              <div class="info-icon">
+                <i
+                  [class]="
+                    'icon-' +
+                    (info.title.toLowerCase().includes('dificultad')
+                      ? 'mountain'
+                      : info.title.toLowerCase().includes('altitud')
+                      ? 'location'
+                      : 'users')
+                  "
+                ></i>
+              </div>
+              <div class="info-content">
+                <h3>{{ info.title }}</h3>
+                <p>{{ info.description }}</p>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+          <!-- Left Column -->
+          <div class="left-column">
+            <!-- Itinerary Section -->
+            <section class="section itinerary-section">
+              <h2 class="section-title">
+                <i class="icon-route"></i> Itinerario
+              </h2>
+              <div class="itinerary-timeline">
+                @for (item of detailService?.itinerary; track $index) {
+                <div class="timeline-item">
+                  <div class="timeline-marker">
+                    <div class="timeline-dot"></div>
+                    @if ($index !== (detailService?.itinerary?.length ?? 0)) {
+                    <div class="timeline-line"></div>
+                    }
+                  </div>
+                  <div class="timeline-content">
+                    <h3 class="timeline-title">{{ item.title }}</h3>
+                    <div class="timeline-description">
+                      @for (line of
+                      formatItineraryDescription(item.description); track
+                      $index) {
+                      <p>
+                        {{ line }}
+                      </p>
+                      }
+                    </div>
+                  </div>
+                </div>
+                }
+              </div>
+            </section>
+
+            <!-- Gallery Section -->
+            @if (getGalleryImages().length > 0) {
+            <section class="section gallery-section">
+              <h2 class="section-title"><i class="icon-image"></i> Galería</h2>
+              <div class="gallery-grid">
+                @for (image of getGalleryImages(); track $index) {
+                <div class="gallery-item">
+                  <img
+                    [src]="image"
+                    [alt]="detailService?.title"
+                    class="gallery-image"
+                  />
+                </div>
+                }
+              </div>
+            </section>
+            }
+          </div>
+
+          <!-- Right Column -->
+          <div class="right-column">
+            <!-- Includes / Excludes -->
+            <section class="section includes-section">
+              <div class="includes-card">
+                <h3 class="includes-title">
+                  <i class="icon-check-circle"></i> Incluye
+                </h3>
+                <div class="includes-content">
+                  @for (include of detailService?.includes?.split(', '); track
+                  $index) {
+                  <p><i class="icon-check"></i> {{ include }}</p>
+                  }
+                </div>
+              </div>
+
+              <div class="excludes-card">
+                <h3 class="excludes-title">
+                  <i class="icon-x-circle"></i> No incluye
+                </h3>
+                <div class="excludes-content">
+                  @for (exclude of detailService?.notIncludes?.split(', ');
+                  track $index) {
+                  <p><i class="icon-x"></i> {{ exclude }}</p>
+                  }
+                </div>
+              </div>
+            </section>
+
+            <!-- Pricing -->
+            <section class="section pricing-section">
+              <div class="pricing-card">
+                <h3 class="pricing-title">Información de Precios</h3>
+                <div class="pricing-details">
+                  <div class="price-item">
+                    <span class="price-label">Tarifa proveedor:</span>
+                    <span class="price-value"
+                      >${{ serviceData()?.feeSupplier }}</span
+                    >
+                  </div>
+                  <div class="price-item">
+                    <span class="price-label">Comisión servicio:</span>
+                    <span class="price-value"
+                      >${{ serviceData()?.commissionByService }}</span
+                    >
+                  </div>
+                  <div class="price-item">
+                    <span class="price-label">Comisión tarjeta:</span>
+                    <span class="price-value"
+                      >${{ serviceData()?.commissionCard }}</span
+                    >
+                  </div>
+                  <hr class="price-divider" />
+                  <div class="price-item final-price">
+                    <span class="price-label">Precio final:</span>
+                    <span class="price-value">{{
+                      serviceData()?.finalPrice || "Consultar"
+                    }}</span>
+                  </div>
+                </div>
+                <button class="cta-button">
+                  <i class="icon-calendar"></i> Reservar Ahora
+                </button>
+              </div>
+            </section>
+
+            <!-- Quick Info -->
+            <section class="section quick-info-section">
+              <div class="quick-info-card">
+                <h3 class="quick-info-title">Información Rápida</h3>
+                <div class="quick-info-items">
+                  <div class="quick-info-item">
+                    <i class="icon-clock"></i>
+                    <span>Duración: {{ detailService?.duration }}</span>
+                  </div>
+                  <div class="quick-info-item">
+                    <i class="icon-users"></i>
+                    <span>Grupo máximo: 15 personas</span>
+                  </div>
+                  <div class="quick-info-item">
+                    <i class="icon-mountain"></i>
+                    <span>Dificultad: Fácil</span>
+                  </div>
+                  <div class="quick-info-item">
+                    <i class="icon-map-pin"></i>
+                    <span>Altitud: 3,399 msnm</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  } @else {
+  <!-- Error State -->
+  <div>
+    <div class="error-container">
+      <div class="error-content">
+        <i class="icon-alert-triangle"></i>
+        <h2>Error al cargar el servicio</h2>
+        <p>
+          No se pudo cargar la información del servicio. Por favor, intenta de
+          nuevo.
+        </p>
+        <button class="retry-button" (click)="getService(serviceId)">
+          <i class="icon-refresh"></i> Reintentar
+        </button>
+      </div>
+    </div>
+  </div>
   }
 </div>
+}

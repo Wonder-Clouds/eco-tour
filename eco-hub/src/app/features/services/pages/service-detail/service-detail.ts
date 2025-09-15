@@ -1,38 +1,61 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, WritableSignal, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ServiceDetail } from '../../../../models/ServiceDetail';
-import { ServiceDetailCard } from '../../components/service-detail-card/service-detail-card';
-import { ServiceApi } from '../../api/service-api';
+import { ServiceApi } from '../../api/service/service-api';
 import { Service } from '../../../../models/Service';
-import { Header } from '../../../../layouts/header/header';
 
 @Component({
   selector: 'app-service-detail',
   standalone: true,
-  imports: [ServiceDetailCard, Header],
+  imports: [],
   templateUrl: './service-detail.html',
-  styleUrl: './service-detail.scss',
+  styleUrls: ['./service-detail.scss'],
 })
 export class ServiceDetailPage implements OnInit {
-  services: Service[] = [];
-  loading = true;
+  serviceId!: string;
+  serviceData: WritableSignal<Service | null> = signal(null);
+  isLoading: WritableSignal<boolean> = signal(true);
 
-  constructor(private serviceApi: ServiceApi) {}
+  constructor(private serviceApi: ServiceApi, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.getAllServicesDetail();
+    this.serviceId = String(this.route.snapshot.paramMap.get('id'));
+    this.getService(this.serviceId);
   }
 
-  getAllServicesDetail() {
-    this.serviceApi.getServices().subscribe({
-      next: (data) => {
-        this.services = data;
-        this.loading = false;
+  getService(id: string) {
+    this.isLoading.set(true);
+    this.serviceApi.getServiceById(id).subscribe({
+      next: (data: Service) => {
+        this.serviceData.set(data);
+        this.isLoading.set(false);
       },
       error: (err) => {
-        console.error('Error al cargar servicios', err);
-        this.loading = false;
+        console.error('Error al cargar el servicio', err);
+        this.isLoading.set(false);
       },
     });
+  }
+
+  get detailService() {
+    return this.serviceData()?.detailService;
+  }
+
+  getCoverImage(): string {
+    const media = this.detailService?.media;
+    if (!media) return '';
+    const coverImage = media.find((m) => m.isCover);
+    return coverImage?.url || '';
+  }
+
+  getGalleryImages(): string[] {
+    const media = this.detailService?.media;
+    if (!media) return [];
+    return media
+      .filter((m) => !m.isCover && ['image', 'cover', 'post'].includes(m.type))
+      .map((m) => m.url);
+  }
+
+  formatItineraryDescription(description: string): string[] {
+    return description.split('\n').filter((line) => line.trim());
   }
 }

@@ -1,15 +1,7 @@
+import { Router } from '@angular/router';
 import { ServiceDetail } from '../../../../models/ServiceDetail';
 import { Service } from './../../../../models/Service';
 import { Component, Input } from '@angular/core';
-
-export interface ServiceCard {
-  serviceType: string;
-  feeSupplier: number;
-  commissionByService: number;
-  commissionCard: number;
-  isActive: boolean;
-  detailService: ServiceDetail;
-}
 
 @Component({
   selector: 'app-service-detail-card',
@@ -18,7 +10,9 @@ export interface ServiceCard {
   styleUrl: './service-detail-card.scss',
 })
 export class ServiceDetailCard {
-  @Input() service!: ServiceCard;
+  @Input() service!: Service;
+
+  constructor(private router: Router) {}
 
   get coverImage(): string | undefined {
     return (
@@ -34,5 +28,9 @@ export class ServiceDetailCard {
       this.service.commissionByService +
       this.service.commissionCard
     );
+  }
+
+  viewDetails(id: string) {
+    this.router.navigate(['servicios', id]);
   }
 }

@@ -4,6 +4,7 @@ import { Home } from './features/dashboard/pages/home/home';
 import { Services } from './features/services/pages/services/services';
 import { Login } from './features/auth/pages/login/login';
 import { ServiceDetailPage } from './features/services/pages/service-detail/service-detail';
+import { CreateServicePage } from './features/services/pages/create-service/create-service';
 
 export const routes: Routes = [
   {
@@ -11,7 +12,9 @@ export const routes: Routes = [
     component: Main,
     children: [
       { path: '', component: Home },
-      { path: 'servicios', component: ServiceDetailPage },
+      { path: 'servicios', component: Services },
+      { path: 'servicios/crear-servicio', component: CreateServicePage },
+      { path: 'servicios/:id', component: ServiceDetailPage },
     ],
   },
 

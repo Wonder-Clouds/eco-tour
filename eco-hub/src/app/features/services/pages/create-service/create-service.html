@@ -1,0 +1,134 @@
+<div class="service-create-container">
+  <h1>Crear Servicio</h1>
+
+  @if(loading) {
+  <p>Cargando...</p>
+  } @else {
+  <form [formGroup]="serviceForm">
+    <section class="general-info">
+      <label>Tipo de Servicio</label>
+      <select value="{{ service.serviceType }}" formControlName="serviceType">
+        <option value="GROUP">GROUP</option>
+        <option value="PRIVATE">PRIVATE</option>
+      </select>
+      <label for="commissionByService">Comisión por Servicio</label>
+      <input type="number" formControlName="commissionByService" />
+
+      <label>Comisión por Tarjeta</label>
+      <input
+        type="number"
+        value="{{ service.commissionCard }}"
+        name="commissionCard"
+      />
+
+      <label>
+        <input type="checkbox" value="{{ service.isActive }}" name="isActive" />
+        Activo
+      </label>
+    </section>
+
+    <section formGroupName="detailService" class="general-info">
+      <label for="title">Título</label>
+      <input formControlName="title" required />
+
+      <label for="duration">Duración</label>
+      <input formControlName="duration" required />
+
+      <label for="summary">Resumen</label>
+      <textarea formControlName="summary"></textarea>
+
+      <label>Fee Supplier</label>
+      <input
+        type="number"
+        value="{{ service.feeSupplier }}"
+        name="feeSupplier"
+      />
+    </section>
+
+    <section class="details">
+      <h2>Detalles del Servicio</h2>
+      <button type="button" (click)="addDetailItem()">Agregar Detalle</button>
+      @for(detail of service.detailService.data; track $index) {
+      <div class="detail-item">
+        <input
+          value="detail.title"
+          name="detailTitle{{ $index }}"
+          placeholder="Título detalle"
+        />
+        <input
+          value="{{ detail.description }}"
+          name="detailDesc{{ $index }}"
+          placeholder="Descripción detalle"
+        />
+        <button type="button" (click)="removeDetailItem($index)">
+          Eliminar
+        </button>
+      </div>
+      }
+    </section>
+
+    <section class="itinerary">
+      <h2>Itinerario</h2>
+      <button type="button" (click)="addItineraryItem()">Agregar Día</button>
+      @for(day of service.detailService.itinerary; track $index) {
+      <div class="itinerary-item">
+        <input
+          value="{{ day.title }}"
+          name="dayTitle{{ $index }}"
+          placeholder="Título del día"
+        />
+        <textarea
+          value="{{ day.description }}"
+          name="dayDesc{{ $index }}"
+          placeholder="Descripción del día"
+        ></textarea>
+        <button type="button" (click)="removeItineraryItem($index)">
+          Eliminar
+        </button>
+      </div>
+      }
+    </section>
+
+    <section class="media">
+      <h2>Medios</h2>
+      <button type="button" (click)="addMediaItem()">Agregar Imagen</button>
+      @for(media of service.detailService.media; track $index) {
+      <div class="media-item">
+        <input
+          value="{{ media.url }}"
+          name="mediaUrl{{ $index }}"
+          placeholder="URL de la imagen"
+        />
+        <label>
+          <input
+            type="checkbox"
+            value="{{ media.isCover }}"
+            name="mediaCover{{ $index }}"
+          />
+          Portada
+        </label>
+        <button type="button" (click)="removeMediaItem($index)">
+          Eliminar
+        </button>
+      </div>
+      }
+    </section>
+
+    <section class="summary">
+      <label>Incluye</label>
+      <textarea
+        value="{{ service?.detailService?.includes }}"
+        name="includes"
+      ></textarea>
+
+      <label>No Incluye</label>
+      <textarea
+        value="{{ service?.detailService?.notIncludes }}"
+        name="notIncludes"
+      ></textarea>
+    </section>
+
+    <button type="submit" (click)="onSaveService()">Guardar Servicio</button>
+  </form>
+  }
+</div>
