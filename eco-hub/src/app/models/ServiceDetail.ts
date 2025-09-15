@@ -3,7 +3,6 @@ import { Media } from './Media';
 
 export interface ServiceDetail {
   title: string;
-  subtitle: string;
   duration: string;
   data: ServiceData[];
   summary: string;
