@@ -434,10 +434,10 @@ $border-radius-sm: 8px;
     margin: 1rem 0;
   }
 
-  .cta-button {
+  .delete-button {
     width: 100%;
-    background: white;
-    color: $primary-color;
+    background: #ef4444;
+    color: #f9fafb;
     border: none;
     padding: 1rem 1.5rem;
     border-radius: $border-radius-sm;
@@ -633,64 +633,5 @@ $border-radius-sm: 8px;
 
   .pricing-section .pricing-card {
     padding: 1.5rem;
-  }
-}
-
-// Icon placeholders (replace with your preferred icon library)
-[class^="icon-"] {
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-
-  // Font Awesome fallback
-  &::before {
-    font-family: "Font Awesome 6 Free", sans-serif;
-    font-weight: 900;
-  }
-
-  &.icon-clock::before {
-    content: "\f017";
-  }
-  &.icon-group::before {
-    content: "\f0c0";
-  }
-  &.icon-mountain::before {
-    content: "\f6fc";
-  }
-  &.icon-location::before {
-    content: "\f3c5";
-  }
-  &.icon-users::before {
-    content: "\f0c0";
-  }
-  &.icon-route::before {
-    content: "\f4d7";
-  }
-  &.icon-image::before {
-    content: "\f03e";
-  }
-  &.icon-check-circle::before {
-    content: "\f058";
-  }
-  &.icon-x-circle::before {
-    content: "\f057";
-  }
-  &.icon-check::before {
-    content: "\f00c";
-  }
-  &.icon-x::before {
-    content: "\f00d";
-  }
-  &.icon-calendar::before {
-    content: "\f073";
-  }
-  &.icon-map-pin::before {
-    content: "\f276";
-  }
-  &.icon-alert-triangle::before {
-    content: "\f071";
-  }
-  &.icon-refresh::before {
-    content: "\f021";
   }
 }

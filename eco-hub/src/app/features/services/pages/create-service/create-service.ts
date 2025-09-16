@@ -1,104 +1,153 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ServiceApi } from '../../api/service/service-api';
 import { Router } from '@angular/router';
 import { Service } from '../../../../models/Service';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-create-service',
-  imports: [ReactiveFormsModule],
+  imports: [
+    ReactiveFormsModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatSelectModule,
+  ],
   templateUrl: './create-service.html',
   styleUrl: './create-service.scss',
 })
-export class CreateServicePage {
-  serviceForm: FormGroup = new FormGroup({
-    detailService: new FormGroup({
-      title: new FormControl(''),
-      duration: new FormControl(''),
-      summary: new FormControl(''),
-      includes: new FormControl(''),
-      notIncludes: new FormControl(''),
-    }),
-    feeSupplier: new FormControl(0),
-    commissionByService: new FormControl(0),
-    commissionCard: new FormControl(0),
-    isActive: new FormControl(false),
-    serviceType: new FormControl(''),
-  });
+export class CreateServicePage implements OnInit {
+  serviceForm!: FormGroup;
 
-  service: Service = {
-    id: '',
-    finalPrice: 0,
-    serviceType: 'GROUP',
-    feeSupplier: 0,
-    commissionByService: 0,
-    commissionCard: 0,
-    isActive: true,
-    detailService: {
-      title: '',
-      duration: '',
-      summary: '',
-      includes: '',
-      notIncludes: '',
-      data: [],
-      itinerary: [],
-      media: [],
-    },
-  };
+  serviceTypes = [
+    { value: 'GROUP', viewValue: 'Grupo' },
+    { value: 'PRIVATE', viewValue: 'Privado' },
+  ];
 
   loading = false;
 
-  constructor(private serviceApi: ServiceApi, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private serviceApi: ServiceApi,
+    private router: Router
+  ) {}
 
-  addDetailItem() {
-    this.service.detailService.data.push({
-      id: '',
-      title: '',
-      description: '',
+  ngOnInit(): void {
+    this.serviceForm = this.fb.group({
+      detailService: this.fb.group({
+        title: [''],
+        duration: [''],
+        data: this.fb.array([
+          this.fb.group({
+            title: [''],
+            description: [''],
+          }),
+        ]),
+        summary: new FormControl(''),
+        includes: new FormControl(''),
+        notIncludes: new FormControl(''),
+        itinerary: this.fb.array([
+          this.fb.group({
+            title: [''],
+            description: [''],
+          }),
+        ]),
+        media: this.fb.array([
+          this.fb.group({
+            type: ['image'], // TODO: Change to dynamic ex. file/image
+            url: [''],
+            isCover: [false],
+          }),
+        ]),
+      }),
+      feeSupplier: [''],
+      commissionByService: [''],
+      commissionCard: [''],
+      isActive: [false],
+      serviceType: ['GROUP'],
     });
   }
 
-  addItineraryItem() {
-    this.service.detailService.itinerary.push({
-      id: '',
-      title: '',
-      description: '',
+  createItineraryItem(): FormGroup {
+    return this.fb.group({
+      id: [''],
+      title: [''],
+      description: [''],
     });
   }
 
-  addMediaItem() {
-    this.service.detailService.media.push({
-      id: 0,
-      type: 'image',
-      url: '',
-      isCover: false,
-    });
+  get itinerary(): FormArray {
+    return this.serviceForm.get('detailService.itinerary') as FormArray;
   }
 
-  removeDetailItem(index: number) {
-    this.service.detailService.data.splice(index, 1);
+  get media(): FormArray {
+    return this.serviceForm.get('detailService.media') as FormArray;
   }
 
-  removeItineraryItem(index: number) {
-    this.service.detailService.itinerary.splice(index, 1);
+  get data(): FormArray {
+    return this.serviceForm.get('detailService.data') as FormArray;
   }
 
-  removeMediaItem(index: number) {
-    this.service.detailService.media.splice(index, 1);
+  addItineraryItem(): void {
+    this.itinerary.push(
+      this.fb.group({
+        title: [''],
+        description: [''],
+      })
+    );
   }
 
-  onSaveService() {
+  addMediaItem(): void {
+    this.media.push(
+      this.fb.group({
+        type: ['image'],
+        url: [''],
+        isCover: [false],
+      })
+    );
+  }
+
+  addDetailItem(): void {
+    this.data.push(
+      this.fb.group({
+        title: [''],
+        description: [''],
+      })
+    );
+  }
+
+  removeItineraryItem(index: number): void {
+    this.itinerary.removeAt(index);
+  }
+
+  removeMediaItem(index: number): void {
+    this.media.removeAt(index);
+  }
+
+  removeDetailItem(index: number): void {
+    this.data.removeAt(index);
+  }
+
+  onSaveService(): void {
     this.loading = true;
-    console.log('WORKS!');
-    // this.serviceApi.postService(this.service).subscribe({
-    //   next: () => {
-    //     this.loading = false;
-    //     this.router.navigate(['/servicios']);
-    //   },
-    //   error: (err) => {
-    //     console.error('Error creando servicio', err);
-    //     this.loading = false;
-    //   },
-    // });
+    console.log(this.serviceForm.value);
+    this.serviceApi.postService(this.serviceForm.value).subscribe({
+      next: () => {
+        this.loading = false;
+        this.router.navigate(['/servicios']);
+      },
+      error: (err) => {
+        console.error('Error creando servicio', err);
+        this.loading = false;
+      },
+    });
   }
 }

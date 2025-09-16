@@ -23,4 +23,8 @@ export class ServiceApi {
   postService(data: Service): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/services/`, data);
   }
+
+  deleteService(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/services/${id}`);
+  }
 }

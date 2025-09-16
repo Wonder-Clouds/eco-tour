@@ -1,5 +1,5 @@
 import { Component, OnInit, WritableSignal, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceApi } from '../../api/service/service-api';
 import { Service } from '../../../../models/Service';
 
@@ -15,7 +15,11 @@ export class ServiceDetailPage implements OnInit {
   serviceData: WritableSignal<Service | null> = signal(null);
   isLoading: WritableSignal<boolean> = signal(true);
 
-  constructor(private serviceApi: ServiceApi, private route: ActivatedRoute) {}
+  constructor(
+    private serviceApi: ServiceApi,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.serviceId = String(this.route.snapshot.paramMap.get('id'));
@@ -28,6 +32,19 @@ export class ServiceDetailPage implements OnInit {
       next: (data: Service) => {
         this.serviceData.set(data);
         this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error al cargar el servicio', err);
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  deleteService(id: string) {
+    this.serviceApi.deleteService(id).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.router.navigate(['/servicios']);
       },
       error: (err) => {
         console.error('Error al cargar el servicio', err);

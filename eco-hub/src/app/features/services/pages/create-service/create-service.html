@@ -6,126 +6,168 @@
   } @else {
   <form [formGroup]="serviceForm">
     <section class="general-info">
-      <label>Tipo de Servicio</label>
-      <select value="{{ service.serviceType }}" formControlName="serviceType">
-        <option value="GROUP">GROUP</option>
-        <option value="PRIVATE">PRIVATE</option>
-      </select>
-      <label for="commissionByService">Comisión por Servicio</label>
-      <input type="number" formControlName="commissionByService" />
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo de Servicio</mat-label>
+        <mat-select formControlName="serviceType">
+          @for (type of serviceTypes; track type) {
+          <mat-option [value]="type.value">{{ type.viewValue }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-      <label>Comisión por Tarjeta</label>
-      <input
-        type="number"
-        value="{{ service.commissionCard }}"
-        name="commissionCard"
-      />
+      <mat-form-field appearance="outline" class="input-form">
+        <mat-label>Comisión por Servicio</mat-label>
+        <input
+          formControlName="commissionByService"
+          matInput
+          type="number"
+          placeholder="S/."
+        />
+      </mat-form-field>
 
-      <label>
-        <input type="checkbox" value="{{ service.isActive }}" name="isActive" />
+      <mat-form-field appearance="outline" class="input-form">
+        <mat-label>Comisión por Tarjeta</mat-label>
+        <input
+          formControlName="commissionCard"
+          matInput
+          type="number"
+          placeholder="S/."
+        />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="input-form">
+        <mat-label>Comisión del proveedor</mat-label>
+        <input
+          formControlName="feeSupplier"
+          matInput
+          type="number"
+          placeholder="S/."
+        />
+      </mat-form-field>
+
+      <mat-checkbox class="example-margin" formControlName="isActive">
         Activo
-      </label>
+      </mat-checkbox>
     </section>
 
-    <section formGroupName="detailService" class="general-info">
-      <label for="title">Título</label>
-      <input formControlName="title" required />
-
-      <label for="duration">Duración</label>
-      <input formControlName="duration" required />
-
-      <label for="summary">Resumen</label>
-      <textarea formControlName="summary"></textarea>
-
-      <label>Fee Supplier</label>
-      <input
-        type="number"
-        value="{{ service.feeSupplier }}"
-        name="feeSupplier"
-      />
-    </section>
-
-    <section class="details">
+    <section formGroupName="detailService" class="">
       <h2>Detalles del Servicio</h2>
-      <button type="button" (click)="addDetailItem()">Agregar Detalle</button>
-      @for(detail of service.detailService.data; track $index) {
-      <div class="detail-item">
-        <input
-          value="detail.title"
-          name="detailTitle{{ $index }}"
-          placeholder="Título detalle"
-        />
-        <input
-          value="{{ detail.description }}"
-          name="detailDesc{{ $index }}"
-          placeholder="Descripción detalle"
-        />
-        <button type="button" (click)="removeDetailItem($index)">
-          Eliminar
-        </button>
-      </div>
-      }
-    </section>
-
-    <section class="itinerary">
-      <h2>Itinerario</h2>
-      <button type="button" (click)="addItineraryItem()">Agregar Día</button>
-      @for(day of service.detailService.itinerary; track $index) {
-      <div class="itinerary-item">
-        <input
-          value="{{ day.title }}"
-          name="dayTitle{{ $index }}"
-          placeholder="Título del día"
-        />
-        <textarea
-          value="{{ day.description }}"
-          name="dayDesc{{ $index }}"
-          placeholder="Descripción del día"
-        ></textarea>
-        <button type="button" (click)="removeItineraryItem($index)">
-          Eliminar
-        </button>
-      </div>
-      }
-    </section>
-
-    <section class="media">
-      <h2>Medios</h2>
-      <button type="button" (click)="addMediaItem()">Agregar Imagen</button>
-      @for(media of service.detailService.media; track $index) {
-      <div class="media-item">
-        <input
-          value="{{ media.url }}"
-          name="mediaUrl{{ $index }}"
-          placeholder="URL de la imagen"
-        />
-        <label>
+      <div class="input-form-detail">
+        <mat-form-field appearance="outline" class="input-form">
+          <mat-label>Título</mat-label>
           <input
-            type="checkbox"
-            value="{{ media.isCover }}"
-            name="mediaCover{{ $index }}"
+            formControlName="title"
+            matInput
+            type="text"
+            placeholder="Ex. Valle Sagrado - Full Day"
           />
-          Portada
-        </label>
-        <button type="button" (click)="removeMediaItem($index)">
-          Eliminar
-        </button>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="input-form">
+          <mat-label>Duración (en días)</mat-label>
+          <input
+            formControlName="duration"
+            matInput
+            type="text"
+            placeholder="0"
+          />
+        </mat-form-field>
       </div>
-      }
+
+      <mat-form-field appearance="outline">
+        <mat-label>Resumen</mat-label>
+        <textarea
+          formControlName="summary"
+          class="input-form"
+          matInput
+          placeholder="Ex. Descubre los principales atractivos de..."
+        ></textarea>
+      </mat-form-field>
+      <section formArrayName="data" class="details">
+        <button type="button" (click)="addDetailItem()">Agregar Detalle</button>
+        @for(detail of data.controls; track $index) {
+        <div class="detail-item">
+          <div class="detail-item" [formGroupName]="$index">
+            <div class="input-wrapper">
+              <input type="text" formControlName="title" required />
+              <label>Título</label>
+              <span class="focus-bg"></span>
+            </div>
+
+            <div class="input-wrapper">
+              <input type="text" formControlName="description" required />
+              <label>Descripción</label>
+              <span class="focus-bg"></span>
+            </div>
+            <button type="button" (click)="removeDetailItem($index)">
+              Eliminar
+            </button>
+          </div>
+        </div>
+        }
+      </section>
+
+      <section formArrayName="itinerary" class="itinerary">
+        <h2>Itinerario</h2>
+        <button type="button" (click)="addItineraryItem()">Agregar Día</button>
+        @for(day of itinerary.controls; track $index) {
+        <div class="itinerary-item" [formGroupName]="$index">
+          <mat-form-field class="input-form">
+            <mat-label>Título del día</mat-label>
+            <input formControlName="title" matInput type="text" />
+          </mat-form-field>
+          <mat-form-field class="input-form">
+            <mat-label>Descripción del día</mat-label>
+            <textarea formControlName="description" matInput></textarea>
+          </mat-form-field>
+          <button type="button" (click)="removeItineraryItem($index)">
+            Eliminar
+          </button>
+        </div>
+        }
+      </section>
+
+      <section class="media" formArrayName="media">
+        <h2>Media</h2>
+        <button type="button" (click)="addMediaItem()">Agregar Imagen</button>
+        @for(media of media.controls; track $index) {
+        <div class="media-item" [formGroupName]="$index">
+          <div class="input-wrapper">
+            <input type="text" formControlName="url" required />
+            <label>URL de la imagen</label>
+            <span class="focus-bg"></span>
+          </div>
+
+          <mat-checkbox class="example-margin" formControlName="isCover">
+            Portada
+          </mat-checkbox>
+          <button type="button" (click)="removeMediaItem($index)">
+            Eliminar
+          </button>
+        </div>
+        }
+      </section>
     </section>
 
-    <section class="summary">
-      <label>Incluye</label>
-      <textarea
-        value="{{ service?.detailService?.includes }}"
-        name="includes"
-      ></textarea>
+    <section class="summary" formGroupName="detailService">
+      <mat-form-field appearance="outline" class="example-full-width">
+        <mat-label>Incluye</mat-label>
+        <textarea
+          formControlName="includes"
+          class="input-form"
+          matInput
+          placeholder="Ex. Transporte"
+        ></textarea>
+      </mat-form-field>
 
-      <label>No Incluye</label>
-      <textarea
-        value="{{ service?.detailService?.notIncludes }}"
-        name="notIncludes"
-      ></textarea>
+      <mat-form-field appearance="outline" class="example-full-width">
+        <mat-label>No Incluye</mat-label>
+        <textarea
+          formControlName="notIncludes"
+          class="input-form"
+          matInput
+          placeholder="Ex. Gastos personales"
+        ></textarea>
+      </mat-form-field>
     </section>
 
     <button type="submit" (click)="onSaveService()">Guardar Servicio</button>

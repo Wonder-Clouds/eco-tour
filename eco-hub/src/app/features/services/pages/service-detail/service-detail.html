@@ -29,11 +29,11 @@
             <p class="hero-summary">{{ detailService?.summary }}</p>
             <div class="hero-badges">
               <span class="badge duration">
-                <i class="icon-clock"></i>
+                <i class="fa-solid fa-clock"></i>
                 {{ detailService?.duration }}
               </span>
               <span class="badge service-type">
-                <i class="icon-group"></i>
+                <i class="fa-solid fa-people-group"></i>
                 {{ serviceData()?.serviceType }}
               </span>
             </div>
@@ -127,25 +127,21 @@
             <!-- Includes / Excludes -->
             <section class="section includes-section">
               <div class="includes-card">
-                <h3 class="includes-title">
-                  <i class="icon-check-circle"></i> Incluye
-                </h3>
+                <h3 class="includes-title">Incluido</h3>
                 <div class="includes-content">
                   @for (include of detailService?.includes?.split(', '); track
                   $index) {
-                  <p><i class="icon-check"></i> {{ include }}</p>
+                  <p><i class="fa-solid fa-check"></i> {{ include }}</p>
                   }
                 </div>
               </div>
 
               <div class="excludes-card">
-                <h3 class="excludes-title">
-                  <i class="icon-x-circle"></i> No incluye
-                </h3>
+                <h3 class="excludes-title">No incluido</h3>
                 <div class="excludes-content">
                   @for (exclude of detailService?.notIncludes?.split(', ');
                   track $index) {
-                  <p><i class="icon-x"></i> {{ exclude }}</p>
+                  <p><i class="fa-solid fa-xmark"></i> {{ exclude }}</p>
                   }
                 </div>
               </div>
@@ -182,8 +178,11 @@
                     }}</span>
                   </div>
                 </div>
-                <button class="cta-button">
-                  <i class="icon-calendar"></i> Reservar Ahora
+                <button
+                  class="delete-button"
+                  (click)="deleteService(serviceId)"
+                >
+                  <i class="fa-solid fa-trash"></i> Eliminar servicio
                 </button>
               </div>
             </section>
