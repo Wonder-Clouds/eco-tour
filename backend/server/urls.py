@@ -17,18 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('itinerary.urls')),
     path('api/', include('data.urls')),
     path('api/', include('media.urls')),
+    path('api/', include('group.urls')),
     path('api/', include('quote.urls')),
     path('api/', include('service.urls')),
     path('api/', include('reserve.urls')),
     path('api/', include('supplier.urls')),
     path('api/', include('person.urls')),
     path('api/', include('file_media.urls')),
+    path('api/', include('expense.urls')),
+    path('api/', include('file_type.urls')),
 
     path('tinymce/', include('tinymce.urls')),
 ]
@@ -40,3 +45,6 @@ swagger_patterns = [
 ]
 
 urlpatterns += swagger_patterns
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

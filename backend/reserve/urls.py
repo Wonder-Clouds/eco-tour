@@ -3,7 +3,7 @@ from .views import ReserveViewSet
 from django.urls import path, include
 
 router = routers.DefaultRouter()
-router.register(r'reserves', ReserveViewSet)
+router.register(r'reserve', ReserveViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

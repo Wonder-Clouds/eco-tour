@@ -20,7 +20,7 @@ class MediaViewSet(viewsets.ModelViewSet):
             return Response({"error": "Service not found"}, status=status.HTTP_404_NOT_FOUND)
         
         file = request.FILES.get('file')
-
+        
         if not file:
             return Response({"error": "No file provided"}, status=status.HTTP_404_NOT_FOUND)
         

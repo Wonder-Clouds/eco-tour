@@ -14,7 +14,7 @@ class Itinerary(SafeDeleteModel):
     title = models.CharField(max_length=255)
     description = HTMLField()
 
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='itineraries')
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='itinerary')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

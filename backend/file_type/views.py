@@ -4,5 +4,5 @@ from .models import FileType
 
 # Create your views here.
 class FileTypeViewSet(viewsets.ModelViewSet):
-    queryset = FileType
+    queryset = FileType.objects.all()
     serializer_class = FileTypeSerializer

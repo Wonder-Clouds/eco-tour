@@ -16,7 +16,7 @@ class Expense(SafeDeleteModel):
     paid = models.BooleanField(default=False)
     date_incurred = models.DateField()
     
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='expenses')
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='expense')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

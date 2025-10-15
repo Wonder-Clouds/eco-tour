@@ -17,7 +17,7 @@ class Person(SafeDeleteModel):
     birth_date = models.DateField(blank=True, null=True)
     nationality = models.CharField(max_length=100, blank=True, null=True)
 
-    groups = models.ManyToManyField(Group, related_name='members', blank=True)
+    group = models.ManyToManyField(Group, related_name='person', blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
