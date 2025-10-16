@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from service.models import Service
+from person.models import Person
 from .models import Media
 
 # Create your views here.
@@ -147,3 +148,63 @@ class MediaViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+    # ===== Person Media Actions =====
+    
+    # Action to upload document for person
+    @action(detail=True, methods=['post'], url_path='person-document')
+    def upload_person_document(self, request, pk=None):
+        try:
+            person = Person.objects.get(id=pk)
+        except:
+            return Response({"error": "Person not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        file = request.FILES.get('file')
+        
+        if not file:
+            return Response({"error": "No file provided"}, status=status.HTTP_404_NOT_FOUND)
+        
+        data = {
+            'person': person.id,
+            'file': file,
+            'type': 'document',
+            'title': request.data.get('title', ''),
+            'description': request.data.get('description', '')
+        }
+
+        serializer = MediaFileSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Action to upload image for person
+    @action(detail=True, methods=['post'], url_path='person-image')
+    def upload_person_image(self, request, pk=None):
+        try:
+            person = Person.objects.get(id=pk)
+        except:
+            return Response({"error": "Person not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        file = request.FILES.get('file')
+
+        if not file:
+            return Response({"error": "No file provided"}, status=status.HTTP_404_NOT_FOUND)
+        
+        data = {
+            'person': person.id,
+            'file': file,
+            'type': 'image',
+            'title': request.data.get('title', ''),
+            'description': request.data.get('description', '')
+        }
+
+        serializer = MediaFileSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

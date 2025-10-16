@@ -1,11 +1,10 @@
 from rest_framework import serializers
 from .models import Media
-from .serializers import Media
 
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Media
-        fields = ['id', 'type', 'file', 'url', 'is_cover', 'created_at', 'updated_at', 'service', 'title', 'description']
+        fields = ['id', 'type', 'file', 'url', 'is_cover', 'created_at', 'updated_at', 'service', 'person', 'title', 'description']
 
 
 class MediaPostSerializer(serializers.ModelSerializer):
@@ -13,10 +12,10 @@ class MediaPostSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Media
-        fields = ['id', 'type', 'url', 'created_at', 'updated_at', 'service', 'title', 'description']
+        fields = ['id', 'type', 'url', 'created_at', 'updated_at', 'service', 'person', 'title', 'description']
 
 
 class MediaFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Media
-        fields = ['id', 'type', 'file', 'created_at', 'updated_at', 'service', 'is_cover']
+        fields = ['id', 'type', 'file', 'created_at', 'updated_at', 'service', 'person', 'is_cover', 'title', 'description']
