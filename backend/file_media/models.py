@@ -7,6 +7,15 @@ from person.models import Person
 
 # Create your models here.
 class FileMedia(SafeDeleteModel):
+    """
+    DEPRECATED: This model is being phased out in favor of the unified Media model.
+    Please use media.models.Media instead, which supports both Person and Service relationships.
+    
+    For migration path:
+    - Use Media model with person ForeignKey for person-related files
+    - Use Media model with service ForeignKey for service-related files
+    - Media model includes type, title, description, and file validation
+    """
     _safedelete_policy = SOFT_DELETE
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
