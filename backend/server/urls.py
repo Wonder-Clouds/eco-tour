@@ -31,9 +31,7 @@ urlpatterns = [
     path('api/', include('reserve.urls')),
     path('api/', include('supplier.urls')),
     path('api/', include('person.urls')),
-    path('api/', include('file_media.urls')),
     path('api/', include('expense.urls')),
-    path('api/', include('file_type.urls')),
 
     path('tinymce/', include('tinymce.urls')),
 ]
