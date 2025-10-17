@@ -1,7 +1,9 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
 from safedelete.models import SafeDeleteModel, SOFT_DELETE
 import uuid
 from group.models import Group
+from media.models import Media
 
 
 # Create your models here.
@@ -18,6 +20,7 @@ class Person(SafeDeleteModel):
     nationality = models.CharField(max_length=100, blank=True, null=True)
 
     group = models.ManyToManyField(Group, related_name='person', blank=True)
+    media = GenericRelation(Media, related_query_name='person')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

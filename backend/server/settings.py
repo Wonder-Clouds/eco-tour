@@ -46,8 +46,6 @@ INSTALLED_APPS = [
     # Local apps
     'data',
     'expense',
-    'file_media',
-    'file_type',
     'group',
     'service',
     'itinerary',

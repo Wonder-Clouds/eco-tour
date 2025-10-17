@@ -1,10 +1,10 @@
 from rest_framework import viewsets
-from .models import Itinerary
-from .serializers import ItinerarySerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from service.models import Service
+from .models import Itinerary
+from .serializers import ItinerarySerializer
 
 class ItineraryViewSet(viewsets.ModelViewSet):
     queryset = Itinerary.objects.all()

@@ -1,7 +1,9 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
 from safedelete.models import SafeDeleteModel, SOFT_DELETE_CASCADE
 from tinymce.models import HTMLField
 import uuid
+from media.models import Media
 
 
 # Create your models here.
@@ -21,6 +23,9 @@ class Service(SafeDeleteModel):
     includes = HTMLField()
     excludes = HTMLField()
     type = models.CharField(max_length=50, choices=TYPE_SERVICE_CHOICES) 
+
+    # Media files associated with the service
+    media = GenericRelation(Media, content_type_field='content_type', object_id_field='object_id')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
