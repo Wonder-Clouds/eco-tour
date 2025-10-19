@@ -7,7 +7,7 @@ class QuoteSerializer(serializers.ModelSerializer):
         model = Quote
         fields = ['id', 'status', 'version', 'creation_date', 
                   'valid_until', 'total_price', 'notes', 'created_at', 
-                  'updated_at', 'services']
+                  'updated_at', 'services', 'pay']
 
 
 class SimpleQuoteSerializer(QuoteSerializer):

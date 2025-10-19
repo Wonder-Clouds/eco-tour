@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/', include('supplier.urls')),
     path('api/', include('person.urls')),
     path('api/', include('expense.urls')),
+    path('api/', include('pay.urls')),
 
     path('tinymce/', include('tinymce.urls')),
 ]

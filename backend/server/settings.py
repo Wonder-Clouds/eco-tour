@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'quote',
     'reserve',
     'supplier',
+    'pay',
 
     # Third party apps
     'rest_framework',
