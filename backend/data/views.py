@@ -3,12 +3,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from service.models import Service
+from shared.pagination import CustomPagination
 from .models import Data
 from .serializers import DataSerializer
 
 # Create your views here.
 class DataViewSet(viewsets.ModelViewSet):
     queryset = Data.objects.all()
+    pagination_class = CustomPagination
     serializer_class = DataSerializer
 
     # Action to create a Data related to Service

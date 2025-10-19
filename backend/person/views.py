@@ -2,11 +2,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
-from media.models import Media
-from media.serializers import (
-    MediaSerializer, MediaUploadSerializer, CoverUploadSerializer, 
-    DocumentUploadSerializer, SetCoverSerializer, PostUploadSerializer
-)
+from media.serializers import MediaSerializer, MediaUploadSerializer, DocumentUploadSerializer
+from shared.pagination import CustomPagination
 from .models import Person
 from .serializers import PersonSerializer
 
@@ -14,6 +11,7 @@ from .serializers import PersonSerializer
 # Create your views here.
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.all()
+    pagination_class = CustomPagination
     serializer_class = PersonSerializer
 
 
