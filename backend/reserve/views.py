@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status   
 from quote.models import Quote
-
+from shared.pagination import CustomPagination
 from .models import Reserve
 from .serializers import ReserveSerializer
 
@@ -11,6 +11,7 @@ from .serializers import ReserveSerializer
 # Create your views here.
 class ReserveViewSet(viewsets.ModelViewSet):
     queryset = Reserve.objects.all()
+    pagination_class = CustomPagination
     serializer_class = ReserveSerializer
     
     @action(detail=True, methods=['post'], url_path='create-reserve')

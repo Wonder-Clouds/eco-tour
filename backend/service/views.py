@@ -7,12 +7,14 @@ from media.serializers import (
     MediaSerializer, MediaUploadSerializer, CoverUploadSerializer, 
     DocumentUploadSerializer, SetCoverSerializer, PostUploadSerializer
 )
+from shared.pagination import CustomPagination
 from .models import Service
 from .serializers import ServiceSerializer
 
 # Create your views here.
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all()
+    pagination_class = CustomPagination
     serializer_class = ServiceSerializer
 
 
@@ -95,7 +97,6 @@ class ServiceViewSet(viewsets.ModelViewSet):
             return Response(MediaSerializer(media).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
     # Action to create a post
     @action(detail=True, methods=['post'], url_path='create-post', serializer_class=PostUploadSerializer)
     def create_post(self, request, pk=None):

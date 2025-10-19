@@ -6,12 +6,15 @@ from rest_framework import status
 from .models import Expense
 from .serializers import ExpenseSerializer
 from group.models import Group
+from shared.pagination import CustomPagination
 
 
 # Create your views here.
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
+    pagination_class = CustomPagination
     serializer_class = ExpenseSerializer
+
 
     @action(detail=True, methods=['post'], url_path='create-expense')
     def create_expense(self, request, pk=None):

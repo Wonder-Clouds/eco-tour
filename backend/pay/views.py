@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from quote.models import Quote
+from shared.pagination import CustomPagination
 from .models import Pay
 from .serializers import PaySerializer, PayRegisterSerializer
 
@@ -10,6 +11,7 @@ from .serializers import PaySerializer, PayRegisterSerializer
 # Create your views here.
 class PayViewSet(viewsets.ModelViewSet):
     queryset = Pay.objects.all()
+    pagination_class = CustomPagination
     serializer_class = PaySerializer
 
     # Action to register a payment for a quote
