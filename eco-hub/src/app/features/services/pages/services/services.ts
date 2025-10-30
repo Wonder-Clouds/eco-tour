@@ -4,6 +4,7 @@ import { ServiceDetailCard } from '../../components/service-detail-card/service-
 import { Service } from '../../../../models/Service';
 import { ServiceApi } from '../../api/service/service-api';
 import { Router } from '@angular/router';
+import { PaginatedResponse } from '../../../../models/PaginatedResponse';
 
 @Component({
   selector: 'app-services',
@@ -23,8 +24,9 @@ export class Services implements OnInit {
 
   getAllServices() {
     this.serviceApi.getServices().subscribe({
-      next: (data) => {
-        this.services = data;
+      next: (data: PaginatedResponse<Service>) => {
+        this.services = data.results ?? [];
+        console.log(this.services);
         this.loading = false;
       },
       error: (err) => {

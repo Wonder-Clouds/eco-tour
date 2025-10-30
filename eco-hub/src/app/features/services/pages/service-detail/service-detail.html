@@ -9,22 +9,22 @@
 } @else {
 <!-- Main Content -->
 <div>
-  @if(detailService) {
+  @if(true) {
   <div>
     <div class="service-detail-container">
       <!-- Hero Section -->
       <div class="hero-section">
         <div class="hero-image-wrapper">
-          <img
+          <!-- <img
             [src]="getCoverImage()"
             [alt]="detailService?.title"
             class="hero-image"
             onerror="this.src='/images/ecotourcuscologo.svg'"
-          />
+          /> -->
           <div class="hero-overlay"></div>
         </div>
         <div class="hero-content">
-          <div class="container">
+          <!-- <div class="container">
             <h1 class="hero-title">{{ detailService?.title }}</h1>
             <p class="hero-summary">{{ detailService?.summary }}</p>
             <div class="hero-badges">
@@ -34,10 +34,10 @@
               </span>
               <span class="badge service-type">
                 <i class="fa-solid fa-people-group"></i>
-                {{ serviceData()?.serviceType }}
+                {{ serviceData()?.type }}
               </span>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
 
@@ -45,7 +45,7 @@
         <!-- Info Cards -->
         <div class="info-cards-section">
           <div class="info-cards-grid">
-            @for (info of detailService?.data; track $index) {
+            <!-- @for (info of detailService?.data; track $index) {
             <div class="info-card">
               <div class="info-icon">
                 <i
@@ -64,7 +64,7 @@
                 <p>{{ info.description }}</p>
               </div>
             </div>
-            }
+            } -->
           </div>
         </div>
 
@@ -78,7 +78,7 @@
                 <i class="icon-route"></i> Itinerario
               </h2>
               <div class="itinerary-timeline">
-                @for (item of detailService?.itinerary; track $index) {
+                <!-- @for (item of detailService?.itinerary; track $index) {
                 <div class="timeline-item">
                   <div class="timeline-marker">
                     <div class="timeline-dot"></div>
@@ -99,12 +99,12 @@
                     </div>
                   </div>
                 </div>
-                }
+                } -->
               </div>
             </section>
 
             <!-- Gallery Section -->
-            @if (getGalleryImages().length > 0) {
+            <!-- @if (getGalleryImages().length > 0) {
             <section class="section gallery-section">
               <h2 class="section-title"><i class="icon-image"></i> Galería</h2>
               <div class="gallery-grid">
@@ -119,7 +119,7 @@
                 }
               </div>
             </section>
-            }
+            } -->
           </div>
 
           <!-- Right Column -->
@@ -129,20 +129,20 @@
               <div class="includes-card">
                 <h3 class="includes-title">Incluido</h3>
                 <div class="includes-content">
-                  @for (include of detailService?.includes?.split(', '); track
+                  <!-- @for (include of detailService?.includes?.split(', '); track
                   $index) {
                   <p><i class="fa-solid fa-check"></i> {{ include }}</p>
-                  }
+                  } -->
                 </div>
               </div>
 
               <div class="excludes-card">
                 <h3 class="excludes-title">No incluido</h3>
                 <div class="excludes-content">
-                  @for (exclude of detailService?.notIncludes?.split(', ');
+                  <!-- @for (exclude of detailService?.notIncludes?.split(', ');
                   track $index) {
                   <p><i class="fa-solid fa-xmark"></i> {{ exclude }}</p>
-                  }
+                  } -->
                 </div>
               </div>
             </section>
@@ -151,7 +151,7 @@
             <section class="section pricing-section">
               <div class="pricing-card">
                 <h3 class="pricing-title">Información de Precios</h3>
-                <div class="pricing-details">
+                <!-- <div class="pricing-details">
                   <div class="price-item">
                     <span class="price-label">Tarifa proveedor:</span>
                     <span class="price-value"
@@ -177,7 +177,7 @@
                       serviceData()?.finalPrice || "Consultar"
                     }}</span>
                   </div>
-                </div>
+                </div> -->
                 <button
                   class="delete-button"
                   (click)="deleteService(serviceId)"
@@ -194,7 +194,7 @@
                 <div class="quick-info-items">
                   <div class="quick-info-item">
                     <i class="icon-clock"></i>
-                    <span>Duración: {{ detailService?.duration }}</span>
+                    <span>Duración: </span>
                   </div>
                   <div class="quick-info-item">
                     <i class="icon-users"></i>

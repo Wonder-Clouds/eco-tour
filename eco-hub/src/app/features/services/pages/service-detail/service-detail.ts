@@ -53,24 +53,24 @@ export class ServiceDetailPage implements OnInit {
     });
   }
 
-  get detailService() {
-    return this.serviceData()?.detailService;
-  }
+  // get detailService() {
+  //   return this.serviceData()?.detailService;
+  // }
 
-  getCoverImage(): string {
-    const media = this.detailService?.media;
-    if (!media) return '';
-    const coverImage = media.find((m) => m.isCover);
-    return coverImage?.url || '';
-  }
+  // getCoverImage(): string {
+  //   const media = this.detailService?.media;
+  //   if (!media) return '';
+  //   const coverImage = media.find((m) => m.isCover);
+  //   return coverImage?.url || '';
+  // }
 
-  getGalleryImages(): string[] {
-    const media = this.detailService?.media;
-    if (!media) return [];
-    return media
-      .filter((m) => !m.isCover && ['image', 'cover', 'post'].includes(m.type))
-      .map((m) => m.url);
-  }
+  // getGalleryImages(): string[] {
+  //   const media = this.detailService?.media;
+  //   if (!media) return [];
+  //   return media
+  //     .filter((m) => !m.isCover && ['image', 'cover', 'post'].includes(m.type))
+  //     .map((m) => m.url);
+  // }
 
   formatItineraryDescription(description: string): string[] {
     return description.split('\n').filter((line) => line.trim());

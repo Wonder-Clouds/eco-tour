@@ -12,6 +12,7 @@ import {
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { Header } from '../../../../layouts/header/header';
 
 @Component({
   selector: 'app-create-service',
@@ -20,6 +21,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatInputModule,
     MatCheckboxModule,
     MatSelectModule,
+    Header,
   ],
   templateUrl: './create-service.html',
   styleUrl: './create-service.scss',

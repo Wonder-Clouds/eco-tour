@@ -34,6 +34,7 @@ export class Sidebar implements OnInit {
   navItems: NavItem[] = [
     { label: 'Panel general', route: '/', icon: 'dashboard' },
     { label: 'Servicios', route: '/servicios', icon: 'business_center' },
+    { label: 'Clientes', route: '/clientes', icon: 'business_center' },
   ];
 
   constructor(private router: Router) {}

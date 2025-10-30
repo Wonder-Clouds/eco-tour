@@ -15,20 +15,17 @@ export class ServiceDetailCard {
   constructor(private router: Router) {}
 
   get coverImage(): string | undefined {
-    return (
-      this.service?.detailService?.media?.find((media) => media.isCover)?.url ||
-      this.service?.detailService?.media?.[0]?.url
-    );
+    return this.service?.media?.find((media) => media.isCover)?.url;
   }
 
-  get totalPrice(): number | undefined {
-    if (!this.service) return 0;
-    return (
-      this.service.feeSupplier +
-      this.service.commissionByService +
-      this.service.commissionCard
-    );
-  }
+  // get totalPrice(): number | undefined {
+  //   if (!this.service) return 0;
+  //   return (
+  //     this.service.feeSupplier +
+  //     this.service.commissionByService +
+  //     this.service.commissionCard
+  //   );
+  // }
 
   viewDetails(id: string) {
     this.router.navigate(['servicios', id]);
