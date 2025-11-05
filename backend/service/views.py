@@ -87,7 +87,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
         
         serializer = SetCoverSerializer(
             media,
-            data=request.data,
+            data={},
             context={'content_object': service},
             partial=True
         )
