@@ -39,7 +39,7 @@ class ServiceQuotePerson(SafeDeleteModel):
     _safedelete_policy = SOFT_DELETE
 
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    notes = models.TextField(blank=True, null=True)
 
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)

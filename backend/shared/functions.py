@@ -13,3 +13,4 @@ def validate_file_type(file):
     file.seek(0) 
     if mime not in ['application/pdf']:
         raise ValidationError("Unsupported file type.")
+    
