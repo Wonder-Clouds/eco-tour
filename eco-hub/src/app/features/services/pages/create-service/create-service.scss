@@ -49,66 +49,6 @@
         width: 100%;
       }
 
-      .input-wrapper {
-        position: relative;
-        width: 100%;
-        max-width: 350px;
-        margin: 0.5rem 0;
-      }
-
-      .input-wrapper input {
-        width: 100%;
-        padding: 14px 16px;
-        font-size: 1rem;
-        border: 2px solid transparent;
-        border-radius: 12px;
-        outline: none;
-        background: #f3f4f6;
-        transition: all 0.3s ease;
-        font-family: "Nunito Sans", sans-serif;
-      }
-
-      .input-wrapper input:focus {
-        border-color: #059669;
-        background: #fff;
-        box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.2);
-      }
-
-      .input-wrapper label {
-        position: absolute;
-        top: 50%;
-        left: 16px;
-        color: #6b7280;
-        font-size: 1rem;
-        transform: translateY(-50%);
-        pointer-events: none;
-        transition: all 0.3s ease;
-      }
-
-      .input-wrapper input:focus + label,
-      .input-wrapper input:valid + label {
-        top: 1px;
-        font-size: 0.75rem;
-        color: #059669;
-        background: #fff;
-        padding: 0 4px;
-        border-radius: 6px;
-      }
-
-      .input-wrapper .focus-bg {
-        position: absolute;
-        inset: 0;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #10b981, #059669);
-        opacity: 0;
-        z-index: -1;
-        transition: opacity 0.3s ease;
-      }
-
-      .input-wrapper input:focus ~ .focus-bg {
-        opacity: 0.1;
-      }
-
       select {
         padding: 0.5rem 0.75rem;
         border: 1px solid #d1d5db;

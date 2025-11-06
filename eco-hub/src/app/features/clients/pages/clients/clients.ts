@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Header } from '../../../../layouts/header/header';
-import { MatTableModule } from '@angular/material/table';
 import { ClientApi } from '../../api/clients/client-api';
 import { PaginatedResponse } from '../../../../models/PaginatedResponse';
 import { Person } from '../../types/Person';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-clients',
   standalone: true,
-  imports: [Header, MatTableModule],
+  imports: [Header, MatTableModule, MatTabsModule],
   templateUrl: './clients.html',
   styleUrl: './clients.scss',
 })

@@ -6,11 +6,17 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { filter } from 'rxjs/operators';
+import {
+  LucideAngularModule,
+  Users,
+  LayoutDashboard,
+  Briefcase,
+} from 'lucide-angular';
 
 interface NavItem {
   label: string;
   route: string;
-  icon: string;
+  icon: any;
   badge?: string;
   children?: NavItem[];
 }
@@ -18,6 +24,7 @@ interface NavItem {
 @Component({
   selector: 'app-sidebar',
   imports: [
+    LucideAngularModule,
     CommonModule,
     RouterModule,
     MatIconModule,
@@ -32,9 +39,10 @@ export class Sidebar implements OnInit {
   @Input() isCollapsed = false;
 
   navItems: NavItem[] = [
-    { label: 'Panel general', route: '/', icon: 'dashboard' },
-    { label: 'Servicios', route: '/servicios', icon: 'business_center' },
-    { label: 'Clientes', route: '/clientes', icon: 'business_center' },
+    { label: 'Panel general', route: '/', icon: LayoutDashboard },
+    { label: 'Servicios', route: '/servicios', icon: Briefcase },
+    { label: 'Clientes', route: '/clientes', icon: Users },
+    { label: 'Grupos', route: '/grupos', icon: Users },
   ];
 
   constructor(private router: Router) {}
