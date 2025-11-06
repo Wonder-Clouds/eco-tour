@@ -23,6 +23,7 @@ class Service(SafeDeleteModel):
     includes = HTMLField()
     excludes = HTMLField()
     type = models.CharField(max_length=50, choices=TYPE_SERVICE_CHOICES) 
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     # Media files associated with the service
     media = GenericRelation(Media, content_type_field='content_type', object_id_field='object_id')
