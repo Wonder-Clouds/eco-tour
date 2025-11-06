@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ServiceApi } from '../../api/service/service-api';
 import { Router } from '@angular/router';
-import { Service } from '../../../../models/Service';
 import {
   FormArray,
   FormBuilder,

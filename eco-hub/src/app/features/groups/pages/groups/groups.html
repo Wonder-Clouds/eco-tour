@@ -1,0 +1,72 @@
+<div>
+  <app-header
+    title="GRUPOS"
+    [onAddClick]="goToCreateGroup.bind(this)"
+  ></app-header>
+
+  <div></div>
+
+  <div>
+    <table mat-table [dataSource]="groups" class="eco-table">
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef>No.</th>
+        <td mat-cell *matCellDef="let element; let i = index">
+          {{ i + 1 }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Descripcion</th>
+        <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="contactInfo">
+        <th mat-header-cell *matHeaderCellDef>Contacto</th>
+        <td mat-cell *matCellDef="let element">{{ element.contact_info }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="totalMembers">
+        <th mat-header-cell *matHeaderCellDef>Miembros totales</th>
+        <td mat-cell *matCellDef="let element">{{ element.total_people }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let element">
+          <div class="flex flex-row gap-5">
+            <button
+              class="flex flex-row gap-2 bg-blue-500 text-white rounded-md p-2 items-center cursor-pointer"
+              mat-icon-button
+              color="primary"
+              (click)="goToListMembers(element)"
+            >
+              <lucide-icon [img]="pencil" [size]="16"></lucide-icon>
+              Ver viajeros
+            </button>
+            <button
+              class="flex flex-row gap-2 bg-red-500 text-white rounded-md px-2 py-1 items-center cursor-pointer"
+              mat-icon-button
+              color="warn"
+              (click)="deleteGroup(element)"
+            >
+              <lucide-icon [img]="trash" [size]="16"></lucide-icon>
+              Delete
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      @if (loading) {
+      <div>Cargando clientes...</div>
+      }
+    </table>
+  </div>
+</div>

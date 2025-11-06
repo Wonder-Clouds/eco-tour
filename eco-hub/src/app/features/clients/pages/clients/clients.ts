@@ -5,12 +5,12 @@ import { PaginatedResponse } from '../../../../models/PaginatedResponse';
 import { Person } from '../../types/Person';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import { Groups } from '../../components/groups/groups';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-clients',
   standalone: true,
-  imports: [Header, MatTableModule, MatTabsModule, Groups],
+  imports: [Header, MatTableModule, MatTabsModule],
   templateUrl: './clients.html',
   styleUrl: './clients.scss',
 })

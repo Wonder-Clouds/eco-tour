@@ -26,8 +26,10 @@
           [matTooltip]="isCollapsed ? item.label : ''"
           matTooltipPosition="right"
         >
-          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
-          <span class="nav-text" *ngIf="!isCollapsed">{{ item.label }}</span>
+          <lucide-icon [img]="item.icon" class="nav-icon"></lucide-icon>
+          <span class="nav-text text-lg" *ngIf="!isCollapsed">{{
+            item.label
+          }}</span>
           <span class="nav-badge" *ngIf="item.badge && !isCollapsed">{{
             item.badge
           }}</span>

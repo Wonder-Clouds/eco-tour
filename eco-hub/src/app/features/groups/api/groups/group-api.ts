@@ -3,7 +3,7 @@ import { environment } from '../../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { PaginatedResponse } from '../../../../models/PaginatedResponse';
 import { Observable } from 'rxjs';
-import { Group } from '../../types/Group';
+import { Group } from '../../../clients/types/Group';
 
 @Injectable({
   providedIn: 'root',

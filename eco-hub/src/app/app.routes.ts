@@ -6,6 +6,8 @@ import { Login } from './features/auth/pages/login/login';
 import { ServiceDetailPage } from './features/services/pages/service-detail/service-detail';
 import { CreateServicePage } from './features/services/pages/create-service/create-service';
 import { Clients } from './features/clients/pages/clients/clients';
+import { CreateGroup } from './features/groups/pages/create-group/create-group';
+import { Groups } from './features/groups/pages/groups/groups';
 
 export const routes: Routes = [
   {
@@ -17,6 +19,8 @@ export const routes: Routes = [
       { path: 'servicios/crear-servicio', component: CreateServicePage },
       { path: 'servicios/:id', component: ServiceDetailPage },
       { path: 'clientes', component: Clients },
+      { path: 'grupos', component: Groups },
+      { path: 'grupos/crear-grupo', component: CreateGroup },
     ],
   },
 
