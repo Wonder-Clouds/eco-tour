@@ -5,13 +5,13 @@ from rest_framework import status
 from service.models import Service
 from shared.pagination import CustomPagination
 from .models import Data
-from .serializers import DataSerializer
+from .serializers import CreateDataSerializer
 
 # Create your views here.
 class DataViewSet(viewsets.ModelViewSet):
     queryset = Data.objects.all()
     pagination_class = CustomPagination
-    serializer_class = DataSerializer
+    serializer_class = CreateDataSerializer
 
     # Action to create a Data related to Service
     @action(detail=True, methods=['post'], url_path='data')
@@ -21,16 +21,13 @@ class DataViewSet(viewsets.ModelViewSet):
         except:
             return Response({"error": "Service not found"}, status=status.HTTP_404_NOT_FOUND)
         
-        data = {
-            'title': request.data.get('title'),
-            'description': request.data.get('description'),
-            'service': service.id
-        }
-
-        serializer = DataSerializer(data=data)
+        serializer = CreateDataSerializer(
+            data=request.data,
+            context={'service': service}
+        )
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
