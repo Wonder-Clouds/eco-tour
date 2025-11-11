@@ -13,7 +13,7 @@ class ItineraryViewSet(viewsets.ModelViewSet):
     serializer_class = CreateItinerarySerializer
 
     # Action to create a Itinerary related to Service
-    @action(detail=True, methods=['post'], url_path='itinerary')
+    @action(detail=True, methods=['post'], url_path='add-itinerary')
     def create_itinerary(self, request, pk=None):
         try:
             service = Service.objects.get(id=pk)

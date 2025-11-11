@@ -16,7 +16,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     serializer_class = ExpenseSerializer
 
 
-    @action(detail=True, methods=['post'], url_path='create-expense')
+    @action(detail=True, methods=['post'], url_path='add-expense')
     def create_expense(self, request, pk=None):
         try:
             group = Group.objects.get(id=pk)

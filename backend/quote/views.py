@@ -25,6 +25,8 @@ class QuoteViewSet(viewsets.ModelViewSet):
         
         if serializer.is_valid():
             service_quote_person = serializer.save()
+            # Forzar actualización del total después de agregar servicio
+            quote.update_total_price()
             return Response(
                 ServiceQuotePersonSerializer(service_quote_person).data,
                 status=status.HTTP_201_CREATED
@@ -39,15 +41,57 @@ class QuoteViewSet(viewsets.ModelViewSet):
         serializer = ServiceQuotePersonSerializer(services, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, methods=['get'], url_path='totals')
+    def totals(self, request, pk=None):
+        """Get detailed totals breakdown for this quote"""
+        quote = self.get_object()
+        # Recalcular el total antes de devolver la respuesta
+        quote.update_total_price()
+        quote.refresh_from_db()
+        
+        serializer = QuoteSerializer(quote)
+        
+        return Response({
+            'quote_total': quote.total_price,
+            'service_total_by_person': serializer.data['service_total_by_person'],
+            'services_count': quote.servicequoteperson_set.count()
+        })
+
+    @action(detail=True, methods=['post'], url_path='recalculate-total')
+    def recalculate_total(self, request, pk=None):
+        """Recalculate total price for this quote"""
+        quote = self.get_object()
+        old_total = quote.total_price
+        quote.update_total_price()
+        quote.refresh_from_db()
+        
+        return Response({
+            'old_total': old_total,
+            'new_total': quote.total_price,
+            'services_count': quote.servicequoteperson_set.count(),
+            'message': 'Total recalculated successfully'
+        })
+
 
 class ServiceQuotePersonViewSet(viewsets.ModelViewSet):
     queryset = ServiceQuotePerson.objects.all()
     serializer_class = ServiceQuotePersonSerializer
 
+    def perform_create(self, serializer):
+        """Override create to ensure total is updated"""
+        instance = serializer.save()
+        instance.quote.update_total_price()
+
+    def perform_update(self, serializer):
+        """Override update to ensure total is updated"""
+        instance = serializer.save()
+        instance.quote.update_total_price()
+
     def perform_destroy(self, instance):
         """Recalculate prices after deletion"""
         service = instance.service
         quote = instance.quote
-        instance.delete()
+        super().perform_destroy(instance)
         update_service_prices_in_quote(service, quote)
+        quote.update_total_price()
 

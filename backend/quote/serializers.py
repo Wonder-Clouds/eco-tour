@@ -6,29 +6,66 @@ from service.models import Service
 
 
 class QuoteSerializer(serializers.ModelSerializer):
+    detail_quote_by_person = serializers.SerializerMethodField()
+    
     class Meta:
         model = Quote
         fields = ['id', 'status', 'version', 'creation_date', 
                   'valid_until', 'total_price', 'notes', 'created_at', 
-                  'updated_at', 'pay', 'group']
+                  'updated_at', 'group', 'detail_quote_by_person']
+    
+    def get_detail_quote_by_person(self, obj):
+        """Get total spent by each person in this quote"""
+        person_totals = {}
+        services = ServiceQuotePerson.objects.filter(quote=obj)
+        
+        for service_person in services:
+            person_id = str(service_person.person.id)
+            person_name = f"{service_person.person.first_name} {service_person.person.last_name}"
+            
+            if person_id not in person_totals:
+                person_totals[person_id] = {
+                    'id_person': person_id,
+                    'person_name': person_name,
+                    'total': 0,
+                    'services': []
+                }
+            
+            person_totals[person_id]['total'] += service_person.unit_price
+            person_totals[person_id]['services'].append({
+                'service_name': service_person.service.title,
+                'unit_price': service_person.unit_price
+            })
+        
+        # Convert dictionary to list
+        return list(person_totals.values())
 
 
 class SimpleQuoteSerializer(QuoteSerializer):
     class Meta(QuoteSerializer.Meta):
         fields = ['id', 'status', 'version', 'notes', 'total_price', 
-                  'created_at', 'updated_at']
+                  'created_at', 'updated_at', 'group', 'detail_quote_by_person']
 
 
 class ServiceQuotePersonSerializer(serializers.ModelSerializer):
     person_id = serializers.UUIDField(write_only=True)
     service_id = serializers.UUIDField(write_only=True)
     quote_id = serializers.UUIDField(write_only=True, required=False)
+    person_name = serializers.SerializerMethodField()
+    service_name = serializers.SerializerMethodField()
     
     class Meta: 
         model = ServiceQuotePerson
         fields = ['id', 'unit_price', 'notes', 'person', 'service', 'quote', 
-                  'person_id', 'service_id', 'quote_id', 'created_at', 'updated_at']
+                  'person_id', 'service_id', 'quote_id', 'person_name', 
+                  'service_name', 'created_at', 'updated_at']
         read_only_fields = ['unit_price', 'person', 'service', 'quote']
+
+    def get_person_name(self, obj):
+        return f"{obj.person.first_name} {obj.person.last_name}"
+    
+    def get_service_name(self, obj):
+        return obj.service.title
 
     def validate(self, attrs):
         """Validate IDs and set actual objects"""

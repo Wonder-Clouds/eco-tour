@@ -14,7 +14,7 @@ class DataViewSet(viewsets.ModelViewSet):
     serializer_class = CreateDataSerializer
 
     # Action to create a Data related to Service
-    @action(detail=True, methods=['post'], url_path='data')
+    @action(detail=True, methods=['post'], url_path='add-data')
     def create_data(self, request, pk=None):
         try:
             service = Service.objects.get(id=pk)
