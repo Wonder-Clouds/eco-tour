@@ -21,7 +21,7 @@ class Quote(SafeDeleteModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(max_length=50, choices=STATUS_QUOTE_CHOICES, default='draft')
     version = models.PositiveIntegerField(default=1)
-    creation_date = models.DateField()
+    creation_date = models.DateField(auto_now_add=True)
     valid_until = models.DateField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     notes = models.TextField(blank=True, null=True)

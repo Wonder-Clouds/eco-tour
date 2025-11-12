@@ -10,10 +10,11 @@ class QuoteSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Quote
-        fields = ['id', 'status', 'version', 'creation_date', 
-                  'valid_until', 'total_price', 'notes', 'created_at', 
-                  'updated_at', 'group', 'detail_quote_by_person']
-    
+        fields = ['id', 'status', 'version', 
+                  'valid_until', 'total_price', 'notes',
+                  'created_at', 'updated_at', 'group',
+                  'detail_quote_by_person']
+
     def get_detail_quote_by_person(self, obj):
         """Get total spent by each person in this quote"""
         person_totals = {}
@@ -34,7 +35,8 @@ class QuoteSerializer(serializers.ModelSerializer):
             person_totals[person_id]['total'] += service_person.unit_price
             person_totals[person_id]['services'].append({
                 'service_name': service_person.service.title,
-                'unit_price': service_person.unit_price
+                'unit_price': service_person.unit_price,
+                'notes': service_person.notes
             })
         
         # Convert dictionary to list
@@ -48,17 +50,19 @@ class SimpleQuoteSerializer(QuoteSerializer):
 
 
 class ServiceQuotePersonSerializer(serializers.ModelSerializer):
-    person_id = serializers.UUIDField(write_only=True)
+    person_id = serializers.UUIDField(write_only=True, required=False, allow_null=True)
     service_id = serializers.UUIDField(write_only=True)
     quote_id = serializers.UUIDField(write_only=True, required=False)
+    use_generic_person = serializers.BooleanField(write_only=True, required=False, default=False)
     person_name = serializers.SerializerMethodField()
     service_name = serializers.SerializerMethodField()
+    is_generic = serializers.SerializerMethodField()
     
     class Meta: 
         model = ServiceQuotePerson
         fields = ['id', 'unit_price', 'notes', 'person', 'service', 'quote', 
-                  'person_id', 'service_id', 'quote_id', 'person_name', 
-                  'service_name', 'created_at', 'updated_at']
+                  'person_id', 'service_id', 'quote_id', 'use_generic_person',
+                  'person_name', 'service_name', 'is_generic', 'created_at', 'updated_at']
         read_only_fields = ['unit_price', 'person', 'service', 'quote']
 
     def get_person_name(self, obj):
@@ -66,45 +70,62 @@ class ServiceQuotePersonSerializer(serializers.ModelSerializer):
     
     def get_service_name(self, obj):
         return obj.service.title
+    
+    def get_is_generic(self, obj):
+        return obj.person.is_generic if obj.person else False
 
     def validate(self, attrs):
         """Validate IDs and set actual objects"""
         
-        # Handle person
-        try:
-            person_id = attrs.pop('person_id')
-            attrs['person'] = Person.objects.get(id=person_id)
-        except Person.DoesNotExist:
-            raise serializers.ValidationError("Invalid person ID")
-        except KeyError:
-            raise serializers.ValidationError("person_id is required")
+        # Handle quote first
+        if 'quote_id' in attrs:
+            try:
+                attrs['quote'] = Quote.objects.get(id=attrs.pop('quote_id'))
+            except Quote.DoesNotExist:
+                raise serializers.ValidationError({"quote_id": "Invalid quote ID"})
+        elif hasattr(self, '_quote'):
+            attrs['quote'] = self._quote
+        else:
+            raise serializers.ValidationError({"quote_id": "quote_id is required"})
+        
+        quote = attrs['quote']
+        use_generic = attrs.pop('use_generic_person', False)
+        
+        # Handle person - can be generic or specific
+        if use_generic or ('person_id' not in attrs or attrs.get('person_id') is None):
+            # Use or create generic person
+            attrs['person'] = Person.get_or_create_generic_person(quote.group)
+            if 'person_id' in attrs:
+                attrs.pop('person_id')
+        else:
+            try:
+                person_id = attrs.pop('person_id')
+                attrs['person'] = Person.objects.get(id=person_id)
+                
+                # Validate that person belongs to the quote's group
+                if quote.group not in attrs['person'].group.all():
+                    raise serializers.ValidationError({
+                        "person_id": f"The person must belong to the group '{quote.group.name}' associated with this quote"
+                    })
+                    
+            except Person.DoesNotExist:
+                raise serializers.ValidationError({"person_id": "Invalid person ID"})
         
         # Handle service
         try:
             service_id = attrs.pop('service_id')
             attrs['service'] = Service.objects.get(id=service_id)
         except Service.DoesNotExist:
-            raise serializers.ValidationError("Invalid service ID")
+            raise serializers.ValidationError({"service_id": "Invalid service ID"})
         except KeyError:
-            raise serializers.ValidationError("service_id is required")
-        
-        # Handle quote
-        if 'quote_id' in attrs:
-            try:
-                attrs['quote'] = Quote.objects.get(id=attrs.pop('quote_id'))
-            except Quote.DoesNotExist:
-                raise serializers.ValidationError("Invalid quote ID")
-        elif hasattr(self, '_quote'):
-            attrs['quote'] = self._quote
-        else:
-            raise serializers.ValidationError("quote_id is required")
+            raise serializers.ValidationError({"service_id": "service_id is required"})
         
         # Validate that this person doesn't already have this service in this quote
+        # Skip this validation for generic persons to allow multiple instances
         person = attrs.get('person')
         service = attrs.get('service')
-        quote = attrs.get('quote')
         
-        if person and service and quote:
+        if person and service and quote and not person.is_generic:
             existing_query = ServiceQuotePerson.objects.filter(
                 person=person,
                 service=service,
@@ -116,9 +137,9 @@ class ServiceQuotePersonSerializer(serializers.ModelSerializer):
                 existing_query = existing_query.exclude(id=self.instance.id)
             
             if existing_query.exists():
-                raise serializers.ValidationError(
-                    f"The person {person} already has the service '{service}' in this quote"
-                )
+                raise serializers.ValidationError({
+                    "person_id": f"The person '{person}' already has the service '{service}' in this quote"
+                })
         
         return attrs
 

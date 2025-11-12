@@ -11,23 +11,62 @@ class GroupViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'], url_path='add-person')
     def add_person(self, request, pk=None):
-
-        try:
-            group = Group.objects.get(pk=pk)
-            serializer = AddPersonSerializer(data=request.data)
-        except Group.DoesNotExist:
-            return Response(
-                {"detail": "Group not found."},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        """Add a person to this group by person_id"""
+        group = self.get_object()
+        serializer = AddPersonSerializer(data=request.data)
         
         if serializer.is_valid():
             person = serializer.validated_data["person"]
+            
+            # Check if person is already in the group
+            if group in person.group.all():
+                return Response(
+                    {"detail": f"Person '{person}' is already in group '{group.name}'."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Add person to group
             person.group.add(group)
             group.refresh_from_db()
             
             return Response(
-                GroupSerializer(group).data,
+                {
+                    "message": f"Person '{person}' added to group '{group.name}' successfully.",
+                    "group": GroupSerializer(group).data
+                },
+                status=status.HTTP_200_OK
+            )
+        
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    @action(detail=True, methods=['post'], url_path='remove-person')
+    def remove_person(self, request, pk=None):
+        """Remove a person from this group by person_id"""
+        group = self.get_object()
+        serializer = AddPersonSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            person = serializer.validated_data["person"]
+            
+            # Check if person is in the group
+            if group not in person.group.all():
+                return Response(
+                    {"detail": f"Person '{person}' is not in group '{group.name}'."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Remove person from group
+            person.group.remove(group)
+            group.refresh_from_db()
+            
+            return Response(
+                {
+                    "message": f"Person '{person}' removed from group '{group.name}' successfully.",
+                    "group": GroupSerializer(group).data
+                },
                 status=status.HTTP_200_OK
             )
         
