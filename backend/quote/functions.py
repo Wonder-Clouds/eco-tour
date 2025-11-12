@@ -66,3 +66,13 @@ def update_service_prices_in_quote(service, quote, exclude_instance=None):
     if people_count > 0:
         new_unit_price = service.price / people_count
         queryset.update(unit_price=new_unit_price)
+        
+        # Update quote total price after changing unit prices
+        quote.update_total_price()
+
+
+def update_quote_total_price(quote):
+    """
+    Update the total price of a quote based on all ServiceQuotePerson records.
+    """
+    quote.update_total_price()
