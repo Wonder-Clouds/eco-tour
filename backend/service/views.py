@@ -2,6 +2,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 from media.models import Media
 from media.serializers import (
     MediaSerializer, MediaUploadSerializer, CoverUploadSerializer, 
@@ -67,6 +69,16 @@ class ServiceViewSet(viewsets.ModelViewSet):
     
 
     # Action to convert a media to cover
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='media_id',
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+                description='UUID of the media to set as cover'
+            )
+        ]
+    )
     @action(detail=True, methods=['patch'], url_path='set-cover/(?P<media_id>[^/.]+)', serializer_class=SetCoverSerializer)
     def set_cover(self, request, pk=None, media_id=None):
         service = self.get_object()
