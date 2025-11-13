@@ -1,8 +1,11 @@
 from .models import Quote, ServiceQuotePerson
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.types import OpenApiTypes
 from .functions import calculate_service_unit_price, update_service_prices_in_quote
 from person.models import Person
 from service.models import Service
+from typing import List, Dict, Any
 
 
 class QuoteSerializer(serializers.ModelSerializer):
@@ -15,7 +18,8 @@ class QuoteSerializer(serializers.ModelSerializer):
                   'created_at', 'updated_at', 'group',
                   'detail_quote_by_person']
 
-    def get_detail_quote_by_person(self, obj):
+    @extend_schema_field(OpenApiTypes.OBJECT)
+    def get_detail_quote_by_person(self, obj: Quote) -> List[Dict[str, Any]]:
         """Get total spent by each person in this quote"""
         person_totals = {}
         services = ServiceQuotePerson.objects.filter(quote=obj)
@@ -65,13 +69,16 @@ class ServiceQuotePersonSerializer(serializers.ModelSerializer):
                   'person_name', 'service_name', 'is_generic', 'created_at', 'updated_at']
         read_only_fields = ['unit_price', 'person', 'service', 'quote']
 
-    def get_person_name(self, obj):
+    @extend_schema_field(OpenApiTypes.STR)
+    def get_person_name(self, obj: ServiceQuotePerson) -> str:
         return f"{obj.person.first_name} {obj.person.last_name}"
     
-    def get_service_name(self, obj):
+    @extend_schema_field(OpenApiTypes.STR)
+    def get_service_name(self, obj: ServiceQuotePerson) -> str:
         return obj.service.title
     
-    def get_is_generic(self, obj):
+    @extend_schema_field(OpenApiTypes.BOOL)
+    def get_is_generic(self, obj: ServiceQuotePerson) -> bool:
         return obj.person.is_generic if obj.person else False
 
     def validate(self, attrs):
