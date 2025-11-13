@@ -14,6 +14,24 @@ class QuoteViewSet(viewsets.ModelViewSet):
             return SimpleQuoteSerializer
         return QuoteSerializer
 
+    def perform_update(self, serializer):
+        """Override update to ensure total price is recalculated"""
+        instance = serializer.save()
+        instance.update_total_price()
+
+    def perform_destroy(self, instance):
+        """
+        Override destroy to validate version tree integrity.
+        Prevents deletion if the quote has child versions.
+        """
+        if instance.has_child_versions():
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError({
+                'error': 'Cannot delete this quote because it has child versions.',
+                'suggestion': 'Delete all child versions first, or use soft delete.'
+            })
+        super().perform_destroy(instance)
+
     @action(detail=True, methods=['post'], url_path='add-service')
     def add_service(self, request, pk=None):
         """Add a service to this quote for a person"""
@@ -70,6 +88,81 @@ class QuoteViewSet(viewsets.ModelViewSet):
             'new_total': quote.total_price,
             'services_count': quote.servicequoteperson_set.count(),
             'message': 'Total recalculated successfully'
+        })
+
+    @action(detail=True, methods=['post'], url_path='duplicate')
+    def duplicate_quote(self, request, pk=None):
+        """
+        Duplicate a quote to create a new version.
+        This creates a copy of the quote with all its services and persons,
+        incrementing the version number.
+        """
+        from django.db import transaction
+        from datetime import timedelta
+        
+        original_quote = self.get_object()
+        
+        # Optional: Allow customization in request
+        notes = request.data.get('notes', original_quote.notes)
+        valid_until = request.data.get('valid_until', None)
+        
+        try:
+            with transaction.atomic():
+                # Create new quote as a version of the original
+                new_quote = Quote.objects.create(
+                    status='draft',  # New versions start as draft
+                    version=original_quote.version + 1,
+                    valid_until=valid_until or (original_quote.valid_until + timedelta(days=30)),
+                    notes=notes,
+                    group=original_quote.group,
+                    parent_quote=original_quote if not original_quote.parent_quote else original_quote.parent_quote
+                )
+                
+                # Copy all ServiceQuotePerson records
+                original_services = ServiceQuotePerson.objects.filter(quote=original_quote)
+                created_count = 0
+                
+                for service_person in original_services:
+                    ServiceQuotePerson.objects.create(
+                        unit_price=service_person.unit_price,
+                        notes=service_person.notes,
+                        person=service_person.person,
+                        service=service_person.service,
+                        quote=new_quote
+                    )
+                    created_count += 1
+                
+                # Update total price
+                new_quote.update_total_price()
+                new_quote.refresh_from_db()
+                
+                serializer = QuoteSerializer(new_quote)
+                
+                return Response({
+                    'message': f'Quote duplicated successfully as version {new_quote.version}',
+                    'original_quote_id': str(original_quote.id),
+                    'new_quote': serializer.data,
+                    'services_copied': created_count
+                }, status=status.HTTP_201_CREATED)
+                
+        except Exception as e:
+            return Response({
+                'error': 'Failed to duplicate quote',
+                'detail': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_path='versions')
+    def get_versions(self, request, pk=None):
+        """Get all versions of this quote"""
+        quote = self.get_object()
+        all_versions = quote.get_all_versions()
+        serializer = SimpleQuoteSerializer(all_versions, many=True)
+        
+        return Response({
+            'root_quote_id': str(quote.get_root_quote().id),
+            'current_quote_id': str(quote.id),
+            'total_versions': all_versions.count(),
+            'versions': serializer.data
         })
 
     @action(detail=True, methods=['post'], url_path='add-services-bulk')

@@ -27,6 +27,7 @@ class Quote(SafeDeleteModel):
     notes = models.TextField(blank=True, null=True)
     
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='quotes')
+    parent_quote = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='versions')
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -44,8 +45,47 @@ class Quote(SafeDeleteModel):
         self.total_price = self.calculate_total_price()
         self.save(update_fields=['total_price'])
 
+    def get_root_quote(self):
+        """Get the original quote (root) in the version tree"""
+        current = self
+        while current.parent_quote:
+            current = current.parent_quote
+        return current
+
+    def get_all_versions(self):
+        """Get all versions of this quote (including this one)"""
+        root = self.get_root_quote()
+        # Get all quotes that have this root as parent or are the root itself
+        all_versions = Quote.objects.filter(
+            models.Q(id=root.id) | models.Q(parent_quote=root)
+        ).order_by('version')
+        
+        # Also get nested versions
+        version_ids = {root.id}
+        to_check = list(root.versions.all())
+        
+        while to_check:
+            current = to_check.pop(0)
+            if current.id not in version_ids:
+                version_ids.add(current.id)
+                to_check.extend(current.versions.all())
+        
+        return Quote.objects.filter(id__in=version_ids).order_by('version')
+
+    def get_version_number(self):
+        """Get the human-readable version number"""
+        if self.parent_quote:
+            parent_version = self.parent_quote.get_version_number()
+            siblings = self.parent_quote.versions.filter(version__lte=self.version).count()
+            return f"{parent_version}.{siblings}"
+        return str(self.version)
+
+    def has_child_versions(self):
+        """Check if this quote has any child versions"""
+        return self.versions.exists()
+
     def __str__(self):
-        return f"Quote {self.id} - {self.status}"
+        return f"Quote {self.id} - v{self.version} - {self.status}"
     
 
 class ServiceQuotePerson(SafeDeleteModel):
