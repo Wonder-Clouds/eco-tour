@@ -37,8 +37,8 @@ export class Groups implements OnInit {
 
   getAllGroups() {
     this.groupsApi.getGroups().subscribe({
-      next: (data: PaginatedResponse<Group>) => {
-        this.groups = data.results ?? [];
+      next: (data: Group[]) => {
+        this.groups = data ?? [];
       },
       error: (err) => {
         console.error('Error loading groups', err);
@@ -50,8 +50,9 @@ export class Groups implements OnInit {
 
   deleteGroup(groupId: string) {}
 
-  goToListMembers(groupId: string) {
-    this.router.navigate(['grupos/', groupId, 'miembros']);
+  goToListMembers(group: any) {
+    console.log('Navigating to members of group:', group);
+    this.router.navigate(['/grupos', group.id, 'miembros']);
   }
 
   goToCreateGroup() {

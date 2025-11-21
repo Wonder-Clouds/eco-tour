@@ -12,6 +12,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Header } from '../../../../layouts/header/header';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { FileUpload } from '../../../../shared/components/file-upload/file-upload';
 
 @Component({
   selector: 'app-create-service',
@@ -20,7 +23,10 @@ import { Header } from '../../../../layouts/header/header';
     MatInputModule,
     MatCheckboxModule,
     MatSelectModule,
+    MatIconModule,
+    MatCardModule,
     Header,
+    FileUpload,
   ],
   templateUrl: './create-service.html',
   styleUrl: './create-service.scss',
@@ -43,37 +49,26 @@ export class CreateServicePage implements OnInit {
 
   ngOnInit(): void {
     this.serviceForm = this.fb.group({
-      detailService: this.fb.group({
-        title: [''],
-        duration: [''],
-        data: this.fb.array([
-          this.fb.group({
-            title: [''],
-            description: [''],
-          }),
-        ]),
-        summary: new FormControl(''),
-        includes: new FormControl(''),
-        notIncludes: new FormControl(''),
-        itinerary: this.fb.array([
-          this.fb.group({
-            title: [''],
-            description: [''],
-          }),
-        ]),
-        media: this.fb.array([
-          this.fb.group({
-            type: ['image'], // TODO: Change to dynamic ex. file/image
-            url: [''],
-            isCover: [false],
-          }),
-        ]),
-      }),
-      feeSupplier: [''],
-      commissionByService: [''],
-      commissionCard: [''],
+      title: [''],
+      duration: [''],
+      summary: new FormControl(''),
+      includes: new FormControl(''),
+      notIncludes: new FormControl(''),
       isActive: [false],
       serviceType: ['GROUP'],
+      itinerary: this.fb.array([
+        this.fb.group({
+          title: [''],
+          description: [''],
+        }),
+      ]),
+      media: this.fb.array([
+        this.fb.group({
+          type: ['image'], // TODO: Change to dynamic ex. file/image
+          url: [''],
+          isCover: [false],
+        }),
+      ]),
     });
   }
 
@@ -139,7 +134,6 @@ export class CreateServicePage implements OnInit {
 
   onSaveService(): void {
     this.loading = true;
-    console.log(this.serviceForm.value);
     this.serviceApi.postService(this.serviceForm.value).subscribe({
       next: () => {
         this.loading = false;
@@ -149,6 +143,14 @@ export class CreateServicePage implements OnInit {
         console.error('Error creando servicio', err);
         this.loading = false;
       },
+    });
+  }
+
+  onFilesSelected(files: File[]): void {
+    console.log('Archivos seleccionados:', files);
+
+    files.forEach((file) => {
+      console.log(`Archivo: ${file.name}, Tamaño: ${file.size}`);
     });
   }
 }

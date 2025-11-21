@@ -1,43 +1,58 @@
 <div class="flex flex-col gap-2">
-  <h1 class="text-xl">Crear Grupo</h1>
+  <form [formGroup]="groupForm">
+    <h1 class="text-xl">Crear Grupo</h1>
 
-  <div class="flex flex-row gap-10">
-    <div class="input-wrapper">
-      <input type="text" formControlName="description" required />
-      <label>Nombre del grupo</label>
-      <span class="focus-bg"></span>
+    <div class="flex flex-row gap-10">
+      <div class="input-wrapper">
+        <input type="text" formControlName="name" required />
+        <label>Nombre del grupo</label>
+        <span class="focus-bg"></span>
+      </div>
+
+      <div class="input-wrapper">
+        <input type="number" formControlName="contactInfo" required />
+        <label>Teléfono de contacto</label>
+        <span class="focus-bg"></span>
+      </div>
+
+      <div class="input-wrapper">
+        <input type="number" formControlName="totalMembers" required />
+        <label>Cantidad de personas</label>
+        <span class="focus-bg"></span>
+      </div>
     </div>
 
     <div class="input-wrapper">
-      <input type="text" formControlName="description" required />
+      <textarea type="text" formControlName="description" required></textarea>
       <label>Descripción</label>
       <span class="focus-bg"></span>
     </div>
 
-    <div class="input-wrapper">
-      <input type="number" formControlName="description" required />
-      <label>Cantidad de personas</label>
-      <span class="focus-bg"></span>
+    <div class="groups-actions">
+      <button class="secondary-button">Limpiar campos</button>
+      <button (click)="onSaveGroup()" class="primary-button">
+        Guardar grupo
+      </button>
     </div>
-  </div>
+  </form>
 
   <h1 class="text-xl">Crear Personas</h1>
 
   <div class="flex flex-row gap-3">
     <div class="input-wrapper">
-      <input type="text" formControlName="description" required />
+      <input type="text" required />
       <label>Nombres</label>
       <span class="focus-bg"></span>
     </div>
 
     <div class="input-wrapper">
-      <input type="text" formControlName="description" required />
+      <input type="text" required />
       <label>Apellidos</label>
       <span class="focus-bg"></span>
     </div>
 
     <div class="input-wrapper">
-      <input type="text" formControlName="description" required />
+      <input type="text" required />
       <label>Email</label>
       <span class="focus-bg"></span>
     </div>
@@ -45,27 +60,29 @@
 
   <div class="flex flex-row gap-3">
     <div class="input-wrapper">
-      <input type="text" formControlName="description" required />
+      <input type="text" required />
       <label>Numero de pasaporte</label>
       <span class="focus-bg"></span>
     </div>
 
     <div class="input-wrapper">
-      <input type="text" formControlName="description" required />
+      <input type="text" required />
       <label>Numero de celular</label>
       <span class="focus-bg"></span>
     </div>
 
     <div class="input-wrapper">
-      <input type="text" formControlName="description" required />
+      <input type="text" required />
       <label>Nacionalidad</label>
       <span class="focus-bg"></span>
     </div>
 
     <div class="input-wrapper">
-      <input type="text" formControlName="description" required />
+      <input type="text" required />
       <label>Fecha de nacimiento</label>
       <span class="focus-bg"></span>
     </div>
   </div>
+
+  <app-form-actions></app-form-actions>
 </div>

@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts';
 import {
-  Chart,
-  registerables,
   ChartOptions,
   ChartType,
   ChartData,
+  ChartConfiguration,
 } from 'chart.js';
 
 @Component({
@@ -16,6 +15,8 @@ import {
   styleUrls: ['./home.scss'],
 })
 export class Home {
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
+
   public barChartOptions: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
@@ -49,4 +50,23 @@ export class Home {
       },
     ],
   };
+
+  // Pie
+  public pieChartOptions: ChartConfiguration['options'] = {
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+      },
+    },
+  };
+  public pieChartData: ChartData<'pie', number[], string | string[]> = {
+    labels: [['Download', 'Sales'], ['In', 'Store', 'Sales'], 'Mail Sales'],
+    datasets: [
+      {
+        data: [300, 500, 100],
+      },
+    ],
+  };
+  public pieChartType: ChartType = 'pie';
 }

@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { PaginatedResponse } from '../../../../models/PaginatedResponse';
 import { Observable } from 'rxjs';
 import { Group } from '../../../clients/types/Group';
+import { CreateGroupRequest } from '../../types/Group';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,11 @@ export class GroupApi {
 
   constructor(private http: HttpClient) {}
 
-  getGroups(): Observable<PaginatedResponse<Group>> {
-    return this.http.get<PaginatedResponse<Group>>(`${this.baseUrl}/group`);
+  getGroups(): Observable<Group[]> {
+    return this.http.get<Group[]>(`${this.baseUrl}/group`);
+  }
+
+  createGroup(groupData: CreateGroupRequest): Observable<Group> {
+    return this.http.post<Group>(`${this.baseUrl}/group/`, groupData);
   }
 }

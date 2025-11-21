@@ -1,0 +1,116 @@
+<div class="file-upload-container">
+  <!-- Zona de Drop -->
+  <div
+    class="drop-zone"
+    [class.dragging]="isDragging"
+    [class.has-files]="uploadedFiles.length > 0"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    (click)="fileInput.click()"
+  >
+    <div class="drop-zone-content">
+      <mat-icon class="upload-icon">cloud_upload</mat-icon>
+      <h3>Arrastra y suelta tus archivos aquí</h3>
+      <p>o haz clic para seleccionar</p>
+
+      <div class="file-info">
+        @if(accept.includes('image')) {
+        <mat-chip>Imágenes permitidas</mat-chip>
+        } @if(accept.includes('pdf') || accept.includes('doc')) {
+        <mat-chip>Documentos permitidos</mat-chip>
+        }
+        <mat-chip>Máx. {{ formatBytes(maxSize) }}</mat-chip>
+        <mat-chip>Hasta {{ maxFiles }} archivos</mat-chip>
+      </div>
+    </div>
+
+    <input
+      #fileInput
+      type="file"
+      [accept]="accept"
+      [multiple]="multiple"
+      (change)="onFileSelected($event)"
+      style="display: none"
+    />
+  </div>
+
+  <!-- Mensaje de Error -->
+  @if(errorMessage) {
+  <div class="error-message">
+    <mat-icon>error</mat-icon>
+    <span>{{ errorMessage }}</span>
+  </div>
+  }
+
+  <!-- Lista de Archivos -->
+  @if(uploadedFiles.length > 0) {
+  <div class="files-list">
+    <div class="files-header">
+      <h4>Archivos Seleccionados ({{ uploadedFiles.length }})</h4>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="uploadFiles()"
+        [disabled]="isUploading"
+      >
+        <mat-icon>cloud_upload</mat-icon>
+        Subir Todos
+      </button>
+    </div>
+
+    <div class="files-grid">
+      @for(uploadedFile of uploadedFiles; track $index) {
+      <div class="file-card" [class.uploading]="uploadedFile.uploading">
+        <!-- Preview o Icono -->
+        <div class="file-preview">
+          @if(uploadedFile.preview) {
+          <img [src]="uploadedFile.preview" [alt]="uploadedFile.file.name" />
+          } @else {
+          <div class="file-icon-wrapper">
+            <mat-icon [color]="uploadedFile.uploading ? 'primary' : 'accent'">
+              {{ getFileIcon(uploadedFile.file) }}
+            </mat-icon>
+          </div>
+          } @if(uploadedFile.uploading) {
+          <div class="upload-overlay">
+            <mat-icon class="uploading-icon">cloud_upload</mat-icon>
+            <span>{{ uploadedFile.progress }}%</span>
+          </div>
+          }
+        </div>
+
+        <!-- Información del Archivo -->
+        <div class="file-info-card">
+          <div class="file-details">
+            <p class="file-name" [title]="uploadedFile.file.name">
+              {{ uploadedFile.file.name }}
+            </p>
+            <p class="file-size">{{ formatBytes(uploadedFile.file.size) }}</p>
+          </div>
+
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="removeFile($index)"
+            [disabled]="uploadedFile.uploading"
+            matTooltip="Eliminar archivo"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <!-- Barra de Progreso -->
+        @if(uploadedFile.uploading) {
+        <mat-progress-bar
+          mode="determinate"
+          [value]="uploadedFile.progress || 0"
+        >
+        </mat-progress-bar>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  }
+</div>

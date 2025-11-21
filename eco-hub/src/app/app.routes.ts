@@ -8,6 +8,8 @@ import { CreateServicePage } from './features/services/pages/create-service/crea
 import { Clients } from './features/clients/pages/clients/clients';
 import { CreateGroup } from './features/groups/pages/create-group/create-group';
 import { Groups } from './features/groups/pages/groups/groups';
+import { GroupMembers } from './features/groups/pages/group-members/group-members';
+import { Quotes } from './features/quotes/pages/quotes/quotes';
 
 export const routes: Routes = [
   {
@@ -20,7 +22,9 @@ export const routes: Routes = [
       { path: 'servicios/:id', component: ServiceDetailPage },
       { path: 'clientes', component: Clients },
       { path: 'grupos', component: Groups },
+      { path: 'grupos/:id/miembros', component: GroupMembers },
       { path: 'grupos/crear-grupo', component: CreateGroup },
+      { path: 'cotizaciones', component: Quotes },
     ],
   },
 
