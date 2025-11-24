@@ -2,8 +2,11 @@ export type MediaType = 'IMAGE' | 'PDF' | 'POST';
 
 export interface Media {
   id: number;
-  type: MediaType;
+  title: string;
+  description: string;
+  type_media: MediaType;
+  file: string;
   url: string;
   image: string;
-  isCover: boolean;
+  is_cover: boolean;
 }

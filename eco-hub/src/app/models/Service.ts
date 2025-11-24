@@ -13,5 +13,5 @@ export interface Service {
   price: number;
   itinerary: string[];
   data: string[];
-  media: string[];
+  media: Media[];
 }
