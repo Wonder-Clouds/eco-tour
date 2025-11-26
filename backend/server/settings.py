@@ -163,9 +163,6 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API documentation for the Eco Tour project',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    'ENUM_NAME_OVERRIDES': {
-        'StatusEnum': 'quote.models.Quote.status',
-    },
     'COMPONENT_SPLIT_REQUEST': True,
 }
 

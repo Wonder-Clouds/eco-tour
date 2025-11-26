@@ -10,14 +10,44 @@ from typing import List, Dict, Any
 
 class QuoteSerializer(serializers.ModelSerializer):
     detail_quote_by_person = serializers.SerializerMethodField()
+    parent_quote_id = serializers.UUIDField(write_only=True, required=False, allow_null=True)
+    version_display = serializers.SerializerMethodField()
+    all_versions = serializers.SerializerMethodField()
+    group_total_people = serializers.SerializerMethodField()
     
     class Meta:
         model = Quote
-        fields = ['id', 'status', 'version', 
+        fields = ['id', 'status', 'version', 'version_display',
                   'valid_until', 'total_price', 'notes',
-                  'created_at', 'updated_at', 'group',
+                  'created_at', 'updated_at', 'group', 'group_total_people',
+                  'parent_quote', 'parent_quote_id', 'all_versions',
                   'detail_quote_by_person']
+        read_only_fields = ['parent_quote', 'version']
 
+    @extend_schema_field(OpenApiTypes.STR)
+    def get_version_display(self, obj: Quote) -> str:
+        """Get human-readable version number"""
+        return obj.get_version_number()
+    
+    @extend_schema_field(OpenApiTypes.OBJECT)
+    def get_all_versions(self, obj: Quote) -> List[Dict[str, Any]]:
+        """Get all versions of this quote"""
+        versions = obj.get_all_versions()
+        return [{
+            'id': str(v.id),
+            'version': v.version,
+            'version_display': v.get_version_number(),
+            'status': v.status,
+            'total_price': str(v.total_price),
+            'created_at': v.created_at,
+            'is_current': v.id == obj.id
+        } for v in versions]
+    
+    @extend_schema_field(OpenApiTypes.INT)
+    def get_group_total_people(self, obj: Quote) -> int:
+        """Get total people count from the associated group"""
+        return obj.group.total_people if obj.group else 0
+    
     @extend_schema_field(OpenApiTypes.OBJECT)
     def get_detail_quote_by_person(self, obj: Quote) -> List[Dict[str, Any]]:
         """Get total spent by each person in this quote"""
@@ -49,13 +79,14 @@ class QuoteSerializer(serializers.ModelSerializer):
 
 class SimpleQuoteSerializer(QuoteSerializer):
     class Meta(QuoteSerializer.Meta):
-        fields = ['id', 'status', 'version', 'notes', 'total_price', 
-                  'created_at', 'updated_at', 'group', 'detail_quote_by_person']
+        fields = ['id', 'status', 'version', 'version_display', 'notes', 'total_price', 
+                  'created_at', 'updated_at', 'group', 'group_total_people',
+                  'parent_quote', 'detail_quote_by_person']
 
 
 class ServiceQuotePersonSerializer(serializers.ModelSerializer):
     person_id = serializers.UUIDField(write_only=True, required=False, allow_null=True)
-    service_id = serializers.UUIDField(write_only=True)
+    service_id = serializers.UUIDField(write_only=True, required=False)
     quote_id = serializers.UUIDField(write_only=True, required=False)
     use_generic_person = serializers.BooleanField(write_only=True, required=False, default=False)
     person_name = serializers.SerializerMethodField()
@@ -92,6 +123,9 @@ class ServiceQuotePersonSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"quote_id": "Invalid quote ID"})
         elif hasattr(self, '_quote'):
             attrs['quote'] = self._quote
+        elif self.instance:
+            # For updates (PATCH/PUT), use the existing quote if not provided
+            attrs['quote'] = self.instance.quote
         else:
             raise serializers.ValidationError({"quote_id": "quote_id is required"})
         
@@ -100,8 +134,12 @@ class ServiceQuotePersonSerializer(serializers.ModelSerializer):
         
         # Handle person - can be generic or specific
         if use_generic or ('person_id' not in attrs or attrs.get('person_id') is None):
-            # Use or create generic person
-            attrs['person'] = Person.get_or_create_generic_person(quote.group)
+            # For updates, if person_id is not provided, keep existing person
+            if self.instance and 'person_id' not in attrs and not use_generic:
+                attrs['person'] = self.instance.person
+            else:
+                # Use or create generic person
+                attrs['person'] = Person.get_or_create_generic_person(quote.group)
             if 'person_id' in attrs:
                 attrs.pop('person_id')
         else:
@@ -119,12 +157,16 @@ class ServiceQuotePersonSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"person_id": "Invalid person ID"})
         
         # Handle service
-        try:
-            service_id = attrs.pop('service_id')
-            attrs['service'] = Service.objects.get(id=service_id)
-        except Service.DoesNotExist:
-            raise serializers.ValidationError({"service_id": "Invalid service ID"})
-        except KeyError:
+        if 'service_id' in attrs:
+            try:
+                service_id = attrs.pop('service_id')
+                attrs['service'] = Service.objects.get(id=service_id)
+            except Service.DoesNotExist:
+                raise serializers.ValidationError({"service_id": "Invalid service ID"})
+        elif self.instance:
+            # For updates, use existing service if not provided
+            attrs['service'] = self.instance.service
+        else:
             raise serializers.ValidationError({"service_id": "service_id is required"})
         
         # Validate that this person doesn't already have this service in this quote

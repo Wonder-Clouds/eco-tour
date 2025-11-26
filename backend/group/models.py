@@ -16,5 +16,13 @@ class Group(SafeDeleteModel):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def update_total_people(self):
+        """Update total_people count based on non-generic persons in the group"""
+        total = self.person.filter(is_generic=False).count()
+        if self.total_people != total:
+            self.total_people = total
+            self.save(update_fields=['total_people'])
+        return total
+
     def __str__(self):
         return self.name

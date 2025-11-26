@@ -4,11 +4,14 @@ from rest_framework import status
 from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
+from django.db import transaction
 from media.models import Media
 from media.serializers import (
     MediaSerializer, MediaUploadSerializer, CoverUploadSerializer, 
     DocumentUploadSerializer, SetCoverSerializer, PostUploadSerializer
 )
+from itinerary.serializers import BulkCreateItinerarySerializer, ItinerarySerializer
+from data.serializers import BulkCreateDataSerializer, DataSerializer
 from shared.pagination import CustomPagination
 from .models import Service
 from .serializers import ServiceSerializer
@@ -124,4 +127,100 @@ class ServiceViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             media = serializer.save()
             return Response(MediaSerializer(media).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    @action(detail=True, methods=['post'], url_path='bulk-add-itineraries')
+    def bulk_add_itineraries(self, request, pk=None):
+        """
+        Bulk add multiple itineraries to a service.
+        
+        Expects a JSON payload with:
+        {
+            "items": [
+                {
+                    "title": "Itinerary Title",
+                    "description": "HTML description"
+                },
+                ...
+            ]
+        }
+        """
+        try:
+            service = Service.objects.get(pk=pk)
+        except Service.DoesNotExist:
+            return Response({"error": "Service not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = BulkCreateItinerarySerializer(
+            data=request.data,
+            context={'service': service}
+        )
+        
+        if serializer.is_valid():
+            try:
+                with transaction.atomic():
+                    serializer.save()
+                    created_items = serializer.context.get('created_items', [])
+                    errors = serializer.context.get('errors', [])
+                    
+                    return Response({
+                        "message": f"Successfully created {len(created_items)} itineraries",
+                        "created": created_items,
+                        "failed": len(errors),
+                        "errors": errors if errors else None
+                    }, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({
+                    "error": "Failed to create itineraries",
+                    "detail": str(e)
+                }, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    @action(detail=True, methods=['post'], url_path='bulk-add-data')
+    def bulk_add_data(self, request, pk=None):
+        """
+        Bulk add multiple data items to a service.
+        
+        Expects a JSON payload with:
+        {
+            "items": [
+                {
+                    "title": "Data Title",
+                    "description": "HTML description"
+                },
+                ...
+            ]
+        }
+        """
+        try:
+            service = Service.objects.get(pk=pk)
+        except Service.DoesNotExist:
+            return Response({"error": "Service not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = BulkCreateDataSerializer(
+            data=request.data,
+            context={'service': service}
+        )
+        
+        if serializer.is_valid():
+            try:
+                with transaction.atomic():
+                    serializer.save()
+                    created_items = serializer.context.get('created_items', [])
+                    errors = serializer.context.get('errors', [])
+                    
+                    return Response({
+                        "message": f"Successfully created {len(created_items)} data items",
+                        "created": created_items,
+                        "failed": len(errors),
+                        "errors": errors if errors else None
+                    }, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({
+                    "error": "Failed to create data items",
+                    "detail": str(e)
+                }, status=status.HTTP_400_BAD_REQUEST)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
