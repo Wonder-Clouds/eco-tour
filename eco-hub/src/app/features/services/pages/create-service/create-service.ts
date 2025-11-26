@@ -15,6 +15,7 @@ import { Header } from '../../../../layouts/header/header';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { FileUpload } from '../../../../shared/components/file-upload/file-upload';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-create-service',
@@ -27,12 +28,14 @@ import { FileUpload } from '../../../../shared/components/file-upload/file-uploa
     MatCardModule,
     Header,
     FileUpload,
+    MatProgressBarModule,
   ],
   templateUrl: './create-service.html',
   styleUrl: './create-service.scss',
 })
 export class CreateServicePage implements OnInit {
   serviceForm!: FormGroup;
+  itineraryForm!: FormGroup;
 
   serviceTypes = [
     { value: 'GROUP', viewValue: 'Grupo' },
@@ -53,22 +56,14 @@ export class CreateServicePage implements OnInit {
       duration: [''],
       summary: new FormControl(''),
       includes: new FormControl(''),
-      notIncludes: new FormControl(''),
+      excludes: new FormControl(''),
       isActive: [false],
-      serviceType: ['GROUP'],
-      itinerary: this.fb.array([
-        this.fb.group({
-          title: [''],
-          description: [''],
-        }),
-      ]),
-      media: this.fb.array([
-        this.fb.group({
-          type: ['image'], // TODO: Change to dynamic ex. file/image
-          url: [''],
-          isCover: [false],
-        }),
-      ]),
+      type: ['group'],
+    });
+
+    this.itineraryForm = this.fb.group({
+      title: [''],
+      description: [''],
     });
   }
 

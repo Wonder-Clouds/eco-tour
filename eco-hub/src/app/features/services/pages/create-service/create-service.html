@@ -1,5 +1,6 @@
 <div class="service-create-container">
   <app-header [title]="'Crear Servicio'"></app-header>
+  <mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
 
   @if(loading) {
   <div class="loading-container">
@@ -7,47 +8,35 @@
   </div>
   } @else {
   <form [formGroup]="serviceForm" class="service-form">
-    <!-- Paso 1: Información General -->
+    <!-- <app-file-upload
+      accept="image/*"
+      [multiple]="true"
+      (filesSelected)="onFilesSelected($event)"
+    >
+    </app-file-upload> -->
     <mat-card class="form-section">
       <mat-card-header>
         <mat-icon class="section-icon">info</mat-icon>
         <mat-card-title>Información General</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <mat-form-field class="full-width">
-          <mat-label>Tipo de Servicio</mat-label>
-          <mat-select formControlName="serviceType">
-            @for (type of serviceTypes; track type) {
-            <mat-option [value]="type.value">
-              {{ type.viewValue }}
-            </mat-option>
-            }
-          </mat-select>
-          <mat-icon matPrefix>category</mat-icon>
-        </mat-form-field>
-      </mat-card-content>
-    </mat-card>
-
-    <app-file-upload
-      accept="image/*"
-      [multiple]="true"
-      (filesSelected)="onFilesSelected($event)"
-    >
-    </app-file-upload>
-
-    <!-- Paso 2: Detalles del Servicio -->
-    <mat-card class="form-section">
-      <mat-card-header>
-        <mat-icon class="section-icon">description</mat-icon>
-        <mat-card-title>Detalles del Servicio</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
+        <div class="input-wrapper">
+          <input type="text" formControlName="title" required />
+          <label>Título</label>
+          <span class="focus-bg"></span>
+        </div>
         <div class="row">
-          <div class="input-wrapper">
-            <input type="text" formControlName="title" required />
-            <label>Título</label>
-            <span class="focus-bg"></span>
-          </div>
+          <mat-form-field class="full-width">
+            <mat-label>Tipo de Servicio</mat-label>
+            <mat-select formControlName="serviceType">
+              @for (type of serviceTypes; track type) {
+              <mat-option [value]="type.value">
+                {{ type.viewValue }}
+              </mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>category</mat-icon>
+          </mat-form-field>
 
           <div class="input-wrapper">
             <input type="text" formControlName="duration" required />
@@ -56,145 +45,38 @@
           </div>
         </div>
 
-        <mat-form-field class="full-width">
-          <mat-label>Resumen del Servicio</mat-label>
-          <textarea
-            formControlName="summary"
-            matInput
-            rows="4"
-            placeholder="Describe brevemente el servicio..."
-          ></textarea>
-        </mat-form-field>
-
-        <!-- Detalles Adicionales -->
-        <!-- <div class="subsection" formArrayName="data">
-          <div class="subsection-header">
-            <h3>
-              <mat-icon>list</mat-icon>
-              Detalles Adicionales
-            </h3>
-            <button
-              mat-raised-button
-              color="primary"
-              type="button"
-              (click)="addDetailItem()"
-            >
-              <mat-icon>add</mat-icon>
-              Agregar Detalle
-            </button>
-          </div>
-
-          @if(data.controls.length === 0) {
-          <div class="empty-state">
-            <mat-icon>inbox</mat-icon>
-            <p>
-              No hay detalles agregados. Haz clic en "Agregar Detalle" para
-              comenzar.
-            </p>
-          </div>
-          } @for(detail of data.controls; track $index) {
-          <mat-card class="detail-card" [formGroupName]="$index">
-            <div class="card-header">
-              <span class="badge">Detalle {{ $index + 1 }}</span>
-              <button
-                mat-icon-button
-                color="warn"
-                type="button"
-                (click)="removeDetailItem($index)"
-                matTooltip="Eliminar detalle"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-
-            <div class="row">
-              <mat-form-field appearance="outline" class="col-6">
-                <mat-label>Título</mat-label>
-                <input formControlName="title" matInput type="text" />
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="col-6">
-                <mat-label>Descripción</mat-label>
-                <input formControlName="description" matInput type="text" />
-              </mat-form-field>
-            </div>
-          </mat-card>
-          }
-        </div> -->
+        <div class="input-wrapper">
+          <textarea type="text" formControlName="summary" required></textarea>
+          <label>Descripción</label>
+          <span class="focus-bg"></span>
+        </div>
       </mat-card-content>
     </mat-card>
 
     <!-- Paso 3: Itinerario -->
-    <mat-card class="form-section">
+    <!-- <mat-card class="form-section">
       <mat-card-header>
         <mat-icon class="section-icon">map</mat-icon>
         <mat-card-title>Itinerario</mat-card-title>
       </mat-card-header>
-      <mat-card-content>
-        <!-- <div class="subsection" formArrayName="itinerary">
-          <div class="subsection-header">
-            <button
-              mat-raised-button
-              color="primary"
-              type="button"
-              (click)="addItineraryItem()"
-            >
-              <mat-icon>add</mat-icon>
-              Agregar Día
-            </button>
-          </div>
+      <mat-card-content [formGroup]="itineraryForm">
+        <div class="input-wrapper">
+          <input type="text" formControlName="title" required />
+          <label>Título</label>
+          <span class="focus-bg"></span>
+        </div>
 
-          @if(itinerary.controls.length === 0) {
-          <div class="empty-state">
-            <mat-icon>event_note</mat-icon>
-            <p>
-              No hay días en el itinerario. Comienza agregando el primer día.
-            </p>
-          </div>
-          } @for(day of itinerary.controls; track $index) {
-          <mat-card class="itinerary-card" [formGroupName]="$index">
-            <div class="card-header">
-              <div class="day-badge">
-                <mat-icon>today</mat-icon>
-                <span>Día {{ $index + 1 }}</span>
-              </div>
-              <button
-                mat-icon-button
-                color="warn"
-                type="button"
-                (click)="removeItineraryItem($index)"
-                matTooltip="Eliminar día"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Título del Día</mat-label>
-              <input
-                formControlName="title"
-                matInput
-                type="text"
-                placeholder="Ej. Llegada a Cusco"
-              />
-              <mat-icon matPrefix>event</mat-icon>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Descripción del Día</mat-label>
-              <textarea
-                formControlName="description"
-                matInput
-                rows="3"
-                placeholder="Describe las actividades del día..."
-              ></textarea>
-              <mat-icon matPrefix>notes</mat-icon>
-            </mat-form-field>
-          </mat-card>
-          }
-        </div> -->
+        <div class="input-wrapper">
+          <textarea
+            type="text"
+            formControlName="description"
+            required
+          ></textarea>
+          <label>Descripción</label>
+          <span class="focus-bg"></span>
+        </div>
       </mat-card-content>
-    </mat-card>
+    </mat-card> -->
 
     <!-- Paso 4: Multimedia -->
     <mat-card class="form-section">
@@ -202,77 +84,6 @@
         <mat-icon class="section-icon">photo_library</mat-icon>
         <mat-card-title>Galería de Imágenes</mat-card-title>
       </mat-card-header>
-      <mat-card-content>
-        <div class="subsection" formArrayName="media">
-          <div class="subsection-header">
-            <button
-              mat-raised-button
-              color="primary"
-              type="button"
-              (click)="addMediaItem()"
-            >
-              <mat-icon>add_photo_alternate</mat-icon>
-              Agregar Imagen
-            </button>
-          </div>
-
-          <!-- @if(media.controls.length === 0) {
-          <div class="empty-state">
-            <mat-icon>add_a_photo</mat-icon>
-            <p>No hay imágenes agregadas. Añade fotos para tu servicio.</p>
-          </div>
-          } -->
-
-          <!-- <div class="media-grid">
-            @for(mediaItem of media.controls; track $index) {
-            <mat-card class="media-card" [formGroupName]="$index">
-              <div class="media-preview">
-                <img
-                  [src]="
-                    mediaItem.get('url')?.value || 'assets/placeholder.jpg'
-                  "
-                  alt="Preview"
-                />
-                @if(mediaItem.get('isCover')?.value) {
-                <div class="cover-badge">
-                  <mat-icon>star</mat-icon>
-                  Portada
-                </div>
-                }
-              </div>
-
-              <mat-card-content>
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>URL de la Imagen</mat-label>
-                  <input
-                    formControlName="url"
-                    matInput
-                    type="text"
-                    placeholder="https://..."
-                  />
-                  <mat-icon matPrefix>link</mat-icon>
-                </mat-form-field>
-
-                <div class="media-actions">
-                  <mat-checkbox formControlName="isCover">
-                    Usar como portada
-                  </mat-checkbox>
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    type="button"
-                    (click)="removeMediaItem($index)"
-                    matTooltip="Eliminar imagen"
-                  >
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
-              </mat-card-content>
-            </mat-card>
-            }
-          </div> -->
-        </div>
-      </mat-card-content>
     </mat-card>
 
     <!-- Paso 5: Inclusiones -->
@@ -283,25 +94,25 @@
       </mat-card-header>
       <mat-card-content>
         <div class="row">
-          <mat-form-field class="col-6">
-            <mat-label>¿Qué Incluye?</mat-label>
+          <div class="input-wrapper">
             <textarea
+              type="text"
               formControlName="includes"
-              matInput
-              rows="5"
-              placeholder="• Transporte&#10;• Guía turístico&#10;• Almuerzo"
+              required
             ></textarea>
-          </mat-form-field>
+            <label>Incluye</label>
+            <span class="focus-bg"></span>
+          </div>
 
-          <mat-form-field class="col-6">
-            <mat-label>¿Qué No Incluye?</mat-label>
+          <div class="input-wrapper">
             <textarea
-              formControlName="notIncludes"
-              matInput
-              rows="5"
-              placeholder="• Gastos personales&#10;• Propinas&#10;• Bebidas alcohólicas"
+              type="text"
+              formControlName="excludes"
+              required
             ></textarea>
-          </mat-form-field>
+            <label>No Incluye</label>
+            <span class="focus-bg"></span>
+          </div>
         </div>
       </mat-card-content>
     </mat-card>
