@@ -72,20 +72,37 @@ main {
 }
 
 $primary-color: #029939;
-$hover-color: #10b981;
+$hover-color: #12893d;
+$color-text: #4d4d4d;
 
 .primary-button {
   background-color: $primary-color;
   color: #fff;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  align-items: center;
+
+  &:hover {
+    background-color: $hover-color;
+  }
+}
+
+.secondary-button {
+  background-color: #fff;
+  color: $primary-color;
+  border: 1px solid $primary-color;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: $hover-color;
+    background-color: #edf8f1;
   }
 }
 
@@ -98,10 +115,10 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+//* Floating Label Input Styles *//
 .input-wrapper {
   position: relative;
   width: 100%;
-  max-width: 350px;
   margin: 0.5rem 0;
 }
 
@@ -156,4 +173,38 @@ body {
 
 .input-wrapper input:focus ~ .focus-bg {
   opacity: 0.1;
+}
+
+.input-wrapper textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  outline: none;
+  background: #f3f4f6;
+  transition: all 0.3s ease;
+  resize: vertical;
+  min-height: 100px;
+  font-family: "Nunito Sans", sans-serif;
+}
+
+.input-wrapper textarea:focus {
+  border-color: #059669;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.2);
+}
+
+.input-wrapper textarea + label {
+  top: 25%;
+}
+
+.input-wrapper textarea:focus + label,
+.input-wrapper textarea:valid + label {
+  top: 1px;
+  font-size: 0.75rem;
+  color: #059669;
+  background: #fff;
+  padding: 0 4px;
+  border-radius: 6px;
 }

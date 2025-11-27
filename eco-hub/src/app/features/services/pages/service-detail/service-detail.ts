@@ -31,6 +31,7 @@ export class ServiceDetailPage implements OnInit {
     this.serviceApi.getServiceById(id).subscribe({
       next: (data: Service) => {
         this.serviceData.set(data);
+        console.log('Servicio cargado:', data);
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -53,16 +54,17 @@ export class ServiceDetailPage implements OnInit {
     });
   }
 
-  // get detailService() {
-  //   return this.serviceData()?.detailService;
-  // }
+  get detailService() {
+    return this.serviceData();
+  }
 
-  // getCoverImage(): string {
-  //   const media = this.detailService?.media;
-  //   if (!media) return '';
-  //   const coverImage = media.find((m) => m.isCover);
-  //   return coverImage?.url || '';
-  // }
+  getCoverImage(): string {
+    const media = this.detailService?.media;
+    if (!media) return '';
+    const coverImage = media.find((m) => m.is_cover);
+    console.log('Cover Image:', coverImage?.file);
+    return coverImage?.file || '';
+  }
 
   // getGalleryImages(): string[] {
   //   const media = this.detailService?.media;

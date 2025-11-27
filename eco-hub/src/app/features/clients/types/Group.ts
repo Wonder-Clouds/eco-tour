@@ -4,7 +4,8 @@ export interface Group {
   id: string;
   name: string;
   description: string;
-  members: Person[];
+  person: Person[];
+  expense: string[];
   contactInfo: string;
   totalMembers: number;
 }

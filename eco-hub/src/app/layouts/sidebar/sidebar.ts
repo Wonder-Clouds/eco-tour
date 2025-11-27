@@ -10,6 +10,7 @@ import {
   LucideAngularModule,
   Users,
   LayoutDashboard,
+  BookMarked,
   Briefcase,
 } from 'lucide-angular';
 
@@ -41,8 +42,8 @@ export class Sidebar implements OnInit {
   navItems: NavItem[] = [
     { label: 'Panel general', route: '/', icon: LayoutDashboard },
     { label: 'Servicios', route: '/servicios', icon: Briefcase },
-    { label: 'Clientes', route: '/clientes', icon: Users },
     { label: 'Grupos', route: '/grupos', icon: Users },
+    { label: 'Cotizaciones', route: '/cotizaciones', icon: BookMarked },
   ];
 
   constructor(private router: Router) {}

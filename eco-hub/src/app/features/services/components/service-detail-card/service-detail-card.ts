@@ -14,9 +14,9 @@ export class ServiceDetailCard {
 
   constructor(private router: Router) {}
 
-  get coverImage(): string | undefined {
-    return this.service?.media?.find((media) => media.isCover)?.url;
-  }
+  // get coverImage(): string | undefined {
+  //   return this.service?.media?.find((media) => media.isCover)?.url;
+  // }
 
   // get totalPrice(): number | undefined {
   //   if (!this.service) return 0;

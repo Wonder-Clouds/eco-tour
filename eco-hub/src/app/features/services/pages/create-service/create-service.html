@@ -1,91 +1,119 @@
 <div class="service-create-container">
   <app-header [title]="'Crear Servicio'"></app-header>
-  @if(loading) {
-  <p>Cargando...</p>
-  } @else {
-  <form [formGroup]="serviceForm">
-    <section class="general-info">
-      <mat-form-field appearance="outline">
-        <mat-label>Tipo de Servicio</mat-label>
-        <mat-select formControlName="serviceType">
-          @for (type of serviceTypes; track type) {
-          <mat-option [value]="type.value">{{ type.viewValue }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+  <mat-progress-bar
+    mode="determinate"
+    [value]="progressValue"
+  ></mat-progress-bar>
 
-      <mat-form-field appearance="outline" class="input-form">
-        <mat-label>Comisión por Servicio</mat-label>
-        <input
-          formControlName="commissionByService"
-          matInput
-          type="number"
-          placeholder="S/."
-        />
-      </mat-form-field>
+  @if (currentStep === 1) {
+  <form [formGroup]="serviceForm" class="service-form">
+    <!-- <app-file-upload
+      accept="image/*"
+      [multiple]="true"
+      (filesSelected)="onFilesSelected($event)"
+    >
+    </app-file-upload> -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-icon class="section-icon">info</mat-icon>
+        <mat-card-title>Información General</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="input-wrapper">
+          <input type="text" formControlName="title" required />
+          <label>Título</label>
+          <span class="focus-bg"></span>
+        </div>
+        <div class="row">
+          <mat-form-field class="full-width">
+            <mat-label>Tipo de Servicio</mat-label>
+            <mat-select formControlName="type">
+              @for (type of serviceTypes; track type) {
+              <mat-option [value]="type.value">
+                {{ type.viewValue }}
+              </mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>category</mat-icon>
+          </mat-form-field>
 
-      <mat-form-field appearance="outline" class="input-form">
-        <mat-label>Comisión por Tarjeta</mat-label>
-        <input
-          formControlName="commissionCard"
-          matInput
-          type="number"
-          placeholder="S/."
-        />
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="input-form">
-        <mat-label>Comisión del proveedor</mat-label>
-        <input
-          formControlName="feeSupplier"
-          matInput
-          type="number"
-          placeholder="S/."
-        />
-      </mat-form-field>
+          <div class="input-wrapper">
+            <input type="text" formControlName="duration" required />
+            <label>Duración</label>
+            <span class="focus-bg"></span>
+          </div>
+        </div>
 
-      <mat-checkbox class="example-margin" formControlName="isActive">
-        Activo
-      </mat-checkbox>
-    </section>
+        <div class="input-wrapper">
+          <textarea type="text" formControlName="summary" required></textarea>
+          <label>Descripción</label>
+          <span class="focus-bg"></span>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
-    <section formGroupName="detailService" class="">
-      <h2>Detalles del Servicio</h2>
-      <div class="input-form-detail">
-        <mat-form-field appearance="outline" class="input-form">
-          <mat-label>Título</mat-label>
-          <input
-            formControlName="title"
-            matInput
-            type="text"
-            placeholder="Ex. Valle Sagrado - Full Day"
-          />
-        </mat-form-field>
+    <!-- Paso 5: Inclusiones -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-icon class="section-icon">checklist</mat-icon>
+        <mat-card-title>Inclusiones y Exclusiones</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="row">
+          <div class="input-wrapper">
+            <textarea
+              type="text"
+              formControlName="includes"
+              required
+            ></textarea>
+            <label>Incluye</label>
+            <span class="focus-bg"></span>
+          </div>
 
-        <mat-form-field appearance="outline" class="input-form">
-          <mat-label>Duración (en días)</mat-label>
-          <input
-            formControlName="duration"
-            matInput
-            type="text"
-            placeholder="0"
-          />
-        </mat-form-field>
-      </div>
+          <div class="input-wrapper">
+            <textarea
+              type="text"
+              formControlName="excludes"
+              required
+            ></textarea>
+            <label>No Incluye</label>
+            <span class="focus-bg"></span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Resumen</mat-label>
-        <textarea
-          formControlName="summary"
-          class="input-form"
-          matInput
-          placeholder="Ex. Descubre los principales atractivos de..."
-        ></textarea>
-      </mat-form-field>
-      <section formArrayName="data" class="details">
-        <button type="button" (click)="addDetailItem()">Agregar Detalle</button>
-        @for(detail of data.controls; track $index) {
-        <div class="detail-item">
-          <div class="detail-item" [formGroupName]="$index">
+    <!-- Botones de Acción -->
+    <div class="form-actions">
+      <button mat-stroked-button type="button" class="btn-cancel">
+        <mat-icon>close</mat-icon>
+        Cancelar
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        (click)="onSaveService()"
+        class="btn-save"
+      >
+        <mat-icon>save</mat-icon>
+        Continuar
+      </button>
+    </div>
+  </form>
+  } @if (currentStep === 2) {
+  <form [formGroup]="itineraryForm">
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-icon class="section-icon">map</mat-icon>
+        <mat-card-title>Itinerario</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div formArrayName="items">
+          @for (item of items.controls; let i = $index; track i) {
+
+          <div [formGroupName]="i" class="itinerary-block">
             <div class="input-wrapper">
               <input type="text" formControlName="title" required />
               <label>Título</label>
@@ -93,83 +121,61 @@
             </div>
 
             <div class="input-wrapper">
-              <input type="text" formControlName="description" required />
+              <textarea formControlName="description" required></textarea>
               <label>Descripción</label>
               <span class="focus-bg"></span>
             </div>
-            <button type="button" (click)="removeDetailItem($index)">
+
+            <button
+              mat-stroked-button
+              color="warn"
+              type="button"
+              (click)="removeItineraryItem(i)"
+              class="secondary-button"
+            >
+              <mat-icon>delete</mat-icon>
               Eliminar
             </button>
           </div>
-        </div>
-        }
-      </section>
+          }
 
-      <section formArrayName="itinerary" class="itinerary">
-        <h2>Itinerario</h2>
-        <button type="button" (click)="addItineraryItem()">Agregar Día</button>
-        @for(day of itinerary.controls; track $index) {
-        <div class="itinerary-item" [formGroupName]="$index">
-          <mat-form-field class="input-form">
-            <mat-label>Título del día</mat-label>
-            <input formControlName="title" matInput type="text" />
-          </mat-form-field>
-          <mat-form-field class="input-form">
-            <mat-label>Descripción del día</mat-label>
-            <textarea formControlName="description" matInput></textarea>
-          </mat-form-field>
-          <button type="button" (click)="removeItineraryItem($index)">
-            Eliminar
+          <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            (click)="addItineraryItem()"
+            class="primary-button"
+          >
+            <mat-icon>add</mat-icon>
+            Añadir otro itinerario
           </button>
         </div>
-        }
-      </section>
+      </mat-card-content>
+    </mat-card>
 
-      <section class="media" formArrayName="media">
-        <h2>Media</h2>
-        <button type="button" (click)="addMediaItem()">Agregar Imagen</button>
-        @for(media of media.controls; track $index) {
-        <div class="media-item" [formGroupName]="$index">
-          <div class="input-wrapper">
-            <input type="text" formControlName="url" required />
-            <label>URL de la imagen</label>
-            <span class="focus-bg"></span>
-          </div>
+    <!-- <mat-card class="form-section">
+      <mat-card-header>
+        <mat-icon class="section-icon">photo_library</mat-icon>
+        <mat-card-title>Galería de Imágenes</mat-card-title>
+      </mat-card-header>
+    </mat-card> -->
 
-          <mat-checkbox class="example-margin" formControlName="isCover">
-            Portada
-          </mat-checkbox>
-          <button type="button" (click)="removeMediaItem($index)">
-            Eliminar
-          </button>
-        </div>
-        }
-      </section>
-    </section>
-
-    <section class="summary" formGroupName="detailService">
-      <mat-form-field appearance="outline" class="example-full-width">
-        <mat-label>Incluye</mat-label>
-        <textarea
-          formControlName="includes"
-          class="input-form"
-          matInput
-          placeholder="Ex. Transporte"
-        ></textarea>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="example-full-width">
-        <mat-label>No Incluye</mat-label>
-        <textarea
-          formControlName="notIncludes"
-          class="input-form"
-          matInput
-          placeholder="Ex. Gastos personales"
-        ></textarea>
-      </mat-form-field>
-    </section>
-
-    <button type="submit" (click)="onSaveService()">Guardar Servicio</button>
+    <div class="form-actions">
+      <button mat-stroked-button type="button" class="btn-cancel">
+        <mat-icon>close</mat-icon>
+        Cancelar
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        (click)="onSaveItinerary(serviceId!)"
+        class="btn-save"
+      >
+        <mat-icon>save</mat-icon>
+        Guardar
+      </button>
+    </div>
   </form>
   }
 </div>

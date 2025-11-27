@@ -4,6 +4,7 @@ import { environment } from '../../../../../environments/environment';
 import { Observable } from 'rxjs';
 import { Service } from '../../../../models/Service';
 import { PaginatedResponse } from '../../../../models/PaginatedResponse';
+import { ItineraryGroup } from '../../types/Itinerary';
 
 @Injectable({
   providedIn: 'root',
@@ -27,5 +28,12 @@ export class ServiceApi {
 
   deleteService(id: string): Observable<any> {
     return this.http.delete<any>(`${this.baseUrl}/service/${id}`);
+  }
+
+  bulkItineraryUpload(id: string, data: ItineraryGroup): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseUrl}/service/${id}/bulk-add-itineraries/`,
+      data
+    );
   }
 }

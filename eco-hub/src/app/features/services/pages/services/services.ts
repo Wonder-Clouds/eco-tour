@@ -26,7 +26,6 @@ export class Services implements OnInit {
     this.serviceApi.getServices().subscribe({
       next: (data: PaginatedResponse<Service>) => {
         this.services = data.results ?? [];
-        console.log(this.services);
         this.loading = false;
       },
       error: (err) => {
