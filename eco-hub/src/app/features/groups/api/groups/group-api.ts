@@ -18,6 +18,10 @@ export class GroupApi {
     return this.http.get<Group[]>(`${this.baseUrl}/group`);
   }
 
+  getGroupById(id: string): Observable<Group> {
+    return this.http.get<Group>(`${this.baseUrl}/group/${id}`);
+  }
+
   createGroup(groupData: CreateGroupRequest): Observable<Group> {
     return this.http.post<Group>(`${this.baseUrl}/group/`, groupData);
   }

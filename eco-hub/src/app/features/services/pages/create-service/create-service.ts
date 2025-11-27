@@ -14,7 +14,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { Header } from '../../../../layouts/header/header';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { FileUpload } from '../../../../shared/components/file-upload/file-upload';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
@@ -27,7 +26,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatIconModule,
     MatCardModule,
     Header,
-    FileUpload,
     MatProgressBarModule,
   ],
   templateUrl: './create-service.html',
@@ -37,11 +35,15 @@ export class CreateServicePage implements OnInit {
   serviceForm!: FormGroup;
   itineraryForm!: FormGroup;
 
+  serviceId: string | null = null;
+
   serviceTypes = [
-    { value: 'GROUP', viewValue: 'Grupo' },
-    { value: 'PRIVATE', viewValue: 'Privado' },
+    { value: 'group', viewValue: 'Grupo' },
+    { value: 'private', viewValue: 'Privado' },
   ];
 
+  currentStep = 1;
+  progressValue = 33;
   loading = false;
 
   constructor(
@@ -62,17 +64,27 @@ export class CreateServicePage implements OnInit {
     });
 
     this.itineraryForm = this.fb.group({
-      title: [''],
-      description: [''],
+      items: this.fb.array([this.createItineraryItem()]),
     });
   }
 
   createItineraryItem(): FormGroup {
     return this.fb.group({
-      id: [''],
       title: [''],
       description: [''],
     });
+  }
+
+  get items(): FormArray {
+    return this.itineraryForm.get('items') as FormArray;
+  }
+
+  addItineraryItem(): void {
+    this.items.push(this.createItineraryItem());
+  }
+
+  removeItineraryItem(index: number): void {
+    this.items.removeAt(index);
   }
 
   get itinerary(): FormArray {
@@ -85,15 +97,6 @@ export class CreateServicePage implements OnInit {
 
   get data(): FormArray {
     return this.serviceForm.get('detailService.data') as FormArray;
-  }
-
-  addItineraryItem(): void {
-    this.itinerary.push(
-      this.fb.group({
-        title: [''],
-        description: [''],
-      })
-    );
   }
 
   addMediaItem(): void {
@@ -115,10 +118,6 @@ export class CreateServicePage implements OnInit {
     );
   }
 
-  removeItineraryItem(index: number): void {
-    this.itinerary.removeAt(index);
-  }
-
   removeMediaItem(index: number): void {
     this.media.removeAt(index);
   }
@@ -130,12 +129,34 @@ export class CreateServicePage implements OnInit {
   onSaveService(): void {
     this.loading = true;
     this.serviceApi.postService(this.serviceForm.value).subscribe({
-      next: () => {
+      next: (res) => {
+        this.serviceId = res.id;
         this.loading = false;
-        this.router.navigate(['/servicios']);
+        this.goToStep(2);
+        // this.router.navigate(['/servicios']);
       },
       error: (err) => {
         console.error('Error creando servicio', err);
+        this.loading = false;
+      },
+    });
+  }
+
+  onSaveItinerary(serviceId: string): void {
+    this.loading = true;
+
+    const payload = {
+      items: this.itineraryForm.value.items,
+    };
+
+    this.serviceApi.bulkItineraryUpload(serviceId, payload).subscribe({
+      next: () => {
+        this.loading = false;
+        this.goToStep(2);
+        this.router.navigate(['/servicios']);
+      },
+      error: (err) => {
+        console.error('Error subiendo itinerarios', err);
         this.loading = false;
       },
     });
@@ -147,5 +168,18 @@ export class CreateServicePage implements OnInit {
     files.forEach((file) => {
       console.log(`Archivo: ${file.name}, Tamaño: ${file.size}`);
     });
+  }
+
+  goToStep(step: number) {
+    this.currentStep = step;
+
+    switch (step) {
+      case 1:
+        this.progressValue = 50;
+        break;
+      case 2:
+        this.progressValue = 100;
+        break;
+    }
   }
 }

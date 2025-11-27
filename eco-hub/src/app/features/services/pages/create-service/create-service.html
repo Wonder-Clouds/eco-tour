@@ -1,12 +1,11 @@
 <div class="service-create-container">
   <app-header [title]="'Crear Servicio'"></app-header>
-  <mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
+  <mat-progress-bar
+    mode="determinate"
+    [value]="progressValue"
+  ></mat-progress-bar>
 
-  @if(loading) {
-  <div class="loading-container">
-    <p>Cargando...</p>
-  </div>
-  } @else {
+  @if (currentStep === 1) {
   <form [formGroup]="serviceForm" class="service-form">
     <!-- <app-file-upload
       accept="image/*"
@@ -28,7 +27,7 @@
         <div class="row">
           <mat-form-field class="full-width">
             <mat-label>Tipo de Servicio</mat-label>
-            <mat-select formControlName="serviceType">
+            <mat-select formControlName="type">
               @for (type of serviceTypes; track type) {
               <mat-option [value]="type.value">
                 {{ type.viewValue }}
@@ -51,39 +50,6 @@
           <span class="focus-bg"></span>
         </div>
       </mat-card-content>
-    </mat-card>
-
-    <!-- Paso 3: Itinerario -->
-    <!-- <mat-card class="form-section">
-      <mat-card-header>
-        <mat-icon class="section-icon">map</mat-icon>
-        <mat-card-title>Itinerario</mat-card-title>
-      </mat-card-header>
-      <mat-card-content [formGroup]="itineraryForm">
-        <div class="input-wrapper">
-          <input type="text" formControlName="title" required />
-          <label>Título</label>
-          <span class="focus-bg"></span>
-        </div>
-
-        <div class="input-wrapper">
-          <textarea
-            type="text"
-            formControlName="description"
-            required
-          ></textarea>
-          <label>Descripción</label>
-          <span class="focus-bg"></span>
-        </div>
-      </mat-card-content>
-    </mat-card> -->
-
-    <!-- Paso 4: Multimedia -->
-    <mat-card class="form-section">
-      <mat-card-header>
-        <mat-icon class="section-icon">photo_library</mat-icon>
-        <mat-card-title>Galería de Imágenes</mat-card-title>
-      </mat-card-header>
     </mat-card>
 
     <!-- Paso 5: Inclusiones -->
@@ -131,7 +97,83 @@
         class="btn-save"
       >
         <mat-icon>save</mat-icon>
-        Guardar Servicio
+        Continuar
+      </button>
+    </div>
+  </form>
+  } @if (currentStep === 2) {
+  <form [formGroup]="itineraryForm">
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-icon class="section-icon">map</mat-icon>
+        <mat-card-title>Itinerario</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div formArrayName="items">
+          @for (item of items.controls; let i = $index; track i) {
+
+          <div [formGroupName]="i" class="itinerary-block">
+            <div class="input-wrapper">
+              <input type="text" formControlName="title" required />
+              <label>Título</label>
+              <span class="focus-bg"></span>
+            </div>
+
+            <div class="input-wrapper">
+              <textarea formControlName="description" required></textarea>
+              <label>Descripción</label>
+              <span class="focus-bg"></span>
+            </div>
+
+            <button
+              mat-stroked-button
+              color="warn"
+              type="button"
+              (click)="removeItineraryItem(i)"
+              class="secondary-button"
+            >
+              <mat-icon>delete</mat-icon>
+              Eliminar
+            </button>
+          </div>
+          }
+
+          <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            (click)="addItineraryItem()"
+            class="primary-button"
+          >
+            <mat-icon>add</mat-icon>
+            Añadir otro itinerario
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- <mat-card class="form-section">
+      <mat-card-header>
+        <mat-icon class="section-icon">photo_library</mat-icon>
+        <mat-card-title>Galería de Imágenes</mat-card-title>
+      </mat-card-header>
+    </mat-card> -->
+
+    <div class="form-actions">
+      <button mat-stroked-button type="button" class="btn-cancel">
+        <mat-icon>close</mat-icon>
+        Cancelar
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        (click)="onSaveItinerary(serviceId!)"
+        class="btn-save"
+      >
+        <mat-icon>save</mat-icon>
+        Guardar
       </button>
     </div>
   </form>
