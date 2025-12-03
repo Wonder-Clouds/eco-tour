@@ -17,7 +17,7 @@ import {
 interface NavItem {
   label: string;
   route: string;
-  icon: any;
+  svgPath: string;
   badge?: string;
   children?: NavItem[];
 }
@@ -40,10 +40,22 @@ export class Sidebar implements OnInit {
   @Input() isCollapsed = false;
 
   navItems: NavItem[] = [
-    { label: 'Panel general', route: '/', icon: LayoutDashboard },
-    { label: 'Servicios', route: '/servicios', icon: Briefcase },
-    { label: 'Grupos', route: '/grupos', icon: Users },
-    { label: 'Cotizaciones', route: '/cotizaciones', icon: BookMarked },
+    {
+      label: 'Panel general',
+      route: '/',
+      svgPath: 'icons/chart-simple.svg',
+    },
+    {
+      label: 'Servicios',
+      route: '/servicios',
+      svgPath: 'icons/bookmark.svg',
+    },
+    { label: 'Grupos', route: '/grupos', svgPath: 'icons/users.svg' },
+    {
+      label: 'Cotizaciones',
+      route: '/cotizaciones',
+      svgPath: 'icons/file-invoice.svg',
+    },
   ];
 
   constructor(private router: Router) {}
