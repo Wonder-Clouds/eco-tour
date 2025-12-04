@@ -73,7 +73,7 @@ export class Quotes implements OnInit {
   }
 
   getGroupName(groupId: string): string {
-    const group = this.groups.find(g => g.id === groupId);
+    const group = this.groups.find((g) => g.id === groupId);
     return group ? group.name : groupId;
   }
 

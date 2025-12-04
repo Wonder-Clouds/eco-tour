@@ -34,7 +34,6 @@
               </mat-option>
               }
             </mat-select>
-            <mat-icon matPrefix>category</mat-icon>
           </mat-form-field>
 
           <div class="input-wrapper">
@@ -131,10 +130,10 @@
               color="warn"
               type="button"
               (click)="removeItineraryItem(i)"
-              class="secondary-button"
+              class="secondary-button remove-itinerary-btn"
             >
               <mat-icon>delete</mat-icon>
-              Eliminar
+              <span>Eliminar</span>
             </button>
           </div>
           }
@@ -144,10 +143,10 @@
             color="primary"
             type="button"
             (click)="addItineraryItem()"
-            class="primary-button"
+            class="primary-button add-itinerary-btn"
           >
             <mat-icon>add</mat-icon>
-            Añadir otro itinerario
+            <span>Añadir Actividad</span>
           </button>
         </div>
       </mat-card-content>
