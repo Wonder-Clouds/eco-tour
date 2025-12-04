@@ -10,6 +10,7 @@ import { CreateGroup } from './features/groups/pages/create-group/create-group';
 import { Groups } from './features/groups/pages/groups/groups';
 import { GroupMembers } from './features/groups/pages/group-members/group-members';
 import { Quotes } from './features/quotes/pages/quotes/quotes';
+import { CreateQuote } from './features/quotes/pages/create-quote/create-quote';
 
 export const routes: Routes = [
   {
@@ -25,6 +26,7 @@ export const routes: Routes = [
       { path: 'grupos/:id/miembros', component: GroupMembers },
       { path: 'grupos/crear-grupo', component: CreateGroup },
       { path: 'cotizaciones', component: Quotes },
+      { path: 'cotizaciones/crear-cotizacion', component: CreateQuote },
     ],
   },
 
