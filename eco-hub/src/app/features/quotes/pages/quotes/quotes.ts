@@ -1,83 +1,83 @@
 import { Component, OnInit } from '@angular/core';
 import { Header } from '../../../../layouts/header/header';
-import {
-  MatFormField,
-  MatLabel,
-  MatSelect,
-  MatOption,
-} from '@angular/material/select';
+import { Quote } from '../../types/Quote';
 import { Group } from '../../../clients/types/Group';
 import { GroupApi } from '../../../groups/api/groups/group-api';
-import { ServiceApi } from '../../../services/api/service/service-api';
-import { Service } from '../../../../models/Service';
+import { QuoteApi } from '../../api/quotes/quote-api';
 import { PaginatedResponse } from '../../../../models/PaginatedResponse';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { LucideAngularModule, Eye } from 'lucide-angular';
+import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-quotes',
   imports: [
     LucideAngularModule,
     Header,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
     MatTableModule,
     MatTabsModule,
+    DatePipe,
   ],
   templateUrl: './quotes.html',
   styleUrl: './quotes.scss',
 })
 export class Quotes implements OnInit {
+  quotes: Quote[] = [];
   groups: Group[] = [];
-  services: Service[] = [];
-
   loading = true;
-
-  selectedGroup: Group | null = null;
-
   displayedColumns: string[] = [
-    'title',
-    'type',
-    'duration',
-    'price',
+    'status',
+    'version_display',
+    'notes',
+    'total_price',
+    'created_at',
+    'group',
     'actions',
   ];
 
-  constructor(private groupsApi: GroupApi, private serviceApi: ServiceApi) {}
+  constructor(
+    private quoteApi: QuoteApi,
+    private groupApi: GroupApi,
+    private router: Router
+  ) {}
+
   ngOnInit(): void {
     this.getAllGroups();
+    this.getAllQuotes();
   }
 
   getAllGroups() {
-    this.groupsApi.getGroups().subscribe({
+    this.groupApi.getGroups().subscribe({
       next: (data: Group[]) => {
         this.groups = data ?? [];
       },
       error: (err) => {
-        console.error('Error loading groups', err);
+        console.error('Error al cargar grupos', err);
       },
     });
   }
 
-  getAllServices() {
-    this.serviceApi.getServices().subscribe({
-      next: (data: PaginatedResponse<Service>) => {
-        this.services = data.results ?? [];
+  getAllQuotes() {
+    this.quoteApi.getQuotes().subscribe({
+      next: (data: Quote[]) => {
+        this.quotes = data ?? [];
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al cargar servicios', err);
+        console.error('Error al cargar cotizaciones', err);
         this.loading = false;
       },
     });
   }
 
-  onGroupSelected(group: Group) {
-    this.selectedGroup = group;
+  getGroupName(groupId: string): string {
+    const group = this.groups.find(g => g.id === groupId);
+    return group ? group.name : groupId;
+  }
 
-    this.getAllServices();
+  goToCreateQuote() {
+    this.router.navigate(['cotizaciones/crear-cotizacion']);
   }
 }
