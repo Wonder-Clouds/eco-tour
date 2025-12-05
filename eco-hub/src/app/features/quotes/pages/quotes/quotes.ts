@@ -80,4 +80,8 @@ export class Quotes implements OnInit {
   goToCreateQuote() {
     this.router.navigate(['cotizaciones/crear-cotizacion']);
   }
+
+  goToQuoteDetail(id: string) {
+    this.router.navigate(['cotizaciones/detalle', id]);
+  }
 }

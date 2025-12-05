@@ -44,9 +44,10 @@
 
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Acciones</th>
-        <td mat-cell *matCellDef="let element">
-          <button class="bg-blue-500 text-white rounded-md p-2">
-            Ver detalle
+        <td mat-cell *matCellDef="let quote">
+          <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded flex items-center gap-2" (click)="goToQuoteDetail(quote.id)">
+            <span class="material-icons">visibility</span>
+            Detalle
           </button>
         </td>
       </ng-container>

@@ -27,6 +27,10 @@ export const routes: Routes = [
       { path: 'grupos/crear-grupo', component: CreateGroup },
       { path: 'cotizaciones', component: Quotes },
       { path: 'cotizaciones/crear-cotizacion', component: CreateQuote },
+      {
+        path: 'cotizaciones/detalle/:id',
+        loadComponent: () => import('./features/quotes/pages/quote-detail/quote-detail').then(m => m.QuoteDetail),
+      },
     ],
   },
 
