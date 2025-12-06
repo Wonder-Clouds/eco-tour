@@ -1,0 +1,86 @@
+<div class="quote-detail-container">
+  <h1 class="text-2xl font-bold mb-6 text-gray-800">Detalle de Cotización</h1>
+
+  <div *ngIf="loading">Cargando...</div>
+  <div *ngIf="error">{{ error }}</div>
+
+  <div *ngIf="!loading && quote">
+    <div class="info-card">
+      <div class="info-header">
+        <span><strong>ID:</strong> {{ quote.id }}</span>
+        <span class="status-badge status-{{ quote.status | lowercase }}">{{ quote.status }}</span>
+        <span><strong>Versión:</strong> {{ quote.version_display }}</span>
+      </div>
+      <div class="info-grid">
+        <div>
+          <strong>Válido hasta:</strong> {{ quote.valid_until }}
+        </div>
+        <div>
+          <strong>Precio total:</strong> {{ quote.total_price }}
+        </div>
+        <div>
+          <strong>Notas:</strong> {{ quote.notes }}
+        </div>
+        <div>
+          <strong>Fecha de creación:</strong> {{ quote.created_at | date:'medium' }}
+        </div>
+        <div>
+          <strong>Última actualización:</strong> {{ quote.updated_at | date:'medium' }}
+        </div>
+        <div>
+          <strong>Grupo:</strong> {{ getGroupName(quote.group) }}
+        </div>
+        <div>
+          <strong>Personas en grupo:</strong> {{ quote.group_total_people }}
+        </div>
+        <div>
+          <strong>Cotización padre:</strong> {{ quote.parent_quote || '-' }}
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <h2 class="text-lg font-semibold mb-2">Versiones</h2>
+      <table class="min-w-full border">
+        <thead>
+          <tr>
+            <th>Versión</th>
+            <th>Estado</th>
+            <th>Precio total</th>
+            <th>Fecha de creación</th>
+            <th>Actual</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let v of quote.all_versions">
+            <td>{{ v.version_display }}</td>
+            <td><span class="status-badge status-{{ v.status | lowercase }}">{{ v.status }}</span></td>
+            <td>{{ v.total_price }}</td>
+            <td>{{ v.created_at | date:'medium' }}</td>
+            <td>{{ v.is_current ? 'Sí' : 'No' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h2 class="text-lg font-semibold mb-2">Detalle por persona</h2>
+      <div *ngFor="let person of quote.detail_quote_by_person" class="person-box">
+        <div class="person-header">
+          <span class="person-name"><strong>Persona:</strong> {{ person.person_name }}</span>
+          <span class="person-total"><strong>Total:</strong> {{ person.total }}</span>
+        </div>
+        <div class="person-services">
+          <strong>Servicios:</strong>
+          <ul>
+            <li *ngFor="let s of person.services" class="service-item">
+              <span class="service-name"><strong>{{ s.service_name }}</strong></span>
+              <span class="service-price">Precio unitario: {{ s.unit_price }}</span>
+              <span *ngIf="s.notes" class="service-notes"><em>Notas:</em> {{ s.notes }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
