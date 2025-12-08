@@ -11,6 +11,7 @@ import { Groups } from './features/groups/pages/groups/groups';
 import { GroupMembers } from './features/groups/pages/group-members/group-members';
 import { Quotes } from './features/quotes/pages/quotes/quotes';
 import { CreateQuote } from './features/quotes/pages/create-quote/create-quote';
+import { Reserves } from './features/reserves/pages/reserves/reserves';
 
 export const routes: Routes = [
   {
@@ -29,8 +30,12 @@ export const routes: Routes = [
       { path: 'cotizaciones/crear-cotizacion', component: CreateQuote },
       {
         path: 'cotizaciones/detalle/:id',
-        loadComponent: () => import('./features/quotes/pages/quote-detail/quote-detail').then(m => m.QuoteDetail),
+        loadComponent: () =>
+          import('./features/quotes/pages/quote-detail/quote-detail').then(
+            (m) => m.QuoteDetail
+          ),
       },
+      { path: 'reservas', component: Reserves },
     ],
   },
 

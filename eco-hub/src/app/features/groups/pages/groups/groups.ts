@@ -7,10 +7,11 @@ import { PaginatedResponse } from '../../../../models/PaginatedResponse';
 import { Header } from '../../../../layouts/header/header';
 import { Router } from '@angular/router';
 import { LucideAngularModule, Pencil, Trash } from 'lucide-angular';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-groups',
-  imports: [LucideAngularModule, Header, MatTableModule, MatTabsModule],
+  imports: [LucideAngularModule, Header, MatTableModule, MatTabsModule, MatTooltipModule],
   templateUrl: './groups.html',
   styleUrl: './groups.scss',
 })

@@ -20,22 +20,53 @@
     <div>
       <span>Participantes</span>
 
-      @for (member of getMembers(); track member) {
-      <div>
-        <span>{{ member.first_name }}</span>
+      <div class="member-list">
+        @for (member of getMembers(); track member.id) {
+        <label class="member-item">
+          <input
+            type="checkbox"
+            class="check"
+            [checked]="selectedMembers.includes(member.id)"
+            (change)="toggleSelection(member.id)"
+          />
+          <span class="name">{{ member.first_name }}</span>
+        </label>
+        }
       </div>
-      }
     </div>
 
     <div>
       <span>Notas</span>
+      <div class="input-wrapper">
+        <textarea type="text" formControlName="description" required></textarea>
+        <span class="focus-bg"></span>
+      </div>
     </div>
   </div>
 
-  <div>
-    <span>Requerimientos</span>
+  <div class="activity-requirements">
+    <h6 class="activity-subtitle">Requerimientos</h6>
     <div>
       <p></p>
+    </div>
+  </div>
+
+  <div class="activity-cost-summary">
+    <div class="activity-prices-container">
+      <div class="activity-prices">
+        <h6>Costo por persona</h6>
+        <span>{{ activity?.price }}</span>
+      </div>
+
+      <div class="activity-prices">
+        <h6>Costo total por actividad</h6>
+        <span>0.0</span>
+      </div>
+    </div>
+    <div class="activity-actions-buttons">
+      <button class="secondary-button">Cancelar</button>
+
+      <button class="primary-button">Confirmar actividad</button>
     </div>
   </div>
 </div>

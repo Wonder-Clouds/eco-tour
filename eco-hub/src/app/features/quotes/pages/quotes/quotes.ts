@@ -10,6 +10,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { LucideAngularModule, Eye } from 'lucide-angular';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-quotes',
@@ -19,6 +20,7 @@ import { Router } from '@angular/router';
     MatTableModule,
     MatTabsModule,
     DatePipe,
+    MatTooltipModule,
   ],
   templateUrl: './quotes.html',
   styleUrl: './quotes.scss',
