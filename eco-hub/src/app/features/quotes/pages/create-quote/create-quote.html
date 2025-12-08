@@ -1,16 +1,16 @@
 <app-header title="COTIZACIONES"></app-header>
 
 <div class="container">
-  <mat-form-field class="full-width">
-    <mat-label>Grupo</mat-label>
-    <mat-select (selectionChange)="onGroupSelected($event.value)">
-      @for (g of groups; track g) {
-      <mat-option [value]="g">
-        {{ g.name }}
-      </mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+  <app-custom-select
+    [items]="groups"
+    [selectedItem]="selectedGroup"
+    label="Grupo"
+    placeholder="Selecciona un grupo"
+    displayKey="name"
+    trackKey="id"
+    (selectionChange)="onGroupSelected($event)"
+  >
+  </app-custom-select>
 
   @if (!selectedActivity && selectedGroup) {
   <section class="activity-box">
@@ -50,7 +50,7 @@
           <td mat-cell *matCellDef="let element">
             <div class="flex flex-row gap-5">
               <button
-                class="flex flex-row gap-2 bg-blue-500 text-white rounded-md p-2"
+                class="secondary-button"
                 (click)="chooseActivity(element)"
               >
                 Elegir actividad

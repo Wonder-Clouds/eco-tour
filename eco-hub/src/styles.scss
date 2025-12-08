@@ -75,6 +75,13 @@ main {
   background-color: #fafafa;
 }
 
+button {
+  font-family: "Nunito Sans", sans-serif;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
 .primary-button {
   display: flex;
   background-color: $primary-color;

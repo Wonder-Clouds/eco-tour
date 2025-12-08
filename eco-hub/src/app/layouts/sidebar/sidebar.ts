@@ -56,6 +56,11 @@ export class Sidebar implements OnInit {
       route: '/cotizaciones',
       svgPath: 'icons/file-invoice.svg',
     },
+    {
+      label: 'Reservas',
+      route: '/reservas',
+      svgPath: 'icons/bell-reserves.svg',
+    },
   ];
 
   constructor(private router: Router) {}

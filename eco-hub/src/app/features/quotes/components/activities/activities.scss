@@ -59,7 +59,15 @@ $shadow-lg: 0 10px 25px rgba(5, 150, 105, 0.12);
   margin: 0;
   color: $text-primary;
   letter-spacing: -0.5px;
-  padding-right: 80px; // Espacio para el badge
+  padding-right: 80px;
+}
+
+.activity-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: $text-secondary;
+  letter-spacing: 0.5px;
 }
 
 // Sección de Duración y Precio
@@ -95,11 +103,6 @@ $shadow-lg: 0 10px 25px rgba(5, 150, 105, 0.12);
       font-size: 1.25rem;
       font-weight: 700;
       color: $text-primary;
-
-      // Si contiene $, resaltar en color primario
-      &::first-letter {
-        color: $primary-color;
-      }
     }
   }
 }
@@ -128,7 +131,6 @@ $shadow-lg: 0 10px 25px rgba(5, 150, 105, 0.12);
       padding-bottom: 8px;
       border-bottom: 2px solid rgba($primary-color, 0.1);
 
-      // Iconos con pseudo-elementos
       &::before {
         content: "";
         width: 4px;
@@ -139,7 +141,6 @@ $shadow-lg: 0 10px 25px rgba(5, 150, 105, 0.12);
       }
     }
 
-    // Participantes
     &:first-child {
       div {
         display: inline-flex;
@@ -161,29 +162,6 @@ $shadow-lg: 0 10px 25px rgba(5, 150, 105, 0.12);
           transform: translateY(-1px);
           box-shadow: 0 2px 8px rgba($primary-color, 0.15);
         }
-
-        span {
-          position: relative;
-          padding-left: 24px;
-
-          &::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(
-              135deg,
-              $primary-color,
-              lighten($primary-color, 10%)
-            );
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-          }
-        }
       }
     }
 
@@ -196,6 +174,54 @@ $shadow-lg: 0 10px 25px rgba(5, 150, 105, 0.12);
       background: rgba($primary-color, 0.02);
       border-color: rgba($primary-color, 0.15);
     }
+  }
+}
+
+.member-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+}
+
+.member-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #333;
+  user-select: none;
+
+  .check {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #888;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $primary-color;
+    }
+
+    &:checked {
+      background-color: $primary-color;
+      border-color: $primary-color;
+
+      &::after {
+        content: "✔";
+        color: white;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .name {
+    font-weight: 500;
   }
 }
 
@@ -235,6 +261,55 @@ $shadow-lg: 0 10px 25px rgba(5, 150, 105, 0.12);
       color: $text-primary;
       font-size: 0.9rem;
     }
+  }
+}
+
+.activity-cost-summary {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+
+  > span:first-child {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $text-secondary;
+  }
+
+  > span:last-child {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $text-primary;
+  }
+
+  .activity-prices-container {
+    display: flex;
+    gap: 3rem;
+
+    .activity-prices {
+      display: flex;
+      flex-direction: column;
+
+      h6 {
+        margin: 0;
+        font-size: 0.85rem;
+        color: $text-secondary;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      span {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: $text-primary;
+      }
+    }
+  }
+
+  .activity-actions-buttons {
+    display: flex;
+    gap: 12px;
   }
 }
 

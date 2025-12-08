@@ -15,6 +15,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { LucideAngularModule, Eye } from 'lucide-angular';
 import { Activities } from '../../components/activities/activities';
+import { CustomSelect } from '../../../../shared/components/custom-select/custom-select';
 
 @Component({
   selector: 'app-quotes',
@@ -28,6 +29,7 @@ import { Activities } from '../../components/activities/activities';
     MatTableModule,
     MatTabsModule,
     Activities,
+    CustomSelect,
   ],
   templateUrl: './create-quote.html',
   styleUrl: './create-quote.scss',
