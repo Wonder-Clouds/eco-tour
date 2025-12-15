@@ -225,10 +225,18 @@ services:
 |--------|----------|-------------|--------|
 | `GET` | `/api/service/` | Obtener todos los servicios | - |
 | `POST` | `/api/service/` | Crear nuevo servicio | `ServiceSerializer` |
+| `POST` | `/api/service/create-with-data-and-itinerary/` | Crear servicio con datos e itinerario transaccional | `ServiceWithDataAndItinerarySerializer` |
 | `GET` | `/api/service/{id}/` | Obtener servicio por ID | - |
 | `PUT` | `/api/service/{id}/` | Actualizar servicio completo | `ServiceSerializer` |
 | `PATCH` | `/api/service/{id}/` | Actualizar servicio parcial | `ServiceSerializer` |
 | `DELETE` | `/api/service/{id}/` | Eliminar servicio (soft delete) | - |
+| `POST` | `/api/service/{id}/bulk-add-itineraries` | Agregar múltiples itinerarios a un servicio | `BulkCreateItinerarySerializer` |
+| `POST` | `/api/service/{id}/bulk-add-data` | Agregar múltiples datos a un servicio | `BulkCreateDataSerializer` |
+| `POST` | `/api/service/{id}/upload-image` | Subir imagen asociada al servicio | `MediaUploadSerializer` |
+| `POST` | `/api/service/{id}/upload-document` | Subir documento asociado al servicio | `DocumentUploadSerializer` |
+| `POST` | `/api/service/{id}/upload-cover` | Subir imagen de portada | `CoverUploadSerializer` |
+| `PATCH` | `/api/service/{id}/set-cover/{media_id}` | Establecer imagen como portada | `SetCoverSerializer` |
+| `POST` | `/api/service/{id}/create-post` | Crear post multimedia | `PostUploadSerializer` |
 
 ### 🗓 Itinerarios (`/api/itinerary/`)
 
@@ -458,7 +466,96 @@ class DataAPITest(APITestCase):
 - Escribir docstrings para funciones y clases
 - Agregar tests para nuevas funcionalidades
 
-## 📄 Licencia
+## � Ejemplo: Crear Servicio con Datos e Itinerario (Endpoint Transaccional)
+
+El endpoint `POST /api/service/create-with-data-and-itinerary/` permite crear un servicio con todos sus datos e itinerarios en una única solicitud transaccional. Si algo falla, todo se revierte.
+
+### Solicitud
+
+```bash
+curl -X POST http://localhost:8000/api/service/create-with-data-and-itinerary/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "service": {
+      "title": "Senderismo en la Amazonía",
+      "duration": 7,
+      "summary": "<p>Aventura única en la Amazonía</p>",
+      "includes": "<p>Guía experto, transporte, alojamiento</p>",
+      "excludes": "<p>Comidas adicionales</p>",
+      "type": "group",
+      "price": "1500.00"
+    },
+    "data": [
+      {
+        "title": "Preparación",
+        "description": "<p>Qué traer: ropa cómoda, botas impermeables</p>"
+      }
+    ],
+    "itinerary": [
+      {
+        "title": "Día 1: Llegada a Iquitos",
+        "description": "<p>Recepción en el aeropuerto y traslado al puerto</p>"
+      },
+      {
+        "title": "Día 2: Exploración de la selva",
+        "description": "<p>Caminata guiada por la selva amazónica</p>"
+      }
+    ]
+  }'
+```
+
+### Respuesta (201 Created)
+
+```json
+{
+  "service": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "title": "Senderismo en la Amazonía",
+    "duration": 7,
+    "summary": "<p>Aventura única en la Amazonía</p>",
+    "includes": "<p>Guía experto, transporte, alojamiento</p>",
+    "excludes": "<p>Comidas adicionales</p>",
+    "type": "group",
+    "price": "1500.00",
+    "created_at": "2025-12-15T12:00:00Z",
+    "updated_at": "2025-12-15T12:00:00Z"
+  },
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "title": "Preparación",
+      "description": "<p>Qué traer: ropa cómoda, botas impermeables</p>",
+      "created_at": "2025-12-15T12:00:00Z",
+      "updated_at": "2025-12-15T12:00:00Z"
+    }
+  ],
+  "itinerary": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440002",
+      "title": "Día 1: Llegada a Iquitos",
+      "description": "<p>Recepción en el aeropuerto y traslado al puerto</p>",
+      "created_at": "2025-12-15T12:00:00Z",
+      "updated_at": "2025-12-15T12:00:00Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440003",
+      "title": "Día 2: Exploración de la selva",
+      "description": "<p>Caminata guiada por la selva amazónica</p>",
+      "created_at": "2025-12-15T12:00:00Z",
+      "updated_at": "2025-12-15T12:00:00Z"
+    }
+  ],
+  "message": "Service created successfully with 1 data items and 2 itinerary items"
+}
+```
+
+### Características
+- ✅ **Transaccional**: Todo o nada - si falla algo, se revierte todo
+- ✅ **Flexible**: Los campos `data` e `itinerary` son opcionales
+- ✅ **Validado**: Valida todos los campos antes de crear
+- ✅ **Escalable**: Soporta hasta 100 elementos de data e itinerary
+
+## �📄 Licencia
 
 Este proyecto está bajo la licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
