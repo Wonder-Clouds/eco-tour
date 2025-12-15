@@ -14,7 +14,7 @@ from itinerary.serializers import BulkCreateItinerarySerializer, ItinerarySerial
 from data.serializers import BulkCreateDataSerializer, DataSerializer
 from shared.pagination import CustomPagination
 from .models import Service
-from .serializers import ServiceSerializer
+from .serializers import ServiceSerializer, ServiceWithDataAndItinerarySerializer
 
 # Create your views here.
 class ServiceViewSet(viewsets.ModelViewSet):
@@ -220,6 +220,62 @@ class ServiceViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 return Response({
                     "error": "Failed to create data items",
+                    "detail": str(e)
+                }, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    @action(detail=False, methods=['post'], url_path='create-with-data-and-itinerary')
+    def create_with_data_and_itinerary(self, request):
+        """
+        Create a service with data and itinerary items in a single transactional endpoint.
+        
+        Expects a JSON payload with:
+        {
+            "service": {
+                "title": "Service Title",
+                "duration": 5,
+                "summary": "<p>Summary HTML</p>",
+                "includes": "<p>Includes HTML</p>",
+                "excludes": "<p>Excludes HTML</p>",
+                "type": "group",
+                "price": "99.99"
+            },
+            "data": [
+                {
+                    "title": "Data Title",
+                    "description": "<p>Description HTML</p>"
+                }
+            ],
+            "itinerary": [
+                {
+                    "title": "Day 1",
+                    "description": "<p>Day 1 activities</p>"
+                }
+            ]
+        }
+        """
+        serializer = ServiceWithDataAndItinerarySerializer(data=request.data)
+        
+        if serializer.is_valid():
+            try:
+                result = serializer.save()
+                
+                # Format the response
+                service = result['service']
+                data_items = result['data']
+                itinerary_items = result['itinerary']
+                
+                return Response({
+                    "service": ServiceSerializer(service).data,
+                    "data": DataSerializer(data_items, many=True).data,
+                    "itinerary": ItinerarySerializer(itinerary_items, many=True).data,
+                    "message": f"Service created successfully with {len(data_items)} data items and {len(itinerary_items)} itinerary items"
+                }, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({
+                    "error": "Failed to create service",
                     "detail": str(e)
                 }, status=status.HTTP_400_BAD_REQUEST)
         
