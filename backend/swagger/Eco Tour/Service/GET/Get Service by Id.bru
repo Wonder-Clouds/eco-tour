@@ -1,0 +1,27 @@
+meta {
+  name: Get Service by Id
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8000/api/service/3fc5e9c8-a976-43f5-8c89-ff49d27716ec
+  body: text
+  auth: inherit
+}
+
+body:text {
+  {
+      "title": "Tour 3",
+      "duration": 2,
+      "summary": "Tour 3",
+      "includes": "include all",
+      "excludes": "excludes all too",
+      "type": "private"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

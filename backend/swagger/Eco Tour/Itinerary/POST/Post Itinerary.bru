@@ -1,0 +1,25 @@
+meta {
+  name: Post Itinerary
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/itinerary/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Salida a comer HeladoO",
+    "description": "Salimos a comer helado",
+    "service": "f10d84ef-a560-4d77-8509-bb0795c1c8b5"
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

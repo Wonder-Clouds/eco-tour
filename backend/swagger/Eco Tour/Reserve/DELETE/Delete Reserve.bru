@@ -1,0 +1,16 @@
+meta {
+  name: Delete Reserve
+  type: http
+  seq: 1
+}
+
+delete {
+  url: http://127.0.0.1:8000/api/reserve/7bf61475-0679-44bf-8c8b-7f8e23edd162/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

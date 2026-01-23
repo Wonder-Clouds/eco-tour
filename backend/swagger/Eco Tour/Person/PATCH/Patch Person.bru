@@ -1,0 +1,23 @@
+meta {
+  name: Patch Person
+  type: http
+  seq: 1
+}
+
+patch {
+  url: http://127.0.0.1:8000/api/person/7b5d118e-5e0c-4d70-be52-be9788062ff5/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "first_name": "Martin"
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Eco Tour",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

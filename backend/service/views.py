@@ -5,16 +5,19 @@ from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 from django.db import transaction
+import json
+
 from media.models import Media
 from media.serializers import (
     MediaSerializer, MediaUploadSerializer, CoverUploadSerializer, 
     DocumentUploadSerializer, SetCoverSerializer, PostUploadSerializer
 )
-from itinerary.serializers import BulkCreateItinerarySerializer, ItinerarySerializer
-from data.serializers import BulkCreateDataSerializer, DataSerializer
+from itinerary.serializers import BulkCreateItinerarySerializer
+from data.serializers import BulkCreateDataSerializer
 from shared.pagination import CustomPagination
 from .models import Service
-from .serializers import ServiceSerializer, ServiceWithDataAndItinerarySerializer
+from .serializers import ServiceSerializer, ServiceAllInOneSerializer
+
 
 # Create your views here.
 class ServiceViewSet(viewsets.ModelViewSet):
@@ -53,7 +56,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-    # Action upload a image with state is_cover=True associated with a service
+    # Action upload image with state is_cover=True associated with a service
     @action(detail=True, methods=['post'], url_path='upload-cover', serializer_class=CoverUploadSerializer)
     def upload_cover(self, request, pk=None):
         try:
@@ -77,7 +80,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 name='media_id',
                 type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
+                location='path',
                 description='UUID of the media to set as cover'
             )
         ]
@@ -224,59 +227,79 @@ class ServiceViewSet(viewsets.ModelViewSet):
                 }, status=status.HTTP_400_BAD_REQUEST)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
-    @action(detail=False, methods=['post'], url_path='create-with-data-and-itinerary')
-    def create_with_data_and_itinerary(self, request):
+
+    @action(detail=False, methods=['post'], url_path='all-in-one-service')
+    def all_in_one_service(self, request, pk=None):
         """
-        Create a service with data and itinerary items in a single transactional endpoint.
-        
-        Expects a JSON payload with:
-        {
-            "service": {
-                "title": "Service Title",
-                "duration": 5,
-                "summary": "<p>Summary HTML</p>",
-                "includes": "<p>Includes HTML</p>",
-                "excludes": "<p>Excludes HTML</p>",
-                "type": "group",
-                "price": "99.99"
-            },
-            "data": [
-                {
-                    "title": "Data Title",
-                    "description": "<p>Description HTML</p>"
-                }
-            ],
-            "itinerary": [
-                {
-                    "title": "Day 1",
-                    "description": "<p>Day 1 activities</p>"
-                }
-            ]
-        }
+        Create a service with itinerary, data, and media in a single request.
+
+        Accepts multipart/form-data with:
+        - title, duration, summary, price, includes, excludes, type (service fields)
+        - media (multiple files with same key name)
+        - itinerary: JSON array of itinerary objects
+        - data: JSON array of data objects
+        - cover (file field for cover image)
         """
-        serializer = ServiceWithDataAndItinerarySerializer(data=request.data)
-        
+        from django.contrib.contenttypes.models import ContentType
+
+        data = request.data.dict()
+
+        # Convert strings json to arrays
+        if 'itinerary' in data and isinstance(data['itinerary'], str):
+            try:
+                data['itinerary'] = json.loads(data['itinerary'])
+            except json.JSONDecodeError:
+                return Response({"error": "Invalid JSON for itinerary."}, status=status.HTTP_400_BAD_REQUEST)
+        if 'data' in data and isinstance(data['data'], str):
+            try:
+                data['data'] = json.loads(data['data'])
+            except json.JSONDecodeError:
+                return Response({"error": "Invalid JSON for data."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Extract cover file if present
+        cover_file = request.FILES.get('cover', None)
+
+        # Extract all media files (they can be sent with the same key "media")
+        media_files = request.FILES.getlist('media')
+
+        # Create media array with metadata for each file
+        data['media'] = [
+            {
+                'type_media': 'image',
+                'title': f'Media {idx+1}',
+                'description': ''
+            }
+            for idx in range(len(media_files))
+        ]
+
+        serializer = ServiceAllInOneSerializer(
+            data=data,
+            context={'request': request, 'media_files': media_files}
+        )
+
         if serializer.is_valid():
             try:
-                result = serializer.save()
-                
-                # Format the response
-                service = result['service']
-                data_items = result['data']
-                itinerary_items = result['itinerary']
-                
-                return Response({
-                    "service": ServiceSerializer(service).data,
-                    "data": DataSerializer(data_items, many=True).data,
-                    "itinerary": ItinerarySerializer(itinerary_items, many=True).data,
-                    "message": f"Service created successfully with {len(data_items)} data items and {len(itinerary_items)} itinerary items"
-                }, status=status.HTTP_201_CREATED)
+                with transaction.atomic():
+                    service = serializer.save()
+
+                    # Handle cover separately if provided
+                    if cover_file:
+                        content_type = ContentType.objects.get_for_model(Service)
+                        Media.objects.create(
+                            file=cover_file,
+                            type_media='image',
+                            title='Cover',
+                            description='Service cover image',
+                            is_cover=True,
+                            content_type=content_type,
+                            object_id=service.id
+                        )
+
+                    return Response(ServiceSerializer(service).data, status=status.HTTP_201_CREATED)
             except Exception as e:
                 return Response({
                     "error": "Failed to create service",
                     "detail": str(e)
                 }, status=status.HTTP_400_BAD_REQUEST)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

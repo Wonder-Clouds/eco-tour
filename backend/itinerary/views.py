@@ -5,16 +5,19 @@ from rest_framework.decorators import action
 from service.models import Service
 from shared.pagination import CustomPagination
 from .models import Itinerary
-from .serializers import CreateItinerarySerializer
+from .serializers import CreateItinerarySerializer, ItinerarySerializer
 
 class ItineraryViewSet(viewsets.ModelViewSet):
     queryset = Itinerary.objects.all()
     pagination_class = CustomPagination
-    serializer_class = CreateItinerarySerializer
+    serializer_class = ItinerarySerializer
 
-    # Action to create a Itinerary related to Service
+
     @action(detail=True, methods=['post'], url_path='add-itinerary')
     def create_itinerary(self, request, pk=None):
+        """
+        This action allows creating an Itinerary associated with a specific Service.
+        """
         try:
             service = Service.objects.get(id=pk)
         except:

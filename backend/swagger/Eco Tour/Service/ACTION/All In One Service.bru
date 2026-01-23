@@ -1,0 +1,31 @@
+meta {
+  name: All In One Service
+  type: http
+  seq: 8
+}
+
+post {
+  url: http://localhost:8000/api/service/all-in-one-service/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  title: Ica 2D/3N
+  duration: 4
+  summary: Es una viaje a Ica
+  includes: Incluye Guias
+  excludes: Todo 
+  type: private
+  price: 50000
+  data: '''
+    {
+    
+    }
+  '''
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

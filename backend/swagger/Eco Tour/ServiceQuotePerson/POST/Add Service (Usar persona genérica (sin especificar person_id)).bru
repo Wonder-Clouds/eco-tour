@@ -1,0 +1,23 @@
+meta {
+  name: Add Service (Usar persona genérica (sin especificar person_id))
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:8000/api/quote/fdcc6f4d-9b05-40ab-8d92-a640c0d08df5/add-service/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "service_id": "3fc5e9c8-a976-43f5-8c89-ff49d27716ec",
+      "notes": "No come carne"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

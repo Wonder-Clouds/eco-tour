@@ -1,0 +1,22 @@
+meta {
+  name: Delete Pay
+  type: http
+  seq: 2
+}
+
+delete {
+  url: http://127.0.0.1:8000/api/pay/192ee4e2-00d7-4007-9fdb-a2e273b398a3/
+  body: text
+  auth: inherit
+}
+
+body:text {
+  {
+      "notes": "Este fue el primer pago"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

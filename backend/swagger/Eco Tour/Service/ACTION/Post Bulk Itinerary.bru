@@ -1,0 +1,35 @@
+meta {
+  name: Post Bulk Itinerary
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/service/3fc5e9c8-a976-43f5-8c89-ff49d27716ec/bulk-add-itineraries/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "items": [
+      {
+        "title": "Día 1 - Llegada",
+        "description": "<p>Descripción en HTML del primer día</p>"
+      },
+      {
+        "title": "Día 2 - Exploración",
+        "description": "<p>Descripción en HTML del segundo día</p>"
+      },
+      {
+        "title": "Día 3 - Regreso",
+        "description": "<p>Descripción en HTML del tercer día</p>"
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,16 @@
+meta {
+  name: Delete Itinerary
+  type: http
+  seq: 1
+}
+
+delete {
+  url: http://localhost:8000/api/itinerary/393a75bd-04ea-4250-a57a-634384be9fb8/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

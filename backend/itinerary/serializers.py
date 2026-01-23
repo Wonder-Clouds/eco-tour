@@ -6,7 +6,7 @@ from service.models import Service
 class ItinerarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Itinerary
-        fields = ['id', 'title', 'description','created_at', 'updated_at']
+        fields = ['id', 'title', 'description', 'service', 'created_at', 'updated_at']
 
 
 class CreateItinerarySerializer(serializers.ModelSerializer):

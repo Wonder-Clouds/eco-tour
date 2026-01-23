@@ -1,0 +1,20 @@
+meta {
+  name: Upload Cover
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/service/f10d84ef-a560-4d77-8509-bb0795c1c8b5/upload-cover/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  file: @file(/home/monchi789/Pictures/Screenshots/Screenshot From 2025-08-15 12-24-25.png)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

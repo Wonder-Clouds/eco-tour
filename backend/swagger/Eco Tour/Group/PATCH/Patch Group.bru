@@ -1,0 +1,22 @@
+meta {
+  name: Patch Group
+  type: http
+  seq: 1
+}
+
+patch {
+  url: http://localhost:8000/api/group/d77b5766-7253-4490-828c-f53e873cfa18/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "total_people": 14
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Patch Supplier
+  type: http
+  seq: 1
+}
+
+patch {
+  url: http://127.0.0.1:8000/api/supplier/fba1f915-1a14-4d77-9810-8119c177c8d6/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "service_type": "tickets"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

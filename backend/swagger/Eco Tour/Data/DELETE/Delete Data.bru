@@ -1,0 +1,23 @@
+meta {
+  name: Delete Data
+  type: http
+  seq: 1
+}
+
+delete {
+  url: http://localhost:8000/api/data/82dd975d-e723-43f9-aeed-0379f811bfe5/
+  body: text
+  auth: inherit
+}
+
+body:text {
+  {
+      "title": "Data 1",
+      "description": "Esta es la data 1"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

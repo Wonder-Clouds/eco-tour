@@ -1,0 +1,16 @@
+meta {
+  name: Get Reserve by Id
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://127.0.0.1:8000/api/reserve/515258a9-524c-4be4-a220-740fbbd0de9b/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,24 @@
+meta {
+  name: Add Itinerary to a Service
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/itinerary/f10d84ef-a560-4d77-8509-bb0795c1c8b5/add-itinerary/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Salida a comer Helado 2",
+    "description": "Salimos a comer helado"
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

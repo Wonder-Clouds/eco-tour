@@ -1,0 +1,54 @@
+meta {
+  name: Itinerary
+}
+
+auth {
+  mode: inherit
+}
+
+docs {
+  # Itinerary
+  
+  ## Get Itinerary
+  Estos endpoints nos permite listar los __itinerary__ ya sea todos o solo uno pasando el id
+    - Get Itinerary: http://localhost:8000/api/itinerary/
+    - Get Itinerary by Id: http://localhost:8000/api/itinerary/d7082bc8-c3a2-4e15-b315-73638b7fb9af
+  
+  ## Post Itinerary
+  Este endpoint nos permite crear un __itinerary__ pasando en el cuerpo el id del __service__
+    - Post Itinerary: http://localhost:8000/api/itinerary/9dbc92c2-94aa-40ed-9f16-77f4a091d633/
+        - Body:
+            ```json
+              {
+                "title": "Salida a comer HeladoO",
+                "description": "Salimos a comer helado",
+                "service": "f10d84ef-a560-4d77-8509-bb0795c1c8b5"
+              }
+            ```
+  
+  ## Patch Itinerary
+  Este endpoint nos permite hacer actualizar un __itinerary__ pasando solo lo que se desea actualizar o todo el cuerpo.
+    - Patch: http://localhost:8000/api/itinerary/787245ce-db27-4bef-a834-7ad1a2294d70/
+      - Body:
+          ```json
+            {
+              "title": "Salida a comer Parrilla"
+            }
+          ```
+  
+  ## Delete Itinerary
+  Este endopoint nos permite eliminar un __itinerary__ pasando el id
+    - Delete: http://localhost:8000/api/itinerary/9dbc92c2-94aa-40ed-9f16-77f4a091d633/
+    
+  ## Action
+  ### Add Itinerary
+  Este endpoint nos permite pasar por la url el id del servicio al cual se quiere relacionar durante la creacion de un __service__
+    - add-itinerary: http://localhost:8000/api/itinerary/f10d84ef-a560-4d77-8509-bb0795c1c8b5/add-itinerary/
+    - Body: 
+      ```json
+        {
+          "title": "Salida al Parque,
+          "description": "Salimos a comer helado"  
+        }
+      ```
+}

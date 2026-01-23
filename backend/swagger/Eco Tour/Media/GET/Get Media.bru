@@ -1,0 +1,22 @@
+meta {
+  name: Get Media
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8000/api/media/
+  body: text
+  auth: inherit
+}
+
+body:text {
+  {
+      "title": "Data 1",
+      "description": "Esta es la data 1"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

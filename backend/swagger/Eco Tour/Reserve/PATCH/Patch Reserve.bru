@@ -1,0 +1,22 @@
+meta {
+  name: Patch Reserve
+  type: http
+  seq: 1
+}
+
+patch {
+  url: http://127.0.0.1:8000/api/reserve/ac16b1d9-681a-4eaf-a265-cab97c98862a/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "supplier": "fba1f915-1a14-4d77-9810-8119c177c8d6"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

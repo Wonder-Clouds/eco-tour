@@ -1,0 +1,31 @@
+meta {
+  name: Post Bulk Data
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/service/7157260c-24d4-4a56-83ed-f9c79862371d/bulk-add-data/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "items": [
+      {
+        "title": "Información sobre fauna",
+        "description": "<p>Datos sobre la fauna local</p>"
+      },
+      {
+        "title": "Información sobre flora",
+        "description": "<p>Datos sobre la flora local</p>"
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

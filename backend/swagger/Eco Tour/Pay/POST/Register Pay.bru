@@ -1,0 +1,26 @@
+meta {
+  name: Register Pay
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:8000/api/pay/ef484fd0-d352-487c-95fe-eb4b42cf1071/register-payment/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "amount": "44555",
+    "currency": "USD",
+    "method": "string",
+    "payment_date": "2025-10-19T01:09:00.422Z",
+    "notes": "string"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Add Person to Group
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/group/01904cd2-aa5a-413f-ace6-81a16961d8cd/add-person/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "person_id": "4d3227ce-ba6f-4396-8c41-f910f693acc3"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
