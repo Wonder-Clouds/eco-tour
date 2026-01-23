@@ -231,3 +231,42 @@ Este endpoint nos permite seleccionar una imagen ya subida y ponerla como portad
 - set-cover: `PATCH` http://localhost:8000/api/service/f10d84ef-a560-4d77-8509-bb0795c1c8b5/set-cover/9c99173c-a927-4fff-9603-9cbb2e97fcfe/
 - Body: Vacío
 
+#### All In One Service
+Este endpoint nos permite crear un _service_ junto con sus _media_, _data_ e _itinerary_ en una sola petición.
+- all-in-one-service: `POST` http://localhost:8000/api/service/all-in-one-service/
+- Body: Form-Data
+    - title: Tour Completo
+    - duration: 5
+    - summary: Este es un tour completo con todo incluido
+    - includes: Todo incluido
+    - excludes: Nada excluido
+    - type: private
+    - price: 150.0
+    - media: (Seleccionar varios archivos de imagen/documento)
+    - cover: (Seleccionar archivo de imagen para portada)
+    - data: 
+      ```json
+        [
+          {
+            "title": "Información sobre el tour",
+            "description": "<p>Detalles y datos importantes</p>"
+          },
+          {
+            "title": "Recomendaciones",
+            "description": "<p>Qué llevar y cómo prepararse</p>"
+          }
+        ]
+      ```
+    - itinerary:
+      ```json
+        [
+          {
+            "title": "Día 1 - Introducción",
+            "description": "<p>Descripción del primer día</p>"
+          },
+          {
+            "title": "Día 2 - Actividades",
+            "description": "<p>Descripción del segundo día</p>"
+          }
+        ]
+      ```
