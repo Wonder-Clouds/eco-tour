@@ -1,0 +1,24 @@
+meta {
+  name: Patch Media
+  type: http
+  seq: 1
+}
+
+patch {
+  url: http://localhost:8000/api/media/311d6136-ffe2-4e17-b09a-535cc1880732/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Imagen del tour a Cocalmayo",
+    "description": "Es una imagen de Cocalmayo"
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

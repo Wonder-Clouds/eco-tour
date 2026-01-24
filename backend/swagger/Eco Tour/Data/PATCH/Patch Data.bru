@@ -1,0 +1,24 @@
+meta {
+  name: Patch Data
+  type: http
+  seq: 1
+}
+
+patch {
+  url: http://localhost:8000/api/data/4913a1f3-ad65-430a-b843-29262625dfb3/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+   "title": "Data 10",
+    "description": "Esta es la data 10"
+    
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

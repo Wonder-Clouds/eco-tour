@@ -1,0 +1,93 @@
+docs {
+  # Documentation of Eco Tours API
+  
+  ## Itinerary
+  
+  ### Get Itinerary
+  Estos endpoints nos permite listar los _itinerary_ ya sea todos o solo uno pasando el id
+    - Get Itinerary: http://localhost:8000/api/itinerary/
+    - Get Itinerary by Id: http://localhost:8000/api/itinerary/d7082bc8-c3a2-4e15-b315-73638b7fb9af
+  
+  ### Post Itinerary
+  Este endpoint nos permite crear un _itinerary_ pasando en el cuerpo el id del _service_
+    - Post Itinerary: http://localhost:8000/api/itinerary/9dbc92c2-94aa-40ed-9f16-77f4a091d633/
+        - Body:
+            ```json
+              {
+                "title": "Salida a comer HeladoO",
+                "description": "Salimos a comer helado",
+                "service": "f10d84ef-a560-4d77-8509-bb0795c1c8b5"
+              }
+            ```
+  
+  ### Patch Itinerary
+  Este endpoint nos permite hacer actualizar un _itinerary_ pasando solo lo que se desea actualizar o todo el cuerpo.
+    - Patch: http://localhost:8000/api/itinerary/787245ce-db27-4bef-a834-7ad1a2294d70/
+      - Body:
+          ```json
+            {
+              "title": "Salida a comer Parrilla"
+            }
+          ```
+  
+  ### Delete Itinerary
+  Este endopoint nos permite eliminar un _itinerary_ pasando el id
+    - Delete: http://localhost:8000/api/itinerary/9dbc92c2-94aa-40ed-9f16-77f4a091d633/
+    
+  ### Action
+  #### Add Itinerary
+  Este endpoint nos permite pasar por la url el id del servicio al cual se quiere relacionar durante la creacion de un _service_
+    - add-itinerary: http://localhost:8000/api/itinerary/f10d84ef-a560-4d77-8509-bb0795c1c8b5/add-itinerary/
+    - Body: 
+      ```json
+        {
+          "title": "Salida al Parque,
+          "description": "Salimos a comer helado"  
+        }
+      ```
+      
+  ## Media
+  
+  ### Get Media
+  Estos endpoints nos permite poder listar los _media_ ya sea todo los _media_ o solo uno pasando id
+    - Get Media: http://localhost:8000/api/media/
+    - Get Media by Id: http://localhost:8000/api/media/311d6136-ffe2-4e17-b09a-535cc1880732/
+  
+  ### Delete Media
+  Este endpoint nos permite eliminar un media pasando el id
+    - Delete Media: http://localhost:8000/api/media/f7d12568-ac0a-4087-adb4-5ff6cf277c3b/
+  
+  ### Patch Media
+  Este endpoint nos permite actualizar un _media_ pasando el id por el url
+    - Patch: http://localhost:8000/api/media/311d6136-ffe2-4e17-b09a-535cc1880732/
+    - Body: 
+    ```json
+      {
+        "title": "Imagen del tour a Cocalmayo",
+        "description": "Es una imagen de Cocalmayo"
+      }
+    ```
+  
+  ## Data
+  ### Get Data
+  Estos endpoints nos permite poder listar los _data_ ya sea todo los _data_ o solo uno pasando id
+    - Get Data: http://localhost:8000/api/data/
+    - Get Data by Id: http://localhost:8000/api/data/632fb9c9-1e72-41a2-85a5-1918186c4f79
+  
+  ### Post Data
+  Este endpoint nos permite crear un _data_ pasando en el cuerpo el id del _service_
+    - Post: http://localhost:8000/api/data/
+    - Body: 
+    ```json
+    {
+      "title": "Data 5",
+      "description": "Esta es la data 5",
+      "service": "f10d84ef-a560-4d77-8509-bb0795c1c8b5"
+    }
+    ```
+  
+  
+  
+  
+  
+}

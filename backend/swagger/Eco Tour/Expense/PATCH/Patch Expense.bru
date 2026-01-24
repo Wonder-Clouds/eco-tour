@@ -1,0 +1,22 @@
+meta {
+  name: Patch Expense
+  type: http
+  seq: 1
+}
+
+patch {
+  url: http://localhost:8000/api/expense/54311eb1-f06a-4319-81ed-1004735c46f7/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+   "group": "4f09fb30-9c00-4149-85fa-c27310d837fd"   
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,16 @@
+meta {
+  name: Delete Expense
+  type: http
+  seq: 1
+}
+
+delete {
+  url: http://localhost:8000/api/expense/8844349c-4207-43c5-ac8d-6cf8a28161e3/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

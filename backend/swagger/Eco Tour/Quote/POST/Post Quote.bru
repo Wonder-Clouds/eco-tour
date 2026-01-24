@@ -1,0 +1,26 @@
+meta {
+  name: Post Quote
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://127.0.0.1:8000/api/quote/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "status": "draft",
+    "version": 1,
+    "valid_until": "2025-11-11",
+    "notes": "string",
+    "group": "fca3cb7e-b1c5-422c-b4b3-986a2242393e"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

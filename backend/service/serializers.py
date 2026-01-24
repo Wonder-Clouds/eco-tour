@@ -1,9 +1,12 @@
 from rest_framework import serializers
 from django.db import transaction
+from django.contrib.contenttypes.models import ContentType
+
 from itinerary.serializers import ItinerarySerializer
 from itinerary.models import Itinerary
 from data.serializers import DataSerializer
 from data.models import Data
+from media.models import Media
 from media.serializers import MediaSerializer
 from .models import Service
 
@@ -12,149 +15,79 @@ class ServiceSerializer(serializers.ModelSerializer):
     data = DataSerializer(many=True, read_only=True)
     media = MediaSerializer(many=True, read_only=True)
     itinerary = ItinerarySerializer(many=True, read_only=True)
+    duration_in_hours = serializers.ReadOnlyField()
 
     class Meta:
         model = Service
-        fields = ['id', 'title', 'duration', 'summary', 'includes', 
-                  'excludes', 'type', 'itinerary', 'data', 'price', 
+        fields = ['id', 'title', 'duration_value', 'duration_unit', 'duration_in_hours',
+                  'summary', 'includes', 'excludes', 'type', 'itinerary', 'data', 'price',
                   'media', 'created_at', 'updated_at']
 
 
-class ServiceWithDataAndItinerarySerializer(serializers.Serializer):
-    """
-    Serializer for creating a service with data and itinerary items in a single transaction.
-    
-    Expected payload:
-    {
-        "service": {
-            "title": "Service Title",
-            "duration": 5,
-            "summary": "<p>Summary HTML</p>",
-            "includes": "<p>Includes HTML</p>",
-            "excludes": "<p>Excludes HTML</p>",
-            "type": "group",
-            "price": "99.99"
-        },
-        "data": [
-            {
-                "title": "Data 1",
-                "description": "<p>Description</p>"
-            },
-            ...
-        ],
-        "itinerary": [
-            {
-                "title": "Day 1",
-                "description": "<p>Day 1 activities</p>"
-            },
-            ...
-        ]
-    }
-    """
-    
-    service = serializers.DictField(
-        child=serializers.CharField(),
-        help_text="Service data including title, duration, summary, includes, excludes, type, price"
-    )
-    data = serializers.ListField(
-        child=serializers.DictField(
-            child=serializers.CharField(),
-        ),
+class ItineraryCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Itinerary
+        fields = ['title', 'description']
+
+
+class DataCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Data
+        fields = ['title', 'description']
+
+class ServiceAllInOneSerializer(serializers.ModelSerializer):
+    itinerary = ItineraryCreateSerializer(many=True, write_only=True, required=False)
+    data = DataCreateSerializer(many=True, write_only=True, required=False)
+    media = serializers.ListField(
+        write_only=True,
         required=False,
-        help_text="List of data items with 'title' and 'description' fields"
+        help_text="List of media objects with 'type_media', 'title', 'description' fields"
     )
-    itinerary = serializers.ListField(
-        child=serializers.DictField(
-            child=serializers.CharField(),
-        ),
-        required=False,
-        help_text="List of itinerary items with 'title' and 'description' fields"
-    )
-    
-    def validate_service(self, value):
-        """Validate service fields"""
-        required_fields = ['title', 'duration', 'summary', 'includes', 'excludes', 'type']
-        for field in required_fields:
-            if field not in value:
-                raise serializers.ValidationError(f"Service field '{field}' is required.")
-        
-        # Validate service type
-        valid_types = ['group', 'private', 'arbitrary']
-        if value.get('type') not in valid_types:
-            raise serializers.ValidationError(f"Service type must be one of: {', '.join(valid_types)}")
-        
-        return value
-    
-    def validate_data(self, value):
-        """Validate data items"""
-        if not value:
-            return value
-        
-        if len(value) > 100:
-            raise serializers.ValidationError("Cannot create more than 100 data items at once.")
-        
-        for idx, item in enumerate(value):
-            if not isinstance(item, dict):
-                raise serializers.ValidationError(f"Data item {idx} must be a dictionary.")
-            if 'title' not in item or 'description' not in item:
-                raise serializers.ValidationError(
-                    f"Data item {idx} must have 'title' and 'description' fields."
-                )
-        
-        return value
-    
-    def validate_itinerary(self, value):
-        """Validate itinerary items"""
-        if not value:
-            return value
-        
-        if len(value) > 100:
-            raise serializers.ValidationError("Cannot create more than 100 itinerary items at once.")
-        
-        for idx, item in enumerate(value):
-            if not isinstance(item, dict):
-                raise serializers.ValidationError(f"Itinerary item {idx} must be a dictionary.")
-            if 'title' not in item or 'description' not in item:
-                raise serializers.ValidationError(
-                    f"Itinerary item {idx} must have 'title' and 'description' fields."
-                )
-        
-        return value
-    
+
+    class Meta:
+        model = Service
+        fields = ['id', 'title', 'duration_value', 'duration_unit', 'summary', 'includes',
+                  'excludes', 'type', 'itinerary', 'data', 'price',
+                  'media', 'created_at', 'updated_at']
+
     def create(self, validated_data):
-        """Create service with data and itinerary in a transaction"""
-        try:
-            with transaction.atomic():
-                # Create the service
-                service_data = validated_data['service']
-                service = Service.objects.create(**service_data)
-                
-                # Create data items
-                data_items = []
-                data_list = validated_data.get('data', [])
-                for item in data_list:
-                    data_obj = Data.objects.create(
-                        service=service,
-                        title=item.get('title'),
-                        description=item.get('description')
-                    )
-                    data_items.append(data_obj)
-                
-                # Create itinerary items
-                itinerary_items = []
-                itinerary_list = validated_data.get('itinerary', [])
-                for item in itinerary_list:
-                    itinerary_obj = Itinerary.objects.create(
-                        service=service,
-                        title=item.get('title'),
-                        description=item.get('description')
-                    )
-                    itinerary_items.append(itinerary_obj)
-                
-                return {
-                    'service': service,
-                    'data': data_items,
-                    'itinerary': itinerary_items
-                }
-        except Exception as e:
-            raise serializers.ValidationError(f"Failed to create service: {str(e)}")
+        itinerary_data = validated_data.pop('itinerary', [])
+        data_data = validated_data.pop('data', [])
+        media_data = validated_data.pop('media', [])
+
+        with transaction.atomic():
+            service = Service.objects.create(**validated_data)
+
+            for item in itinerary_data:
+                item.pop('service', None)
+                Itinerary.objects.create(service=service, **item)
+
+            for item in data_data:
+                item.pop('service', None)
+                Data.objects.create(service=service, **item)
+
+            # Create media items
+            media_files = self.context.get('media_files', [])
+            content_type = ContentType.objects.get_for_model(Service)
+
+            for idx, (file, media_item) in enumerate(zip(media_files, media_data)):
+                # Extract metadata from media_item
+                type_media = media_item.get('type_media', 'image')
+                title = media_item.get('title', file.name)
+                description = media_item.get('description', '')
+
+                Media.objects.create(
+                    file=file,
+                    type_media=type_media,
+                    title=title,
+                    description=description,
+                    is_cover=media_item.get('is_cover', False),
+                    content_type=content_type,
+                    object_id=service.id
+                )
+
+        return service
+
+    def to_representation(self, instance):
+        return ServiceSerializer(instance).data
+

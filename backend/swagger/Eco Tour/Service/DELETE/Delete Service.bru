@@ -1,0 +1,16 @@
+meta {
+  name: Delete Service
+  type: http
+  seq: 1
+}
+
+delete {
+  url: http://localhost:8000/api/service/2d616c5b-13e5-49d6-8568-d20749cc94e3/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,60 @@
+meta {
+  name: All In One Service
+  type: http
+  seq: 8
+}
+
+post {
+  url: http://localhost:8000/api/service/all-in-one-service/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  title: Ica 2D/3N
+  duration: 4
+  summary: Es una viaje a Ica
+  includes: Incluye Guias
+  excludes: Todo
+  type: private
+  price: 50000
+  data: '''
+    [
+    {
+          "title": "Información sobre fauna",
+          "description": "<p>Datos sobre la fauna local</p>"
+        },
+        {
+          "title": "Información sobre flora",
+          "description": "<p>Datos sobre la flora local</p>"
+        }
+       ]
+  '''
+  itinerary: '''
+    [
+        {
+          "title": "Día 1 - Llegada",
+          "description": "<p>Descripción en HTML del primer día</p>"
+        },
+        {
+          "title": "Día 2 - Exploración",
+          "description": "<p>Descripción en HTML del segundo día</p>"
+        },
+        {
+          "title": "Día 3 - Regreso",
+          "description": "<p>Descripción en HTML del tercer día</p>"
+        }
+      ]
+  '''
+  media: @file(/home/monchi789/Pictures/Peruvian Cusco Travel Tour/14-12-25/PANEL-DE-CIRCUITO-2.jpeg)
+  media: @file(/home/monchi789/Pictures/Peruvian Cusco Travel Tour/14-12-25/Machu Picchu Circuito 2/Machu Picchu Circuito 2-2.png)
+  media: @file(/home/monchi789/Pictures/Peruvian Cusco Travel Tour/14-12-25/Machu Picchu Circuito 2/Machu Picchu Circuito 2-3.png)
+  cover: @file(/home/monchi789/Pictures/Wonder Clouds/Logos/wonder_logo_color.png)
+  duration_value: 45
+  duration_unit: days
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -52,11 +52,13 @@ class DocumentUploadSerializer(serializers.ModelSerializer):
 class CoverUploadSerializer(serializers.ModelSerializer):
     type_media = serializers.CharField(read_only=True)
     is_cover = serializers.BooleanField(read_only=True)
-    file = serializers.FileField(validators=[validate_image_type]) 
+    file = serializers.FileField(validators=[validate_image_type])
+    title = serializers.CharField(required=False)
+    description = serializers.CharField(required=False)
 
     class Meta:
         model = Media
-        fields = ['id', 'type_media', 'file', 'is_cover', 'created_at', 'updated_at']
+        fields = ['id', 'type_media', 'file', 'is_cover', 'title', 'description', 'created_at', 'updated_at']
 
     def create(self, validated_data):
         content_object = self.context.get('content_object')

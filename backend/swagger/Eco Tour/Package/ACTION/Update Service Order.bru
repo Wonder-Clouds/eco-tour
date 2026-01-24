@@ -1,0 +1,47 @@
+meta {
+  name: Update Service Order
+  type: http
+  seq: 3
+}
+
+patch {
+  url: http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/update-order/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "services": [
+      {
+        "service_id": "f10d84ef-a560-4d77-8509-bb0795c1c8b5",
+        "order": 1
+      },
+      {
+        "service_id": "87f6fc21-9f41-42a0-a7b1-12cf4a8e1ad4",
+        "order": 10 
+      },
+      {
+        "service_id": "61f34e3e-00f9-4dd1-bbb2-9bb87bdfe43f",
+        "order": 5
+      },
+      {
+        "service_id": "7157260c-24d4-4a56-83ed-f9c79862371d",
+        "order": 4 
+      },
+      {
+        "service_id": "3fc5e9c8-a976-43f5-8c89-ff49d27716ec",
+        "order": 12
+      },
+      {
+        "service_id": "1e4cdb93-fa56-46b8-9803-a3eb848e92af",
+        "order": 6 
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

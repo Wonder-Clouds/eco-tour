@@ -5,13 +5,13 @@ from rest_framework import status
 from service.models import Service
 from shared.pagination import CustomPagination
 from .models import Data
-from .serializers import CreateDataSerializer
+from .serializers import CreateDataSerializer, DataSerializer
 
 # Create your views here.
 class DataViewSet(viewsets.ModelViewSet):
     queryset = Data.objects.all()
     pagination_class = CustomPagination
-    serializer_class = CreateDataSerializer
+    serializer_class = DataSerializer
 
     # Action to create a Data related to Service
     @action(detail=True, methods=['post'], url_path='add-data')

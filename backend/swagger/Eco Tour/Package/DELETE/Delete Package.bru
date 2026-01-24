@@ -1,0 +1,16 @@
+meta {
+  name: Delete Package
+  type: http
+  seq: 1
+}
+
+delete {
+  url: http://localhost:8000/api/package/45cd2f9c-57db-4ee3-b5fa-8a801aaac438/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

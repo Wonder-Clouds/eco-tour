@@ -1,0 +1,26 @@
+meta {
+  name: Upload Document
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:8000/api/person/894f805d-928b-4253-b8b2-7ecad855441d/upload-document/
+  body: multipartForm
+  auth: inherit
+}
+
+params:query {
+  ~: 
+}
+
+body:multipart-form {
+  file: @file(/home/monchi789/Documents/Tesis/PROYECTO DE TESIS - MONZON Y ROZAS.pdf)
+  ~title: Passport
+  ~description: 
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

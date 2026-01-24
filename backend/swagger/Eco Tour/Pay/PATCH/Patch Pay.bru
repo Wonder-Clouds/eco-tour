@@ -1,0 +1,22 @@
+meta {
+  name: Patch Pay
+  type: http
+  seq: 1
+}
+
+patch {
+  url: http://127.0.0.1:8000/api/pay/67723bcc-8a83-4c88-ba97-9eabf13d87b4/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "notes": "Este fue el primer pago"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

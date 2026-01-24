@@ -1,0 +1,22 @@
+meta {
+  name: Patch Itinerary
+  type: http
+  seq: 1
+}
+
+patch {
+  url: http://localhost:8000/api/itinerary/787245ce-db27-4bef-a834-7ad1a2294d70/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title":"Salida a comer Papitas"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

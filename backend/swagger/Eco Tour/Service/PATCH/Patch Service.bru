@@ -1,0 +1,22 @@
+meta {
+  name: Patch Service
+  type: http
+  seq: 1
+}
+
+patch {
+  url: http://localhost:8000/api/service/f10d84ef-a560-4d77-8509-bb0795c1c8b5/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "price": 6400 
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

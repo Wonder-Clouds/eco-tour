@@ -1,0 +1,16 @@
+meta {
+  name: Get Itinerary by Id
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8000/api/itinerary/d7082bc8-c3a2-4e15-b315-73638b7fb9af
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

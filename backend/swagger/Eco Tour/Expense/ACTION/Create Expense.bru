@@ -1,0 +1,26 @@
+meta {
+  name: Create Expense
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/expense/d77b5766-7253-4490-828c-f53e873cfa18/create-expense/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "description": "Expense by ticket of bus",
+      "amount": 20.45,
+      "currency": "PEN",
+      "paid": false,
+      "date_incurred": "2025-10-11"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

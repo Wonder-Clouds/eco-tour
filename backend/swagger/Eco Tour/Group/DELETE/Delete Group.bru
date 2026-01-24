@@ -1,0 +1,22 @@
+meta {
+  name: Delete Group
+  type: http
+  seq: 1
+}
+
+delete {
+  url: http://localhost:8000/api/group/f0295867-277a-4a48-846a-e703159ab286/
+  body: text
+  auth: inherit
+}
+
+body:text {
+  {
+      "total_people": 14
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'expense',
     'group',
     'service',
+    'package',
     'itinerary',
     'media',
     'person',

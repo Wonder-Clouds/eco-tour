@@ -1,0 +1,28 @@
+meta {
+  name: Create Reserve
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:8000/api/reserve/1dc68a6d-432c-4e16-9177-9b254b6b0dd4/create-reserve/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "supplier": "7933bba6-cec4-497c-9f4a-26e86b1135eb",
+    "start_date": "2025-10-11",
+    "end_date": "2025-10-15",
+    "price": 450.50,
+    "currency": "USD",
+    "status": "pending",
+    "notes": "Reserva temporal"
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+}

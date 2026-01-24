@@ -1,0 +1,25 @@
+meta {
+  name: Create Group
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/group/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "name": "Group-Nuevo",
+      "description": "Es el grupo 5",
+      "contact_info": "Perez Martinez - 988678799",
+      "total_people": 5
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

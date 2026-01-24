@@ -1,0 +1,16 @@
+meta {
+  name: Delete Supplier
+  type: http
+  seq: 1
+}
+
+delete {
+  url: http://127.0.0.1:8000/api/supplier/807e1cb5-b825-4724-ac82-1171536594d0/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

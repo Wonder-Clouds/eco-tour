@@ -5,6 +5,7 @@ __pycache__/
 *.sqlite3
 .idea/
 .vscode/
+.venv/
 
 postgres/
 media_files/

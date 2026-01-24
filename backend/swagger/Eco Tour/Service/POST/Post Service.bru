@@ -1,0 +1,29 @@
+meta {
+  name: Post Service
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/service/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "title": "Tour Prueba",
+      "duration_value": 1,
+      "duration_unit": "weeks",
+      "summary": "Tour 3",
+      "includes": "include all",
+      "excludes": "excludes all too",
+      "type": "group",
+      "price": 20.4
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
