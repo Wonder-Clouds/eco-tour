@@ -5,9 +5,17 @@ meta {
 }
 
 get {
-  url: http://localhost:8000/api/package/
+  url: http://localhost:8000/api/package/?search=Machu&price_min=100&price_max=100060&total_duration_hours_min=24&total_duration_hours_max=144
   body: none
   auth: inherit
+}
+
+params:query {
+  search: Machu
+  price_min: 100
+  price_max: 100060
+  total_duration_hours_min: 24
+  total_duration_hours_max: 144
 }
 
 settings {
