@@ -15,11 +15,12 @@ class ServiceSerializer(serializers.ModelSerializer):
     data = DataSerializer(many=True, read_only=True)
     media = MediaSerializer(many=True, read_only=True)
     itinerary = ItinerarySerializer(many=True, read_only=True)
+    duration_in_hours = serializers.ReadOnlyField()
 
     class Meta:
         model = Service
-        fields = ['id', 'title', 'duration', 'summary', 'includes', 
-                  'excludes', 'type', 'itinerary', 'data', 'price', 
+        fields = ['id', 'title', 'duration_value', 'duration_unit', 'duration_in_hours',
+                  'summary', 'includes', 'excludes', 'type', 'itinerary', 'data', 'price',
                   'media', 'created_at', 'updated_at']
 
 
@@ -45,7 +46,7 @@ class ServiceAllInOneSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Service
-        fields = ['id', 'title', 'duration', 'summary', 'includes',
+        fields = ['id', 'title', 'duration_value', 'duration_unit', 'summary', 'includes',
                   'excludes', 'type', 'itinerary', 'data', 'price',
                   'media', 'created_at', 'updated_at']
 
@@ -86,3 +87,7 @@ class ServiceAllInOneSerializer(serializers.ModelSerializer):
                 )
 
         return service
+
+    def to_representation(self, instance):
+        return ServiceSerializer(instance).data
+

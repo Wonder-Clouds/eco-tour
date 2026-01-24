@@ -12,7 +12,7 @@ Eco tour es un sistema diseñado para poder gestionar lo siguiente:
 
 ## Diagrama de Clases
 Para el desarrollo del sistema se ha diseñado el siguiente diagrama de clases:
-![Eco-Tour-Diagram-Class.jpg](images/Eco-Tour-Diagram-Class.jpg)
+![Eco Tour.jpg](images/Eco%20Tour.jpg)
 
 ## Modulo de Servicios
 - El sistema debe poder crear un servicio turístico
@@ -22,8 +22,11 @@ Para el desarrollo del sistema se ha diseñado el siguiente diagrama de clases:
 - El sistema debe poder gestionar diferentes medios (imágenes, videos) para cada servicio turístico
 - El sistema debe poder gestionar diferentes datos adicionales para cada servicio turístico
 - Hay 3 tipos de servicios turísticos:
-  - `private`
-  - `group`
-  - `arbitrary`
+  - `private` -> total de personas entre el precio del tour de tipo privado 
+  - `group` -> precio por persona en tours de tipo grupal
+  - `arbitrary` -> total de personas al mismo tour entre su precio arbitrario
+- El sistema debe poder sumar de forma dinámica los precios de los servicios turísticos que componen un paquete
+- El sistema debe poder gestionar la suma de dias y horas de los servicios turísticos que componen un paquete
+- El sistema debe poder gestionar los tours de horas, días y múltiples días.
 
 ## Modulo de Reservas

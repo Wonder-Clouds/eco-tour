@@ -5,6 +5,10 @@ from tinymce.models import HTMLField
 import uuid
 from media.models import Media
 
+class DurationUnit(models.TextChoices):
+    HOURS = 'hours', 'Hours'
+    DAYS = 'days', 'Days'
+    WEEKS = 'weeks', 'Weeks'
 
 # Create your models here.
 class Service(SafeDeleteModel):
@@ -18,7 +22,12 @@ class Service(SafeDeleteModel):
 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     title = models.CharField(max_length=255)
-    duration = models.PositiveIntegerField(help_text="Duration in days")
+    duration_value = models.PositiveIntegerField(default=1, help_text="Duration value")
+    duration_unit = models.CharField(
+        max_length=10,
+        choices=DurationUnit.choices,
+        default=DurationUnit.DAYS
+    )
     summary = HTMLField()
     includes = HTMLField()
     excludes = HTMLField()
@@ -33,4 +42,13 @@ class Service(SafeDeleteModel):
 
     def __str__(self):
         return self.title
-    
+
+    @property
+    def duration_in_hours(self) -> int:
+        """Convert duration to hours unit"""
+        if self.duration_unit == DurationUnit.DAYS:
+            return self.duration_value * 24
+        elif self.duration_unit == DurationUnit.WEEKS:
+            return self.duration_value * 24 * 7
+        return self.duration_value
+

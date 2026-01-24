@@ -1,0 +1,23 @@
+meta {
+  name: Add Service To Package
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/add-service/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "service_id": "59e6d9d2-7ee2-49cd-9e2f-0d1accd5ecb1",
+    "order": 8
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

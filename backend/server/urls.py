@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/', include('group.urls')),
     path('api/', include('quote.urls')),
     path('api/', include('service.urls')),
+    path('api/', include('package.urls')),
     path('api/', include('reserve.urls')),
     path('api/', include('supplier.urls')),
     path('api/', include('person.urls')),

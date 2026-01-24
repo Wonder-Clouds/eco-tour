@@ -124,7 +124,8 @@ Este endpoint nos permite crear un _service_, en este nos es necesario pasar los
 ```json
 {
     "title": "Tour 4",
-    "duration": 2,
+    "duration_value": 2,
+    "duration_unit": "days",
     "summary": "Tour 3",
     "includes": "include all",
     "excludes": "excludes all too",
@@ -236,7 +237,8 @@ Este endpoint nos permite crear un _service_ junto con sus _media_, _data_ e _it
 - all-in-one-service: `POST` http://localhost:8000/api/service/all-in-one-service/
 - Body: Form-Data
     - title: Tour Completo
-    - duration: 5
+    - duration_value: 3
+    - duration_unit: days
     - summary: Este es un tour completo con todo incluido
     - includes: Todo incluido
     - excludes: Nada excluido
@@ -270,3 +272,140 @@ Este endpoint nos permite crear un _service_ junto con sus _media_, _data_ e _it
           }
         ]
       ```
+
+## Package
+### Get Package
+Estos endpoints nos permite listar los _package_ ya sea todos o solo uno pasando el id
+- Get Package: http://localhost:8000/api/package/
+- Get Package by Id: http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0
+
+### Post Package
+Este endpoint nos permite crear un _package_, en este nos es necesario pasar los valores de los _services_
+- Post Package: http://localhost:8000/api/package/
+- Body:
+```json
+{
+  "title": "MachiPicchu VIP",
+  "description": "Es el plan VIP de Machu Picchu con varias actividades",
+  "services": [
+    {
+      "service_id": "f10d84ef-a560-4d77-8509-bb0795c1c8b5",
+      "order": 0
+    },
+    {
+      "service_id": "87f6fc21-9f41-42a0-a7b1-12cf4a8e1ad4",
+      "order": 0 
+    },
+    {
+      "service_id": "61f34e3e-00f9-4dd1-bbb2-9bb87bdfe43f",
+      "order": 0 
+    },
+    {
+      "service_id": "7157260c-24d4-4a56-83ed-f9c79862371d",
+      "order": 0 
+    },
+    {
+      "service_id": "3fc5e9c8-a976-43f5-8c89-ff49d27716ec",
+      "order": 0 
+    },
+    {
+      "service_id": "1e4cdb93-fa56-46b8-9803-a3eb848e92af",
+      "order": 0 
+    }
+  ]
+}
+```
+
+### Patch Package
+Este endpoint nos permite actualizar un _package_ pasando solo lo que se desea actualizar o todo el cuerpo.
+- Patch: http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/
+  - Body: 
+```json
+  {
+    "services": [
+      {
+        "service_id": "f10d84ef-a560-4d77-8509-bb0795c1c8b5",
+        "order": 1
+      },
+      {
+        "service_id": "87f6fc21-9f41-42a0-a7b1-12cf4a8e1ad4",
+        "order": 2 
+      },
+      {
+        "service_id": "61f34e3e-00f9-4dd1-bbb2-9bb87bdfe43f",
+        "order": 3
+      },
+      {
+        "service_id": "7157260c-24d4-4a56-83ed-f9c79862371d",
+        "order": 4 
+      },
+      {
+        "service_id": "3fc5e9c8-a976-43f5-8c89-ff49d27716ec",
+        "order": 5 
+      },
+      {
+        "service_id": "1e4cdb93-fa56-46b8-9803-a3eb848e92af",
+        "order": 6 
+      }
+    ]
+  }
+```
+
+### Delete Package
+Este endpoint nos permite eliminar un _package_ pasando el id
+- Delete: http://localhost:8000/api/package/45cd2f9c-57db-4ee3-b5fa-8a801aaac438/
+
+### Action
+#### Add Service
+Este endpoint nos permite pasar por la url el id del _service_ que se quiere relacionar durante la creacion de un _package_
+- add-service: `POST` http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/add-service/
+- Body: 
+```json
+  {
+    "service_id": "f10d84ef-a560-4d77-8509-bb0795c1c8b5",
+    "order": 1
+  }
+```
+
+#### Remove Service
+Este endpoint nos permite eliminar la relación de un _service_ dentro de un _package_ pasando ambos ids por la url
+- remove-service: `DELETE` http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/remove-service/61f34e3e-00f9-4dd1-bbb2-9bb87bdfe43f/
+
+#### Update Service Order
+Este endpoint nos permite actualizar el orden de un _service_ dentro de un _package_ pasando el id del _package_por la url
+- update-service-order: `PATCH` http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/update-order/
+- Body: 
+```json
+{
+  "services": [
+    {
+      "service_id": "f10d84ef-a560-4d77-8509-bb0795c1c8b5",
+      "order": 1
+    },
+    {
+      "service_id": "87f6fc21-9f41-42a0-a7b1-12cf4a8e1ad4",
+      "order": 10 
+    },
+    {
+      "service_id": "61f34e3e-00f9-4dd1-bbb2-9bb87bdfe43f",
+      "order": 5
+    },
+    {
+      "service_id": "7157260c-24d4-4a56-83ed-f9c79862371d",
+      "order": 4 
+    },
+    {
+      "service_id": "3fc5e9c8-a976-43f5-8c89-ff49d27716ec",
+      "order": 12
+    },
+    {
+      "service_id": "1e4cdb93-fa56-46b8-9803-a3eb848e92af",
+      "order": 6 
+    }
+  ]
+} 
+```
+
+#### Detail Duration
+Este endpoint nos permite obtener la duración total del _package_ pasando el id por la url
+- duration: `GET` http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/duration/
