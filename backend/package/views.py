@@ -1,4 +1,5 @@
-from rest_framework import viewsets, status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
@@ -6,6 +7,7 @@ from drf_spectacular.utils import extend_schema
 from uuid import UUID
 
 from shared.pagination import CustomPagination
+from .filters import PackageFilter
 from .models import Package, PackageService
 from .serializers import (
     PackageListSerializer,
@@ -21,6 +23,11 @@ class PackageViewSet(viewsets.ModelViewSet):
         'services', 'package_services', 'package_services__service'
     ).order_by('-created_at')
     pagination_class = CustomPagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = PackageFilter
+    search_fields = ['title', 'description']
+    ordering_fields = ['price', 'total_duration_hours', 'created_at']
+    ordering = ['-created_at']
 
     def get_serializer_class(self):
         if self.action == 'list':

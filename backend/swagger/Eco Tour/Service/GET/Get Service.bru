@@ -5,9 +5,16 @@ meta {
 }
 
 get {
-  url: http://localhost:8000/api/service/
+  url: http://localhost:8000/api/service/?search=Ica&price_min=100&price_max=600000&type=private
   body: none
   auth: inherit
+}
+
+params:query {
+  search: Ica
+  price_min: 100
+  price_max: 600000
+  type: private
 }
 
 settings {

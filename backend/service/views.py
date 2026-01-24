@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, filters
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
@@ -15,6 +16,7 @@ from media.serializers import (
 from itinerary.serializers import BulkCreateItinerarySerializer
 from data.serializers import BulkCreateDataSerializer
 from shared.pagination import CustomPagination
+from .filters import ServiceFilter
 from .models import Service
 from .serializers import ServiceSerializer, ServiceAllInOneSerializer
 
@@ -23,6 +25,11 @@ from .serializers import ServiceSerializer, ServiceAllInOneSerializer
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all()
     pagination_class = CustomPagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = ServiceFilter
+    search_fields = ['title', 'summary']
+    ordering_fields = ['price', 'duration_value', 'created_at']
+    ordering = ['-created_at']
     serializer_class = ServiceSerializer
 
 

@@ -6,7 +6,7 @@ from media.serializers import MediaSerializer
 
 
 class PackageServiceSerializer(serializers.ModelSerializer):
-    service = ServiceSerializer(read_only=True)
+    service = serializers.SerializerMethodField()
     service_id = serializers.PrimaryKeyRelatedField(
         queryset=Service.objects.all(),
         source='service',
@@ -17,6 +17,15 @@ class PackageServiceSerializer(serializers.ModelSerializer):
         model = PackageService
         fields = ['id', 'service', 'service_id', 'order']
 
+    def get_service(self, obj):
+        return {
+            'id': obj.service.id,
+            'title': obj.service.title,
+            'duration_in_hours': obj.service.duration_in_hours,
+            'duration_value': obj.service.duration_value,
+            'duration_unit': obj.service.duration_unit,
+            'price': obj.service.price,
+        }
 
 class PackageServiceCreateSerializer(serializers.Serializer):
     service_id = serializers.UUIDField()
@@ -28,11 +37,12 @@ class PackageListSerializer(serializers.ModelSerializer):
     total_duration_hours = serializers.ReadOnlyField()
     services_count = serializers.SerializerMethodField()
     media = serializers.SerializerMethodField()
+    package_services = PackageServiceSerializer(many=True, read_only=True)
 
     class Meta:
         model = Package
         fields = [
-            'id', 'title', 'description', 'price',
+            'id', 'title', 'description', 'price', 'package_services',
             'total_duration', 'total_duration_hours',
             'services_count', 'media', 'created_at', 'updated_at'
         ]

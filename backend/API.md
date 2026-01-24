@@ -117,6 +117,16 @@ Estos endpoints nos permite listar los _service_ ya sea todos o solo uno pasando
 - Get Service: http://localhost:8000/api/service/
 - Get Service by Id: http://localhost:8000/api/service/3fc5e9c8-a976-43f5-8c89-ff49d27716ec/
 
+### Filters
+- Filtros para _service_ `http://localhost:8000/api/service/?search=Ica&price_min=100&price_max=600000&type=private&duration_min=40&duration_max=1080` que contiene lo siguiente:
+  - `search`: Buscar por título del servicio
+  - `price_min`: Precio mínimo
+  - `price_max`: Precio máximo
+  - `type`: Tipo de servicio (`private`, `group`, `arbitrary`)
+  - `duration_min`: Duración mínima en horas
+  - `duration_max`: Duración máxima en horas
+
+
 ### Post Service
 Este endpoint nos permite crear un _service_, en este nos es necesario pasar los valores de los _media, _data_ y _itinerary_
 - Post Service: http://localhost:8000/api/service/
@@ -278,6 +288,14 @@ Este endpoint nos permite crear un _service_ junto con sus _media_, _data_ e _it
 Estos endpoints nos permite listar los _package_ ya sea todos o solo uno pasando el id
 - Get Package: http://localhost:8000/api/package/
 - Get Package by Id: http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0
+
+### Filters
+- Filtros para _package_ `http://localhost:8000/api/package/?search=Machu&price_min=100&price_max=100060&total_duration_hours_min=24&total_duration_hours_max=144` que contiene lo siguiente:
+  - `search`: Buscar por título del paquete
+  - `price_min`: Precio mínimo
+  - `price_max`: Precio máximo
+  - `total_duration_hours_min`: Duración mínima en horas
+  - `total_duration_hours_max`: Duración máxima en horas
 
 ### Post Package
 Este endpoint nos permite crear un _package_, en este nos es necesario pasar los valores de los _services_
