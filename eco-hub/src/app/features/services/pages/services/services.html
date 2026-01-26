@@ -1,9 +1,0 @@
-<app-header
-  title="SERVICIOS"
-  [onAddClick]="goToAddService.bind(this)"
-></app-header>
-<div class="service-detail-page">
-  @for (service of services; track $index) {
-  <app-service-detail-card [service]="service" />
-  }
-</div>
