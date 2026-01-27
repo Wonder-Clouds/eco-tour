@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
@@ -8,6 +9,7 @@ from .models import Itinerary
 from .serializers import CreateItinerarySerializer, ItinerarySerializer
 
 class ItineraryViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Itinerary.objects.all()
     pagination_class = CustomPagination
     serializer_class = ItinerarySerializer

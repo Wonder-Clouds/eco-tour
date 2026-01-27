@@ -1,5 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
@@ -23,6 +24,7 @@ from .serializers import ServiceSerializer, ServiceAllInOneSerializer
 
 # Create your views here.
 class ServiceViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Service.objects.all()
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]

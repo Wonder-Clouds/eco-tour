@@ -1,11 +1,16 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+from shared.pagination import CustomPagination
 from .models import Quote, ServiceQuotePerson
 from .serializers import QuoteSerializer, SimpleQuoteSerializer, ServiceQuotePersonSerializer
 from .functions import update_service_prices_in_quote
 
 class QuoteViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
     queryset = Quote.objects.all()
     serializer_class = QuoteSerializer
 

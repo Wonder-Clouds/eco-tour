@@ -1,4 +1,41 @@
 # Eco Tour - API Documentación
+
+## Autenticación
+La API utiliza autenticación basada en tokens. Para obtener un token, envía una solicitud POST al siguiente endpoint con las credenciales de usuario:
+### Get Token
+Para este endpoint se debe enviar las credenciales de un usuario ya creado en el sistema para obtener el token de autenticación.
+- token: `POST` http://localhost:8000/api/token/
+- Body: 
+```json
+{
+  "username": "tu_usuario",
+  "password": "tu_contraseña"
+}
+```
+### Refresh Token
+Para este endpoint se debe enviar el token de refresco obtenido en el paso anterior para obtener un nuevo token de acceso.
+- refresh: `POST` http://localhost:8000/api/token//refresh/
+- Body:
+```json
+{
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MDE1NTY0NywiaWF0IjoxNzY5NTUwODQ3LCJqdGkiOiJkZmMzMDJkYmVkNTA0OGI2YThkZDMxZWQxOTYxOTJjMCIsInVzZXJfaWQiOiIxIn0.2Rt54pNB8HojbXQf9j8ZjBZFVsvrf2THaGgBplIvEu0"
+}
+```
+
+### Verify Token
+Para este endpoint se debe enviar el token de acceso para verificar su validez.
+- verify: `POST` http://localhost:8000/api/token//verify/
+- Body:
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NTU0NDQ3LCJpYXQiOjE3Njk1NTA4NDcsImp0aSI6IjYzY2YyZGI3LWY0ZTItNDI3Yi1iZjhiLTU3ZGI3Y2E3Y2E0NyIsInVzZXJfaWQiOiIxIn0.o8kVbX1jz4Z8KX1F1Z5xX9ZkY1j3QF1Z5xX9ZkY1j3QF1Z5xX9ZkY1j3QF1Z5xX9ZkY1j3QF1Z5xX9ZkY"
+}
+```
+
+>A partir de ahora todos los endpoints requieren el token de acceso en el encabezado de autorización:
+> Authorization: Bearer <tu_token_de_acceso>
+> Reemplaza <tu_token_de_acceso> con el token obtenido en el paso de autenticación.
+
 ## Itinerary
 
 ### Get Itinerary

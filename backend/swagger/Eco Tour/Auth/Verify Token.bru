@@ -1,0 +1,22 @@
+meta {
+  name: Verify Token
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://127.0.0.1:8000/api/token/verify/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NTU0NjA1LCJpYXQiOjE3Njk1NTEwMDUsImp0aSI6ImY5YjBmMGU2ODlmNjRkMTNhOTY3ZGNlZDgwZGUzZTEyIiwidXNlcl9pZCI6IjEifQ.-lCUUVnh8z0tsE0SQ1KREmECXOaXJydvWCKfmX0kARE"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

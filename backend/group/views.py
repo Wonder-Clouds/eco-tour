@@ -1,12 +1,16 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from person.serializers import AddPersonSerializer
+from shared.pagination import CustomPagination
 from .serializers import GroupSerializer
 from .models import Group
 
 class GroupViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Group.objects.all()
+    pagination_class = CustomPagination
     serializer_class = GroupSerializer
     
     @action(detail=True, methods=['post'], url_path='add-person')
