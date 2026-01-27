@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -11,6 +12,7 @@ from shared.pagination import CustomPagination
 
 # Create your views here.
 class ExpenseViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Expense.objects.all()
     pagination_class = CustomPagination
     serializer_class = ExpenseSerializer

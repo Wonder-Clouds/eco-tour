@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status   
 from quote.models import Quote
@@ -10,6 +11,7 @@ from .serializers import ReserveSerializer
 
 # Create your views here.
 class ReserveViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Reserve.objects.all()
     pagination_class = CustomPagination
     serializer_class = ReserveSerializer
