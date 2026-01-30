@@ -14,7 +14,8 @@ from .serializers import (
     PackageListSerializer,
     PackageDetailSerializer,
     PackageCreateSerializer,
-    PackageServiceCreateSerializer
+    PackageServiceCreateSerializer,
+    PackageSummarySerializer
 )
 from service.models import Service
 
@@ -150,3 +151,25 @@ class PackageViewSet(viewsets.ModelViewSet):
                 for ps in package.package_services.select_related('service').all()
             ]
         })
+
+    @extend_schema(responses={200: PackageSummarySerializer(many=True)})
+    @action(detail=False, methods=['get'], url_path='summary')
+    def summary(self, request):
+        """
+        Get package summary list with:
+        - id
+        - title
+        - description
+        - price
+        - services_count (total number of services)
+        - total_duration (total duration in days)
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = PackageSummarySerializer(page, many=True, context={'request': request})
+            return self.get_paginated_response(serializer.data)
+
+        serializer = PackageSummarySerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)

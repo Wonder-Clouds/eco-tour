@@ -110,3 +110,36 @@ class PackageCreateSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return PackageDetailSerializer(instance).data
+
+
+class PackageSummarySerializer(serializers.ModelSerializer):
+    """Serializer para listar paquetes con campos resumidos"""
+    services_count = serializers.SerializerMethodField()
+    total_duration = serializers.SerializerMethodField()
+    price = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Package
+        fields = ['id', 'title', 'description', 'price', 'services_count', 'total_duration']
+
+    def get_services_count(self, obj):
+        """Retorna el número total de servicios en el paquete"""
+        return obj.services.count()
+
+    def get_total_duration(self, obj):
+        """Retorna la duración total del paquete en días"""
+        total_hours = sum(
+            service.duration_in_hours for service in obj.services.all()
+        )
+        days = total_hours // 24
+        remaining_hours = total_hours % 24
+
+        if days > 0 and remaining_hours > 0:
+            return f"{days} día{'s' if days != 1 else ''}, {remaining_hours} hora{'s' if remaining_hours != 1 else ''}"
+        elif days > 0:
+            return f"{days} día{'s' if days != 1 else ''}"
+        elif remaining_hours > 0:
+            return f"{remaining_hours} hora{'s' if remaining_hours != 1 else ''}"
+        return "0 horas"
+
+
