@@ -279,6 +279,17 @@ Este endpoint nos permite seleccionar una imagen ya subida y ponerla como portad
 - set-cover: `PATCH` http://localhost:8000/api/service/f10d84ef-a560-4d77-8509-bb0795c1c8b5/set-cover/9c99173c-a927-4fff-9603-9cbb2e97fcfe/
 - Body: Vacío
 
+### Get Summary Service
+Este endpoint nos permite obtener un resumen de todos los _service_ con los siguientes campos:
+- Get Summary Service: http://localhost:8000/api/service/summary/
+- Campos:
+  - id
+  - title
+  - price
+  - type
+  - duration (Suma de duration_value y duration_unit)
+  - cover (URL de la imagen de portada si existe)
+
 #### All In One Service
 Este endpoint nos permite crear un _service_ junto con sus _media_, _data_ e _itinerary_ en una sola petición.
 - all-in-one-service: `POST` http://localhost:8000/api/service/all-in-one-service/
@@ -464,3 +475,14 @@ Este endpoint nos permite actualizar el orden de un _service_ dentro de un _pack
 #### Detail Duration
 Este endpoint nos permite obtener la duración total del _package_ pasando el id por la url
 - duration: `GET` http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/duration/
+
+#### Package Summary
+Este endpoint nos permite obtener un resumen de todos los _package_ con los siguientes campos:
+- Get Package Summary: http://localhost:8000/api/package/summary/
+- Campos: 
+  - id
+  - title
+  - description
+  - price
+  - services_count (Número total de servicios en el paquete)
+  - total_duration (Duración total del paquete en días)
