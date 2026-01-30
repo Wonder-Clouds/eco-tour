@@ -1,7 +1,7 @@
 import { Link, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useAuth } from '@/features/auth/hooks/useAuth'
-import { Home, Map, LogOut, Menu, X } from 'lucide-react'
+import { Home, Map, Package, LogOut, Menu, X } from 'lucide-react'
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -75,6 +75,15 @@ export default function Sidebar() {
             >
               <Map size={22} />
               {isOpen && <span className="font-semibold text-base">Servicios</span>}
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/packages"
+              className={`sidebar-link ${isActive('/packages') ? 'sidebar-link-active' : ''} ${!isOpen ? 'justify-center' : ''}`}
+            >
+              <Package size={22} />
+              {isOpen && <span className="font-semibold text-base">Paquetes</span>}
             </Link>
           </li>
         </ul>
