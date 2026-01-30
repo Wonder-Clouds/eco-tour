@@ -1,9 +1,9 @@
-// src/features/services/components/cells/ActionsCell.tsx
 import { Link } from '@tanstack/react-router';
-import { Service } from '@/types/service.type';
+import { SummaryService } from '@/types/service.type';
+import { Eye, Pencil, Trash2 } from 'lucide-react';
 
 interface Props {
-  service: Service;
+  service: SummaryService;
 }
 
 export const ActionsCell = ({ service }: Props) => {
@@ -12,17 +12,28 @@ export const ActionsCell = ({ service }: Props) => {
       <Link
         to="/services/$id"
         params={{ id: service.id }}
-        className="text-blue-600 hover:underline"
+        className="p-2 rounded-lg transition hover:bg-gray-100"
+        style={{ color: '#00932c' }}
+        title="Ver"
       >
-        Ver
+        <Eye size={18} />
       </Link>
       <Link
-        to="/services/$id/edit"
-        params={{ id: service.id }}
-        className="text-green-600 hover:underline"
+        to="."
+        className="p-2 rounded-lg transition hover:bg-gray-100"
+        style={{ color: '#eab308' }}
+        title="Editar"
       >
-        Editar
+        <Pencil size={18} />
       </Link>
+      <button
+        className="p-2 rounded-lg transition hover:bg-red-50"
+        style={{ color: '#dc2626' }}
+        title="Eliminar"
+        onClick={() => console.log('Eliminar', service.id)}
+      >
+        <Trash2 size={18} />
+      </button>
     </div>
   );
 };

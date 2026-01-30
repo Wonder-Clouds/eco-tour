@@ -4,6 +4,8 @@ export interface Media {
   description: string
   type_media: string
   file: string
-  url: string
+  url?: string | null
   is_cover: boolean
+  created_at?: string
+  updated_at?: string
 }

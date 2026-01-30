@@ -30,10 +30,31 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-pfg@8zgf@e_#m4rcpf1
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+CORS_ALLOW_CREDENTIALS = True
 
-ALLOWED_HOSTS = []
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+
 
 # Application definition
 

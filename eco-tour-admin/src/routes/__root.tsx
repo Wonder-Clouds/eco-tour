@@ -1,9 +1,17 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
+import React from 'react'
+import {
+  HeadContent,
+  Scripts,
+  createRootRoute,
+  Navigate,
+  Outlet,
+  useRouter,
+} from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import Header from '../components/Header'
+import Sidebar from '../components/Sidebar'
+import { useAuth } from '@/features/auth/hooks/useAuth'
 
 import appCss from '../styles.css?url'
 
@@ -42,22 +50,58 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          <Header />
-          {children}
+          <RootLayout>{children}</RootLayout>
         </QueryClientProvider>
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
         <Scripts />
       </body>
     </html>
+  )
+}
+
+function RootLayout({ children }: { children: React.ReactNode }) {
+  const [isMounted, setIsMounted] = React.useState(false)
+  const { isAuthenticated, isLoading } = useAuth()
+  const router = useRouter()
+  const isLoginPage = router.state.location.pathname === '/login'
+
+  React.useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Durante SSR, mostrar loading
+  if (!isMounted) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Cargando...
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Cargando...
+      </div>
+    )
+  }
+
+  if (!isAuthenticated && !isLoginPage) {
+    return <Navigate to="/login" />
+  }
+
+  if (isLoginPage) {
+    return children
+  }
+
+  return (
+    <div className="flex h-screen">
+      <Sidebar />
+      <div className="flex-1 flex flex-col">
+        <Header />
+        <main className="flex-1 overflow-auto">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   )
 }

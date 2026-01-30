@@ -52,6 +52,19 @@ code {
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.871 0.006 286.286);
+
+  /* Eco Tour - Forest Green Colors */
+  --color-forest-green-50: #edfff2;
+  --color-forest-green-100: #d6ffe2;
+  --color-forest-green-200: #afffc6;
+  --color-forest-green-300: #71ff9b;
+  --color-forest-green-400: #2dfb69;
+  --color-forest-green-500: #02e545;
+  --color-forest-green-600: #00bf35;
+  --color-forest-green-700: #00932c;
+  --color-forest-green-800: #067528;
+  --color-forest-green-900: #085f24;
+  --color-forest-green-950: #003611;
 }
 
 .dark {
@@ -133,6 +146,35 @@ code {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: #fafafa;
   }
 }
+
+/* Sidebar Navigation Styles */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  background-color: transparent;
+  color: #374151;
+}
+
+.sidebar-link:hover {
+  background-color: #afffc6 !important;
+  color: #085f24 !important;
+}
+
+.sidebar-link-active {
+  background-color: #00bf35 !important;
+  color: #ffffff !important;
+}
+
+.sidebar-link-active:hover {
+  background-color: #00932c !important;
+  color: #ffffff !important;
+}
+
