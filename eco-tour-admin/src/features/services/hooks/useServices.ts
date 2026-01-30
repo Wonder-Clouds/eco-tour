@@ -1,11 +1,11 @@
 // src/features/services/hooks/useServices.ts
 import { useQuery } from '@tanstack/react-query'
-import { getServices } from '../api/servicesApi'
+import { getServices, ServiceFilters } from '../api/servicesApi'
 
-export const useServices = () => {
+export const useServices = (filters?: ServiceFilters) => {
   return useQuery({
-    queryKey: ['services'],
-    queryFn: () => getServices(),
+    queryKey: ['services', filters],
+    queryFn: () => getServices(filters),
     staleTime: 5 * 60 * 1000,
   })
 }

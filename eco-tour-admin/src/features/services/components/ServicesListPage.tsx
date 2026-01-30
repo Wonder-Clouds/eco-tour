@@ -5,11 +5,13 @@ import { useService } from '../hooks/useService';
 import { Plus } from 'lucide-react';
 import { CreateServiceModal } from './CreateServiceModal';
 import { EditServiceModal } from './EditServiceModal';
-import { deleteService } from '../api/servicesApi';
+import { ServiceFiltersComponent } from './ServiceFilters';
+import { deleteService, ServiceFilters } from '../api/servicesApi';
 import { useQueryClient } from '@tanstack/react-query';
 
 export const ServicesListPage = () => {
-  const { data, isLoading, error } = useServices();
+  const [filters, setFilters] = useState<ServiceFilters>({});
+  const { data, isLoading, error } = useServices(filters);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -38,14 +40,6 @@ export const ServicesListPage = () => {
   const handleCloseEditModal = () => {
     setEditingServiceId(null);
   };
-
-  if (isLoading) {
-    return (
-      <div className="p-8 flex items-center justify-center" style={{ backgroundColor: '#fafafa', minHeight: '100%' }}>
-        <p style={{ color: '#00932c' }}>Cargando servicios...</p>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -88,12 +82,25 @@ export const ServicesListPage = () => {
         </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <ServicesTable
-          data={data || []}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+      <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
+        {/* Filtros */}
+        <ServiceFiltersComponent
+          filters={filters}
+          onFiltersChange={setFilters}
         />
+
+        {/* Tabla */}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <p style={{ color: '#00932c' }}>Cargando servicios...</p>
+          </div>
+        ) : (
+          <ServicesTable
+            data={data || []}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        )}
       </div>
 
       <CreateServiceModal
