@@ -1,10 +1,43 @@
+import { useState } from 'react';
 import { ServicesTable } from '../components/ServicesTable';
-import { Link } from '@tanstack/react-router';
 import { useServices } from '../hooks/useServices';
+import { useService } from '../hooks/useService';
 import { Plus } from 'lucide-react';
+import { CreateServiceModal } from './CreateServiceModal';
+import { EditServiceModal } from './EditServiceModal';
+import { deleteService } from '../api/servicesApi';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const ServicesListPage = () => {
   const { data, isLoading, error } = useServices();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  // Cargar el servicio completo cuando se quiere editar
+  const { data: editingService } = useService(editingServiceId || '', {
+    enabled: !!editingServiceId,
+  });
+
+  const handleEdit = (serviceId: string) => {
+    setEditingServiceId(serviceId);
+  };
+
+  const handleDelete = async (serviceId: string) => {
+    if (confirm('¿Estás seguro de eliminar este servicio? Esta acción no se puede deshacer.')) {
+      try {
+        await deleteService(serviceId);
+        queryClient.invalidateQueries({ queryKey: ['services'] });
+      } catch (error) {
+        console.error('Error al eliminar servicio:', error);
+        alert('Error al eliminar el servicio');
+      }
+    }
+  };
+
+  const handleCloseEditModal = () => {
+    setEditingServiceId(null);
+  };
 
   if (isLoading) {
     return (
@@ -36,8 +69,8 @@ export const ServicesListPage = () => {
             Gestiona los servicios disponibles
           </p>
         </div>
-        <Link
-          to='.'
+        <button
+          onClick={() => setIsCreateModalOpen(true)}
           className="flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium"
           style={{
             backgroundColor: '#00bf35',
@@ -52,12 +85,29 @@ export const ServicesListPage = () => {
         >
           <Plus size={20} />
           Crear Servicio
-        </Link>
+        </button>
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-6">
-        <ServicesTable data={data || []} />
+        <ServicesTable
+          data={data || []}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       </div>
+
+      <CreateServiceModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
+
+      {editingService && (
+        <EditServiceModal
+          isOpen={!!editingServiceId}
+          onClose={handleCloseEditModal}
+          service={editingService}
+        />
+      )}
     </div>
   );
 };

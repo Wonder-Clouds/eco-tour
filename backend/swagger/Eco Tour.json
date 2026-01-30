@@ -1,0 +1,4053 @@
+{
+  "name": "Eco Tour",
+  "version": "1",
+  "items": [
+    {
+      "type": "folder",
+      "name": "Auth",
+      "filename": "Auth",
+      "examples": [],
+      "root": {
+        "request": {
+          "auth": {
+            "mode": "inherit"
+          }
+        },
+        "meta": {
+          "name": "Auth"
+        }
+      },
+      "items": [
+        {
+          "type": "http",
+          "name": "Get Token",
+          "filename": "Get Token.bru",
+          "seq": 1,
+          "settings": {
+            "encodeUrl": true,
+            "timeout": 0
+          },
+          "tags": [],
+          "examples": [],
+          "request": {
+            "url": "http://127.0.0.1:8000/api/token/",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"username\": \"monchi789\",\n  \"password\": \"1234\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Refresh Token",
+          "filename": "Refresh Token.bru",
+          "seq": 2,
+          "settings": {
+            "encodeUrl": true,
+            "timeout": 0
+          },
+          "tags": [],
+          "examples": [],
+          "request": {
+            "url": "http://127.0.0.1:8000/api/token/refresh/",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MDMyMzc2NSwiaWF0IjoxNzY5NzE4OTY1LCJqdGkiOiJiMDg3ZDM4YWQ0MDU0NmI1YTIyYzFkYzlkY2Q1Nzc0MyIsInVzZXJfaWQiOiIxIn0.FLoOsDYA38yNcrIyrgrhkKfWe2O8LWEJADjNNRXQ2ZM\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Verify Token",
+          "filename": "Verify Token.bru",
+          "seq": 3,
+          "settings": {
+            "encodeUrl": true,
+            "timeout": 0
+          },
+          "tags": [],
+          "examples": [],
+          "request": {
+            "url": "http://127.0.0.1:8000/api/token/verify/",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NTU0NjA1LCJpYXQiOjE3Njk1NTEwMDUsImp0aSI6ImY5YjBmMGU2ODlmNjRkMTNhOTY3ZGNlZDgwZGUzZTEyIiwidXNlcl9pZCI6IjEifQ.-lCUUVnh8z0tsE0SQ1KREmECXOaXJydvWCKfmX0kARE\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Data",
+      "filename": "Data",
+      "seq": 3,
+      "examples": [],
+      "root": {
+        "request": {
+          "auth": {
+            "mode": "inherit"
+          }
+        },
+        "meta": {
+          "name": "Data",
+          "seq": 3
+        }
+      },
+      "items": [
+        {
+          "type": "folder",
+          "name": "ACTION",
+          "filename": "ACTION",
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "ACTION"
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Create Data",
+              "filename": "Create Data.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/data/f10d84ef-a560-4d77-8509-bb0795c1c8b5/add-data/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"title\": \"Data 5\",\n    \"description\": \"Esta es la data 5\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "DELETE",
+          "filename": "DELETE",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Delete Data",
+              "filename": "Delete Data.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/data/82dd975d-e723-43f9-aeed-0379f811bfe5/",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "text",
+                  "text": "{\n    \"title\": \"Data 1\",\n    \"description\": \"Esta es la data 1\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch Data",
+              "filename": "Patch Data.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/data/4913a1f3-ad65-430a-b843-29262625dfb3/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n \"title\": \"Data 10\",\n  \"description\": \"Esta es la data 10\"\n  \n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Get Data by Id",
+              "filename": "Get Data by Id.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/data/632fb9c9-1e72-41a2-85a5-1918186c4f79",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "text": "{\n    \"title\": \"Data 1\",\n    \"description\": \"Esta es la data 1\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NTU0NjA1LCJpYXQiOjE3Njk1NTEwMDUsImp0aSI6ImY5YjBmMGU2ODlmNjRkMTNhOTY3ZGNlZDgwZGUzZTEyIiwidXNlcl9pZCI6IjEifQ.-lCUUVnh8z0tsE0SQ1KREmECXOaXJydvWCKfmX0kARE"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Data",
+              "filename": "Get Data.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/data/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NTU0NjA1LCJpYXQiOjE3Njk1NTEwMDUsImp0aSI6ImY5YjBmMGU2ODlmNjRkMTNhOTY3ZGNlZDgwZGUzZTEyIiwidXNlcl9pZCI6IjEifQ.-lCUUVnh8z0tsE0SQ1KREmECXOaXJydvWCKfmX0kARE"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "POST",
+          "filename": "POST",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Post Data",
+              "filename": "Post Data.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/data/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"title\": \"Data 5\",\n    \"description\": \"Esta es la data 5\",\n    \"service\": \"f10d84ef-a560-4d77-8509-bb0795c1c8b5\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Expense",
+      "filename": "Expense",
+      "examples": [],
+      "items": [
+        {
+          "type": "folder",
+          "name": "ACTION",
+          "filename": "ACTION",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Create Expense",
+              "filename": "Create Expense.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/expense/d77b5766-7253-4490-828c-f53e873cfa18/create-expense/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"description\": \"Expense by ticket of bus\",\n    \"amount\": 20.45,\n    \"currency\": \"PEN\",\n    \"paid\": false,\n    \"date_incurred\": \"2025-10-11\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "DELETE",
+          "filename": "DELETE",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Delete Expense",
+              "filename": "Delete Expense.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/expense/8844349c-4207-43c5-ac8d-6cf8a28161e3/",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch Expense",
+              "filename": "Patch Expense.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/expense/54311eb1-f06a-4319-81ed-1004735c46f7/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n \"group\": \"4f09fb30-9c00-4149-85fa-c27310d837fd\"   \n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Get Expense by Id",
+              "filename": "Get Expense by Id.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/expense/54311eb1-f06a-4319-81ed-1004735c46f7/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Expense",
+              "filename": "Get Expense.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/expense/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Group",
+      "filename": "Group",
+      "examples": [],
+      "items": [
+        {
+          "type": "folder",
+          "name": "ACTION",
+          "filename": "ACTION",
+          "seq": 1,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "ACTION",
+              "seq": 1
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Add Person to Group",
+              "filename": "Add Person to Group.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/group/01904cd2-aa5a-413f-ace6-81a16961d8cd/add-person/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"person_id\": \"4d3227ce-ba6f-4396-8c41-f910f693acc3\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "DELETE",
+          "filename": "DELETE",
+          "seq": 2,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "DELETE",
+              "seq": 2
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Delete Group",
+              "filename": "Delete Group.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/group/f0295867-277a-4a48-846a-e703159ab286/",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "text",
+                  "text": "{\n    \"total_people\": 14\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "seq": 3,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "GET",
+              "seq": 3
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Get Group by Id",
+              "filename": "Get Group by Id.bru",
+              "seq": 3,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/group/fca3cb7e-b1c5-422c-b4b3-986a2242393e",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "text",
+                  "text": "{\n    \"name\": \"Group-0003\",\n    \"description\": \"Es el grupo 3\",\n    \"contact_info\": \"Perez Martinez - 988678799\",\n    \"total_people\": 5\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Group",
+              "filename": "Get Group.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/group/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "seq": 4,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "PATCH",
+              "seq": 4
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch Group",
+              "filename": "Patch Group.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/group/d77b5766-7253-4490-828c-f53e873cfa18/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"total_people\": 14\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "POST",
+          "filename": "POST",
+          "seq": 5,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "POST",
+              "seq": 5
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Create Group",
+              "filename": "Create Group.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/group/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"name\": \"Group-Nuevo\",\n    \"description\": \"Es el grupo 5\",\n    \"contact_info\": \"Perez Martinez - 988678799\",\n    \"total_people\": 5\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Itinerary",
+      "filename": "Itinerary",
+      "examples": [],
+      "root": {
+        "request": {
+          "auth": {
+            "mode": "inherit"
+          }
+        },
+        "docs": "# Itinerary\n\n## Get Itinerary\nEstos endpoints nos permite listar los __itinerary__ ya sea todos o solo uno pasando el id\n  - Get Itinerary: http://localhost:8000/api/itinerary/\n  - Get Itinerary by Id: http://localhost:8000/api/itinerary/d7082bc8-c3a2-4e15-b315-73638b7fb9af\n\n## Post Itinerary\nEste endpoint nos permite crear un __itinerary__ pasando en el cuerpo el id del __service__\n  - Post Itinerary: http://localhost:8000/api/itinerary/9dbc92c2-94aa-40ed-9f16-77f4a091d633/\n      - Body:\n          ```json\n            {\n              \"title\": \"Salida a comer HeladoO\",\n              \"description\": \"Salimos a comer helado\",\n              \"service\": \"f10d84ef-a560-4d77-8509-bb0795c1c8b5\"\n            }\n          ```\n\n## Patch Itinerary\nEste endpoint nos permite hacer actualizar un __itinerary__ pasando solo lo que se desea actualizar o todo el cuerpo.\n  - Patch: http://localhost:8000/api/itinerary/787245ce-db27-4bef-a834-7ad1a2294d70/\n    - Body:\n        ```json\n          {\n            \"title\": \"Salida a comer Parrilla\"\n          }\n        ```\n\n## Delete Itinerary\nEste endopoint nos permite eliminar un __itinerary__ pasando el id\n  - Delete: http://localhost:8000/api/itinerary/9dbc92c2-94aa-40ed-9f16-77f4a091d633/\n  \n## Action\n### Add Itinerary\nEste endpoint nos permite pasar por la url el id del servicio al cual se quiere relacionar durante la creacion de un __service__\n  - add-itinerary: http://localhost:8000/api/itinerary/f10d84ef-a560-4d77-8509-bb0795c1c8b5/add-itinerary/\n  - Body: \n    ```json\n      {\n        \"title\": \"Salida al Parque,\n        \"description\": \"Salimos a comer helado\"  \n      }\n    ```",
+        "meta": {
+          "name": "Itinerary"
+        }
+      },
+      "items": [
+        {
+          "type": "folder",
+          "name": "ACTION",
+          "filename": "ACTION",
+          "seq": 2,
+          "examples": [],
+          "root": {
+            "request": {
+              "auth": {
+                "mode": "inherit"
+              }
+            },
+            "meta": {
+              "name": "ACTION",
+              "seq": 2
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Add Itinerary to a Service",
+              "filename": "Add Itinerary to a Service.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/itinerary/f10d84ef-a560-4d77-8509-bb0795c1c8b5/add-itinerary/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"title\": \"Salida a comer Helado 2\",\n  \"description\": \"Salimos a comer helado\"\n}\n",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "DELETE",
+          "filename": "DELETE",
+          "seq": 4,
+          "examples": [],
+          "root": {
+            "request": {
+              "auth": {
+                "mode": "inherit"
+              }
+            },
+            "meta": {
+              "name": "DELETE",
+              "seq": 4
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Delete Itinerary",
+              "filename": "Delete Itinerary.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/itinerary/393a75bd-04ea-4250-a57a-634384be9fb8/",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "examples": [],
+          "root": {
+            "request": {
+              "auth": {
+                "mode": "inherit"
+              }
+            },
+            "meta": {
+              "name": "GET"
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Get Itinerary by Id",
+              "filename": "Get Itinerary by Id.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/itinerary/d7082bc8-c3a2-4e15-b315-73638b7fb9af",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Itinerary",
+              "filename": "Get Itinerary.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/itinerary/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "examples": [],
+          "root": {
+            "request": {
+              "auth": {
+                "mode": "inherit"
+              }
+            },
+            "docs": "En esta carpeta los metodos Patch",
+            "meta": {
+              "name": "PATCH"
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch Itinerary",
+              "filename": "Patch Itinerary.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/itinerary/787245ce-db27-4bef-a834-7ad1a2294d70/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"title\":\"Salida a comer Papitas\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "POST",
+          "filename": "POST",
+          "seq": 3,
+          "examples": [],
+          "root": {
+            "request": {
+              "auth": {
+                "mode": "inherit"
+              }
+            },
+            "meta": {
+              "name": "POST",
+              "seq": 3
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Post Itinerary",
+              "filename": "Post Itinerary.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/itinerary/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"title\": \"Salida a comer HeladoO\",\n  \"description\": \"Salimos a comer helado\",\n  \"service\": \"f10d84ef-a560-4d77-8509-bb0795c1c8b5\"\n}\n",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Media",
+      "filename": "Media",
+      "seq": 2,
+      "examples": [],
+      "root": {
+        "request": {
+          "auth": {
+            "mode": "inherit"
+          }
+        },
+        "meta": {
+          "name": "Media",
+          "seq": 2
+        }
+      },
+      "items": [
+        {
+          "type": "folder",
+          "name": "DELETE",
+          "filename": "DELETE",
+          "seq": 2,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "DELETE",
+              "seq": 2
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Delete Media",
+              "filename": "Delete Media.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/media/f7d12568-ac0a-4087-adb4-5ff6cf277c3b/",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "seq": 1,
+          "examples": [],
+          "root": {
+            "request": {
+              "auth": {
+                "mode": "inherit"
+              }
+            },
+            "meta": {
+              "name": "GET",
+              "seq": 1
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Get Media by Id",
+              "filename": "Get Media by Id.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/media/311d6136-ffe2-4e17-b09a-535cc1880732/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "text",
+                  "text": "{\n    \"title\": \"Data 1\",\n    \"description\": \"Esta es la data 1\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Media",
+              "filename": "Get Media.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/media/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "text",
+                  "text": "{\n    \"title\": \"Data 1\",\n    \"description\": \"Esta es la data 1\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "seq": 3,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "PATCH",
+              "seq": 3
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch Media",
+              "filename": "Patch Media.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/media/311d6136-ffe2-4e17-b09a-535cc1880732/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"title\": \"Imagen del tour a Cocalmayo\",\n  \"description\": \"Es una imagen de Cocalmayo\"\n}\n",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Package",
+      "filename": "Package",
+      "seq": 13,
+      "examples": [],
+      "root": {
+        "request": {
+          "auth": {
+            "mode": "inherit"
+          }
+        },
+        "meta": {
+          "name": "Package",
+          "seq": 13
+        }
+      },
+      "items": [
+        {
+          "type": "folder",
+          "name": "ACTION",
+          "filename": "ACTION",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Add Service To Package",
+              "filename": "Add Service To Package.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/add-service/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"service_id\": \"59e6d9d2-7ee2-49cd-9e2f-0d1accd5ecb1\",\n  \"order\": 8\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Detail Duration Package",
+              "filename": "Detail Duration Package.bru",
+              "seq": 4,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/duration/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Remove Service Of Package",
+              "filename": "Remove Service Of Package.bru",
+              "seq": 2,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/remove-service/61f34e3e-00f9-4dd1-bbb2-9bb87bdfe43f/",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Update Service Order",
+              "filename": "Update Service Order.bru",
+              "seq": 3,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/update-order/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"services\": [\n    {\n      \"service_id\": \"f10d84ef-a560-4d77-8509-bb0795c1c8b5\",\n      \"order\": 1\n    },\n    {\n      \"service_id\": \"87f6fc21-9f41-42a0-a7b1-12cf4a8e1ad4\",\n      \"order\": 10 \n    },\n    {\n      \"service_id\": \"61f34e3e-00f9-4dd1-bbb2-9bb87bdfe43f\",\n      \"order\": 5\n    },\n    {\n      \"service_id\": \"7157260c-24d4-4a56-83ed-f9c79862371d\",\n      \"order\": 4 \n    },\n    {\n      \"service_id\": \"3fc5e9c8-a976-43f5-8c89-ff49d27716ec\",\n      \"order\": 12\n    },\n    {\n      \"service_id\": \"1e4cdb93-fa56-46b8-9803-a3eb848e92af\",\n      \"order\": 6 \n    }\n  ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "DELETE",
+          "filename": "DELETE",
+          "seq": 2,
+          "examples": [],
+          "root": {
+            "request": {
+              "auth": {
+                "mode": "inherit"
+              }
+            },
+            "meta": {
+              "name": "DELETE",
+              "seq": 2
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Delete Package",
+              "filename": "Delete Package.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/package/45cd2f9c-57db-4ee3-b5fa-8a801aaac438/",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch Package",
+              "filename": "Patch Package.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"services\": [\n    {\n      \"service_id\": \"f10d84ef-a560-4d77-8509-bb0795c1c8b5\",\n      \"order\": 1\n    },\n    {\n      \"service_id\": \"87f6fc21-9f41-42a0-a7b1-12cf4a8e1ad4\",\n      \"order\": 2 \n    },\n    {\n      \"service_id\": \"61f34e3e-00f9-4dd1-bbb2-9bb87bdfe43f\",\n      \"order\": 3\n    },\n    {\n      \"service_id\": \"7157260c-24d4-4a56-83ed-f9c79862371d\",\n      \"order\": 4 \n    },\n    {\n      \"service_id\": \"3fc5e9c8-a976-43f5-8c89-ff49d27716ec\",\n      \"order\": 5 \n    },\n    {\n      \"service_id\": \"1e4cdb93-fa56-46b8-9803-a3eb848e92af\",\n      \"order\": 6 \n    }\n  ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "seq": 1,
+          "examples": [],
+          "root": {
+            "request": {
+              "auth": {
+                "mode": "inherit"
+              }
+            },
+            "meta": {
+              "name": "GET",
+              "seq": 1
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Get Package by Id",
+              "filename": "Get Package by Id.bru",
+              "seq": 2,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/package/98ba4761-a967-4ffb-a4e6-38c725af24c0",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Package",
+              "filename": "Get Package.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/package/?search=Machu&price_min=100&price_max=100060&total_duration_hours_min=24&total_duration_hours_max=144",
+                "method": "GET",
+                "headers": [],
+                "params": [
+                  {
+                    "name": "search",
+                    "value": "Machu",
+                    "type": "query",
+                    "enabled": true
+                  },
+                  {
+                    "name": "price_min",
+                    "value": "100",
+                    "type": "query",
+                    "enabled": true
+                  },
+                  {
+                    "name": "price_max",
+                    "value": "100060",
+                    "type": "query",
+                    "enabled": true
+                  },
+                  {
+                    "name": "total_duration_hours_min",
+                    "value": "24",
+                    "type": "query",
+                    "enabled": true
+                  },
+                  {
+                    "name": "total_duration_hours_max",
+                    "value": "144",
+                    "type": "query",
+                    "enabled": true
+                  }
+                ],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "POST",
+          "filename": "POST",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Post Package",
+              "filename": "Post Package.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/package/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"title\": \"MachiPicchu VIP\",\n  \"description\": \"Es el plan VIP de Machu Picchu con varias actividades\",\n  \"services\": [\n    {\n      \"service_id\": \"f10d84ef-a560-4d77-8509-bb0795c1c8b5\",\n      \"order\": 0\n    },\n    {\n      \"service_id\": \"87f6fc21-9f41-42a0-a7b1-12cf4a8e1ad4\",\n      \"order\": 0 \n    },\n    {\n      \"service_id\": \"61f34e3e-00f9-4dd1-bbb2-9bb87bdfe43f\",\n      \"order\": 0 \n    },\n    {\n      \"service_id\": \"7157260c-24d4-4a56-83ed-f9c79862371d\",\n      \"order\": 0 \n    },\n    {\n      \"service_id\": \"3fc5e9c8-a976-43f5-8c89-ff49d27716ec\",\n      \"order\": 0 \n    },\n    {\n      \"service_id\": \"1e4cdb93-fa56-46b8-9803-a3eb848e92af\",\n      \"order\": 0 \n    }\n  ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Pay",
+      "filename": "Pay",
+      "examples": [],
+      "items": [
+        {
+          "type": "folder",
+          "name": "ACTION",
+          "filename": "ACTION",
+          "seq": 1,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "ACTION",
+              "seq": 1
+            }
+          }
+        },
+        {
+          "type": "folder",
+          "name": "DELETE",
+          "filename": "DELETE",
+          "seq": 2,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "DELETE",
+              "seq": 2
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Delete Pay",
+              "filename": "Delete Pay.bru",
+              "seq": 2,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/pay/192ee4e2-00d7-4007-9fdb-a2e273b398a3/",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "text",
+                  "text": "{\n    \"notes\": \"Este fue el primer pago\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "seq": 3,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "GET",
+              "seq": 3
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Get Pay by Id",
+              "filename": "Get Pay by Id.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/pay/67723bcc-8a83-4c88-ba97-9eabf13d87b4/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Pay",
+              "filename": "Get Pay.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/pay/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "seq": 4,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "PATCH",
+              "seq": 4
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch Pay",
+              "filename": "Patch Pay.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/pay/67723bcc-8a83-4c88-ba97-9eabf13d87b4/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"notes\": \"Este fue el primer pago\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "POST",
+          "filename": "POST",
+          "seq": 5,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "POST",
+              "seq": 5
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Register Pay",
+              "filename": "Register Pay.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/pay/ef484fd0-d352-487c-95fe-eb4b42cf1071/register-payment/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"amount\": \"44555\",\n  \"currency\": \"USD\",\n  \"method\": \"string\",\n  \"payment_date\": \"2025-10-19T01:09:00.422Z\",\n  \"notes\": \"string\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Person",
+      "filename": "Person",
+      "examples": [],
+      "items": [
+        {
+          "type": "folder",
+          "name": "ACTION",
+          "filename": "ACTION",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Upload Document",
+              "filename": "Upload Document.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/person/894f805d-928b-4253-b8b2-7ecad855441d/upload-document/",
+                "method": "POST",
+                "headers": [],
+                "params": [
+                  {
+                    "name": "",
+                    "value": "",
+                    "type": "query",
+                    "enabled": false
+                  }
+                ],
+                "body": {
+                  "mode": "multipartForm",
+                  "formUrlEncoded": [],
+                  "multipartForm": [
+                    {
+                      "type": "file",
+                      "name": "file",
+                      "value": [
+                        "/home/monchi789/Documents/Tesis/PROYECTO DE TESIS - MONZON Y ROZAS.pdf"
+                      ],
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "title",
+                      "value": "Passport",
+                      "enabled": false
+                    },
+                    {
+                      "type": "text",
+                      "name": "description",
+                      "value": "",
+                      "enabled": false
+                    }
+                  ],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Upload Image",
+              "filename": "Upload Image.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/person/894f805d-928b-4253-b8b2-7ecad855441d/upload-media/",
+                "method": "POST",
+                "headers": [],
+                "params": [
+                  {
+                    "name": "",
+                    "value": "",
+                    "type": "query",
+                    "enabled": false
+                  }
+                ],
+                "body": {
+                  "mode": "multipartForm",
+                  "formUrlEncoded": [],
+                  "multipartForm": [
+                    {
+                      "type": "file",
+                      "name": "file",
+                      "value": [
+                        "/home/monchi789/Pictures/Screenshots/Screenshot From 2025-08-15 12-24-25.png"
+                      ],
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "title",
+                      "value": "Passport",
+                      "enabled": false
+                    },
+                    {
+                      "type": "text",
+                      "name": "description",
+                      "value": "",
+                      "enabled": false
+                    }
+                  ],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "DELETE",
+          "filename": "DELETE",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Delete Person",
+              "filename": "Delete Person.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/person/fcb66c2b-d2b6-40a6-9e2f-aacb2e49f638/",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Get Person by Id",
+              "filename": "Get Person by Id.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/person/894f805d-928b-4253-b8b2-7ecad855441d/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"first_name\": \"string\",\n    \"last_name\": \"string\",\n    \"email\": \"user@user2.com\",\n    \"phone_number\": \"string\",\n    \"passport_number\": \"string\",\n    \"birth_date\": \"2025-10-15\",\n    \"nationality\": \"string\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Person",
+              "filename": "Get Person.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/person/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch Person",
+              "filename": "Patch Person.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/person/7b5d118e-5e0c-4d70-be52-be9788062ff5/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"first_name\": \"Martin\"\n}\n",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "POST",
+          "filename": "POST",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Create Person",
+              "filename": "Create Person.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/person/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "  {\n    \"first_name\": \"Maria\",\n    \"last_name\": \"del Barrio\",\n    \"email\": \"maria.del_bario@example.com\",\n    \"phone_number\": \"+34600111222\",\n    \"passport_number\": \"F2233445\",\n    \"birth_date\": \"1997-08-11\",\n    \"nationality\": \"Española\"\n  }",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Quote",
+      "filename": "Quote",
+      "examples": [],
+      "items": [
+        {
+          "type": "folder",
+          "name": "ACTION",
+          "filename": "ACTION",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Detail Quote Versions",
+              "filename": "Detail Quote Versions.bru",
+              "seq": 5,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/quote/ef484fd0-d352-487c-95fe-eb4b42cf1071/versions/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Duplicate Quote",
+              "filename": "Duplicate Quote.bru",
+              "seq": 2,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/quote/ef484fd0-d352-487c-95fe-eb4b42cf1071/duplicate/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Get Quote by Id",
+              "filename": "Get Quote by Id.bru",
+              "seq": 2,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/quote/c0225d60-1067-44c2-8775-b98e73aa8dc0/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Quote",
+              "filename": "Get Quote.bru",
+              "seq": 3,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/quote/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch Quote",
+              "filename": "Patch Quote.bru",
+              "seq": 2,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/quote/c0225d60-1067-44c2-8775-b98e73aa8dc0/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "POST",
+          "filename": "POST",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Post Quote",
+              "filename": "Post Quote.bru",
+              "seq": 2,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/quote/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"status\": \"draft\",\n  \"version\": 1,\n  \"valid_until\": \"2025-11-11\",\n  \"notes\": \"string\",\n  \"group\": \"fca3cb7e-b1c5-422c-b4b3-986a2242393e\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Reserve",
+      "filename": "Reserve",
+      "examples": [],
+      "items": [
+        {
+          "type": "folder",
+          "name": "ACTION",
+          "filename": "ACTION",
+          "seq": 1,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "ACTION",
+              "seq": 1
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Create Reserve",
+              "filename": "Create Reserve.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/reserve/1dc68a6d-432c-4e16-9177-9b254b6b0dd4/create-reserve/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"supplier\": \"7933bba6-cec4-497c-9f4a-26e86b1135eb\",\n  \"start_date\": \"2025-10-11\",\n  \"end_date\": \"2025-10-15\",\n  \"price\": 450.50,\n  \"currency\": \"USD\",\n  \"status\": \"pending\",\n  \"notes\": \"Reserva temporal\"\n}\n",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "DELETE",
+          "filename": "DELETE",
+          "seq": 2,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "DELETE",
+              "seq": 2
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Delete Reserve",
+              "filename": "Delete Reserve.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/reserve/7bf61475-0679-44bf-8c8b-7f8e23edd162/",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "seq": 3,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "GET",
+              "seq": 3
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Get Reserve by Id",
+              "filename": "Get Reserve by Id.bru",
+              "seq": 3,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/reserve/515258a9-524c-4be4-a220-740fbbd0de9b/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Reserve",
+              "filename": "Get Reserve.bru",
+              "seq": 3,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/reserve/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "seq": 4,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "PATCH",
+              "seq": 4
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch Reserve",
+              "filename": "Patch Reserve.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/reserve/ac16b1d9-681a-4eaf-a265-cab97c98862a/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"supplier\": \"fba1f915-1a14-4d77-9810-8119c177c8d6\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "POST",
+          "filename": "POST",
+          "seq": 5,
+          "examples": [],
+          "root": {
+            "meta": {
+              "name": "POST",
+              "seq": 5
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Service",
+      "filename": "Service",
+      "examples": [],
+      "items": [
+        {
+          "type": "folder",
+          "name": "ACTION",
+          "filename": "ACTION",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "All In One Service",
+              "filename": "All In One Service.bru",
+              "seq": 8,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/all-in-one-service/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "multipartForm",
+                  "formUrlEncoded": [],
+                  "multipartForm": [
+                    {
+                      "type": "text",
+                      "name": "title",
+                      "value": "Ica 2D/3N",
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "summary",
+                      "value": "Es una viaje a Ica",
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "includes",
+                      "value": "Incluye Guias",
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "excludes",
+                      "value": "Todo",
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "type",
+                      "value": "private",
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "price",
+                      "value": "50000",
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "data",
+                      "value": "[\n{\n      \"title\": \"Información sobre fauna\",\n      \"description\": \"<p>Datos sobre la fauna local</p>\"\n    },\n    {\n      \"title\": \"Información sobre flora\",\n      \"description\": \"<p>Datos sobre la flora local</p>\"\n    }\n   ]",
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "itinerary",
+                      "value": "[\n    {\n      \"title\": \"Día 1 - Llegada\",\n      \"description\": \"<p>Descripción en HTML del primer día</p>\"\n    },\n    {\n      \"title\": \"Día 2 - Exploración\",\n      \"description\": \"<p>Descripción en HTML del segundo día</p>\"\n    },\n    {\n      \"title\": \"Día 3 - Regreso\",\n      \"description\": \"<p>Descripción en HTML del tercer día</p>\"\n    }\n  ]",
+                      "enabled": true
+                    },
+                    {
+                      "type": "file",
+                      "name": "media",
+                      "value": [
+                        "/home/monchi789/Pictures/Peruvian Cusco Travel Tour/14-12-25/PANEL-DE-CIRCUITO-2.jpeg"
+                      ],
+                      "enabled": true
+                    },
+                    {
+                      "type": "file",
+                      "name": "media",
+                      "value": [
+                        "/home/monchi789/Pictures/Peruvian Cusco Travel Tour/14-12-25/Machu Picchu Circuito 2/Machu Picchu Circuito 2-2.png"
+                      ],
+                      "enabled": true
+                    },
+                    {
+                      "type": "file",
+                      "name": "media",
+                      "value": [
+                        "/home/monchi789/Pictures/Peruvian Cusco Travel Tour/14-12-25/Machu Picchu Circuito 2/Machu Picchu Circuito 2-3.png"
+                      ],
+                      "enabled": true
+                    },
+                    {
+                      "type": "file",
+                      "name": "cover",
+                      "value": [
+                        "/home/monchi789/Pictures/Wonder Clouds/Logos/wonder_logo_color.png"
+                      ],
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "duration_value",
+                      "value": "45",
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "duration_unit",
+                      "value": "days",
+                      "enabled": true
+                    }
+                  ],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NzM0NjYxLCJpYXQiOjE3Njk3MzEwNjEsImp0aSI6IjUxYTQ3ZGE4NGZjYjQ2ZWE4OTZiODE4Y2RmOWUzMmFhIiwidXNlcl9pZCI6IjEifQ.BbZU4qP03HVgfgD9klbwGS9KZ0Ia_lsRh8k3ETpQCrQ"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Post Bulk Data",
+              "filename": "Post Bulk Data.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/7157260c-24d4-4a56-83ed-f9c79862371d/bulk-add-data/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"items\": [\n    {\n      \"title\": \"Información sobre fauna\",\n      \"description\": \"<p>Datos sobre la fauna local</p>\"\n    },\n    {\n      \"title\": \"Información sobre flora\",\n      \"description\": \"<p>Datos sobre la flora local</p>\"\n    }\n  ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Post Bulk Itinerary",
+              "filename": "Post Bulk Itinerary.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/3fc5e9c8-a976-43f5-8c89-ff49d27716ec/bulk-add-itineraries/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"items\": [\n    {\n      \"title\": \"Día 1 - Llegada\",\n      \"description\": \"<p>Descripción en HTML del primer día</p>\"\n    },\n    {\n      \"title\": \"Día 2 - Exploración\",\n      \"description\": \"<p>Descripción en HTML del segundo día</p>\"\n    },\n    {\n      \"title\": \"Día 3 - Regreso\",\n      \"description\": \"<p>Descripción en HTML del tercer día</p>\"\n    }\n  ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Set Cover",
+              "filename": "Set Cover.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/f10d84ef-a560-4d77-8509-bb0795c1c8b5/set-cover/9c99173c-a927-4fff-9603-9cbb2e97fcfe/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Upload Cover",
+              "filename": "Upload Cover.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/f10d84ef-a560-4d77-8509-bb0795c1c8b5/upload-cover/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "multipartForm",
+                  "formUrlEncoded": [],
+                  "multipartForm": [
+                    {
+                      "type": "file",
+                      "name": "file",
+                      "value": [
+                        "/home/monchi789/Pictures/Screenshots/Screenshot From 2025-08-15 12-24-25.png"
+                      ],
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "title",
+                      "value": "El cover",
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "description",
+                      "value": "Descripcion del cover",
+                      "enabled": true
+                    }
+                  ],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Upload Document",
+              "filename": "Upload Document.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/f10d84ef-a560-4d77-8509-bb0795c1c8b5/upload-document/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "multipartForm",
+                  "formUrlEncoded": [],
+                  "multipartForm": [
+                    {
+                      "type": "file",
+                      "name": "file",
+                      "value": [
+                        "/home/monchi789/Documents/Tesis/PROYECTO DE TESIS - MONZON Y ROZAS.pdf"
+                      ],
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "title",
+                      "value": "Pasaporte",
+                      "enabled": false
+                    },
+                    {
+                      "type": "text",
+                      "name": "description",
+                      "value": "Es un pasaporte",
+                      "enabled": false
+                    }
+                  ],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Upload Image",
+              "filename": "Upload Image.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/f10d84ef-a560-4d77-8509-bb0795c1c8b5/upload-image/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "multipartForm",
+                  "formUrlEncoded": [],
+                  "multipartForm": [
+                    {
+                      "type": "file",
+                      "name": "file",
+                      "value": [
+                        "/home/monchi789/Pictures/Screenshots/Screenshot From 2025-08-14 16-12-43.png"
+                      ],
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "title",
+                      "value": "Pasaporte",
+                      "enabled": true
+                    },
+                    {
+                      "type": "text",
+                      "name": "description",
+                      "value": "Es un pasaporte",
+                      "enabled": true
+                    }
+                  ],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Upload Post",
+              "filename": "Upload Post.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/f10d84ef-a560-4d77-8509-bb0795c1c8b5/create-post/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"url\": \"http://localhost:8000/api/service/f10d84ef-a560-4d77-8509-bb0795c1c8b5/create-post/\",\n    \"title\": \"Post de Facebook\",\n    \"description\": \"Esta es la description\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "List Sumary Service",
+              "filename": "List Sumary Service.bru",
+              "seq": 9,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/summary/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NzM0NjYxLCJpYXQiOjE3Njk3MzEwNjEsImp0aSI6IjUxYTQ3ZGE4NGZjYjQ2ZWE4OTZiODE4Y2RmOWUzMmFhIiwidXNlcl9pZCI6IjEifQ.BbZU4qP03HVgfgD9klbwGS9KZ0Ia_lsRh8k3ETpQCrQ"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "DELETE",
+          "filename": "DELETE",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Delete Service",
+              "filename": "Delete Service.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/2d616c5b-13e5-49d6-8568-d20749cc94e3/",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Get Service by Id",
+              "filename": "Get Service by Id.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/6f749cd1-9677-40e6-b9fa-5d12d2baad05",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "text": "{\n    \"title\": \"Tour 3\",\n    \"duration\": 2,\n    \"summary\": \"Tour 3\",\n    \"includes\": \"include all\",\n    \"excludes\": \"excludes all too\",\n    \"type\": \"private\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NzM0NjYxLCJpYXQiOjE3Njk3MzEwNjEsImp0aSI6IjUxYTQ3ZGE4NGZjYjQ2ZWE4OTZiODE4Y2RmOWUzMmFhIiwidXNlcl9pZCI6IjEifQ.BbZU4qP03HVgfgD9klbwGS9KZ0Ia_lsRh8k3ETpQCrQ"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Service",
+              "filename": "Get Service.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/",
+                "method": "GET",
+                "headers": [],
+                "params": [
+                  {
+                    "name": "search",
+                    "value": "Ica",
+                    "type": "query",
+                    "enabled": false
+                  },
+                  {
+                    "name": "price_min",
+                    "value": "100",
+                    "type": "query",
+                    "enabled": false
+                  },
+                  {
+                    "name": "price_max",
+                    "value": "600000",
+                    "type": "query",
+                    "enabled": false
+                  },
+                  {
+                    "name": "type",
+                    "value": "private",
+                    "type": "query",
+                    "enabled": false
+                  }
+                ],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NzM0NjYxLCJpYXQiOjE3Njk3MzEwNjEsImp0aSI6IjUxYTQ3ZGE4NGZjYjQ2ZWE4OTZiODE4Y2RmOWUzMmFhIiwidXNlcl9pZCI6IjEifQ.BbZU4qP03HVgfgD9klbwGS9KZ0Ia_lsRh8k3ETpQCrQ"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch Service",
+              "filename": "Patch Service.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/f10d84ef-a560-4d77-8509-bb0795c1c8b5/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"price\": 6400 \n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "POST",
+          "filename": "POST",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Post Service",
+              "filename": "Post Service.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"title\": \"Tour Prueba\",\n    \"duration_value\": 1,\n    \"duration_unit\": \"weeks\",\n    \"summary\": \"Tour 3\",\n    \"includes\": \"include all\",\n    \"excludes\": \"excludes all too\",\n    \"type\": \"group\",\n    \"price\": 20.4\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "ServiceQuotePerson",
+      "filename": "ServiceQuotePerson",
+      "examples": [],
+      "items": [
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Get ServiceQuotePerson by Id",
+              "filename": "Get ServiceQuotePerson by Id.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service-quote-person/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get ServiceQuotePerson",
+              "filename": "Get ServiceQuotePerson.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service-quote-person/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch ServiceQuotePerson",
+              "filename": "Patch ServiceQuotePerson.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service-quote-person/17b3656c-e931-4fb9-8807-0de19a988428/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n        \"service\": \"87f6fc21-9f41-42a0-a7b1-12cf4a8e1ad4\",\n            \"notes\": \"Comida china\"\n\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Replace generic_person to person",
+              "filename": "Replace generic_person to person.bru",
+              "seq": 5,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/servicequoteperson/f6d16df5-033e-4783-94ae-d3758af7f4f3/assign-person/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"person_id\": \"894f805d-928b-4253-b8b2-7ecad855441d\",\n    \"notes\": \"Actualizado con persona real\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Update generic_person to person",
+              "filename": "Update generic_person to person.bru",
+              "seq": 5,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://localhost:8000/api/service-quote-person/9389bbf6-a63f-4d1f-b057-46054babb5b5/update-generic-person/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"first_name\": \"Juan\",\n    \"last_name\": \"Alberto\",\n    \"phone_number\": \"+51 987654321\",\n    \"passport_number\": \"ABC123456\",\n    \"birth_date\": \"1990-05-15\",\n    \"nationality\": \"Peruana\",\n    \"notes\": \"Cliente VIP\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "POST",
+          "filename": "POST",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Add Bulk Services",
+              "filename": "Add Bulk Services.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/quote/5127a1fd-a4ec-4f8e-99b2-d66fc74ee1d0/add-services-bulk/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n  \"services\": [\n    {\n      \"service_id\": \"87f6fc21-9f41-42a0-a7b1-12cf4a8e1ad4\",\n      \"person_temp_id\": \"temp-1\",\n      \"notes\": \"\"\n    },\n    {\n      \"service_id\": \"87f6fc21-9f41-42a0-a7b1-12cf4a8e1ad4\",\n      \"person_temp_id\": \"temp-2\",\n      \"notes\": \"\"\n    },\n        {\n      \"service_id\": \"f10d84ef-a560-4d77-8509-bb0795c1c8b5\",\n      \"person_temp_id\": \"temp-1\",\n      \"notes\": \"\"\n    }\n  ]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Add Service (Usar persona genérica (sin especificar person_id))",
+              "filename": "Add Service (Usar persona genérica (sin especificar person_id)).bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/quote/fdcc6f4d-9b05-40ab-8d92-a640c0d08df5/add-service/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"service_id\": \"3fc5e9c8-a976-43f5-8c89-ff49d27716ec\",\n    \"notes\": \"No come carne\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Add Service",
+              "filename": "Add Service.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/quote/fdcc6f4d-9b05-40ab-8d92-a640c0d08df5/add-service/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"service_id\": \"3fc5e9c8-a976-43f5-8c89-ff49d27716ec\",\n    \"person_id\": \"4d3227ce-ba6f-4396-8c41-f910f693acc3\",\n    \"notes\": \"No come carne\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Supplier",
+      "filename": "Supplier",
+      "examples": [],
+      "items": [
+        {
+          "type": "folder",
+          "name": "DELETE",
+          "filename": "DELETE",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Delete Supplier",
+              "filename": "Delete Supplier.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/supplier/807e1cb5-b825-4724-ac82-1171536594d0/",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "GET",
+          "filename": "GET",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Get Supplier by Id",
+              "filename": "Get Supplier by Id.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/supplier/fba1f915-1a14-4d77-9810-8119c177c8d6",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "text",
+                  "text": "{\n    \"name\": \"Torres Quispe\",\n    \"contact_info\": \"964789012\",\n    \"service_type\": \"other\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get Supplier",
+              "filename": "Get Supplier.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/supplier/",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "PATCH",
+          "filename": "PATCH",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Patch Supplier",
+              "filename": "Patch Supplier.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/supplier/fba1f915-1a14-4d77-9810-8119c177c8d6/",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"service_type\": \"tickets\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "POST",
+          "filename": "POST",
+          "examples": [],
+          "items": [
+            {
+              "type": "http",
+              "name": "Post Supplier",
+              "filename": "Post Supplier.bru",
+              "seq": 1,
+              "settings": {
+                "encodeUrl": true,
+                "timeout": 0
+              },
+              "tags": [],
+              "examples": [],
+              "request": {
+                "url": "http://127.0.0.1:8000/api/supplier/",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"name\": \"Torres Quispe\",\n    \"contact_info\": \"964789012\",\n    \"service_type\": \"other\"\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "inherit"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "environments": [],
+  "root": {
+    "docs": "# Documentation of Eco Tours API\n\n## Itinerary\n\n### Get Itinerary\nEstos endpoints nos permite listar los _itinerary_ ya sea todos o solo uno pasando el id\n  - Get Itinerary: http://localhost:8000/api/itinerary/\n  - Get Itinerary by Id: http://localhost:8000/api/itinerary/d7082bc8-c3a2-4e15-b315-73638b7fb9af\n\n### Post Itinerary\nEste endpoint nos permite crear un _itinerary_ pasando en el cuerpo el id del _service_\n  - Post Itinerary: http://localhost:8000/api/itinerary/9dbc92c2-94aa-40ed-9f16-77f4a091d633/\n      - Body:\n          ```json\n            {\n              \"title\": \"Salida a comer HeladoO\",\n              \"description\": \"Salimos a comer helado\",\n              \"service\": \"f10d84ef-a560-4d77-8509-bb0795c1c8b5\"\n            }\n          ```\n\n### Patch Itinerary\nEste endpoint nos permite hacer actualizar un _itinerary_ pasando solo lo que se desea actualizar o todo el cuerpo.\n  - Patch: http://localhost:8000/api/itinerary/787245ce-db27-4bef-a834-7ad1a2294d70/\n    - Body:\n        ```json\n          {\n            \"title\": \"Salida a comer Parrilla\"\n          }\n        ```\n\n### Delete Itinerary\nEste endopoint nos permite eliminar un _itinerary_ pasando el id\n  - Delete: http://localhost:8000/api/itinerary/9dbc92c2-94aa-40ed-9f16-77f4a091d633/\n  \n### Action\n#### Add Itinerary\nEste endpoint nos permite pasar por la url el id del servicio al cual se quiere relacionar durante la creacion de un _service_\n  - add-itinerary: http://localhost:8000/api/itinerary/f10d84ef-a560-4d77-8509-bb0795c1c8b5/add-itinerary/\n  - Body: \n    ```json\n      {\n        \"title\": \"Salida al Parque,\n        \"description\": \"Salimos a comer helado\"  \n      }\n    ```\n    \n## Media\n\n### Get Media\nEstos endpoints nos permite poder listar los _media_ ya sea todo los _media_ o solo uno pasando id\n  - Get Media: http://localhost:8000/api/media/\n  - Get Media by Id: http://localhost:8000/api/media/311d6136-ffe2-4e17-b09a-535cc1880732/\n\n### Delete Media\nEste endpoint nos permite eliminar un media pasando el id\n  - Delete Media: http://localhost:8000/api/media/f7d12568-ac0a-4087-adb4-5ff6cf277c3b/\n\n### Patch Media\nEste endpoint nos permite actualizar un _media_ pasando el id por el url\n  - Patch: http://localhost:8000/api/media/311d6136-ffe2-4e17-b09a-535cc1880732/\n  - Body: \n  ```json\n    {\n      \"title\": \"Imagen del tour a Cocalmayo\",\n      \"description\": \"Es una imagen de Cocalmayo\"\n    }\n  ```\n\n## Data\n### Get Data\nEstos endpoints nos permite poder listar los _data_ ya sea todo los _data_ o solo uno pasando id\n  - Get Data: http://localhost:8000/api/data/\n  - Get Data by Id: http://localhost:8000/api/data/632fb9c9-1e72-41a2-85a5-1918186c4f79\n\n### Post Data\nEste endpoint nos permite crear un _data_ pasando en el cuerpo el id del _service_\n  - Post: http://localhost:8000/api/data/\n  - Body: \n  ```json\n  {\n    \"title\": \"Data 5\",\n    \"description\": \"Esta es la data 5\",\n    \"service\": \"f10d84ef-a560-4d77-8509-bb0795c1c8b5\"\n  }\n  ```\n\n\n\n\n"
+  },
+  "brunoConfig": {
+    "version": "1",
+    "name": "Eco Tour",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ],
+    "size": 0.03514862060546875,
+    "filesCount": 120
+  },
+  "exportedAt": "2026-01-30T02:53:26.631Z",
+  "exportedUsing": "Bruno/3.0.2"
+}

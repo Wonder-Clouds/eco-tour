@@ -1,5 +1,5 @@
 // src/features/services/hooks/useServiceTable.ts
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -10,7 +10,7 @@ import {
   type SortingState,
   type FilterFn,
 } from '@tanstack/react-table'
-import { serviceColumns } from '../components/columns/serviceColumns'
+import { createServiceColumns } from '../components/columns/serviceColumns'
 import { SummaryService } from '@/types/service.type'
 
 // Función de filtro fuzzy
@@ -25,14 +25,24 @@ const fuzzyFilter: FilterFn<SummaryService> = (row, columnId, value) => {
   return cellValue.includes(searchValue)
 }
 
-export const useServiceTable = (data: SummaryService[]) => {
+interface UseServiceTableOptions {
+  onEdit?: (serviceId: string) => void;
+  onDelete?: (serviceId: string) => void;
+}
+
+export const useServiceTable = (data: SummaryService[], options: UseServiceTableOptions = {}) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState('')
 
+  const columns = useMemo(
+    () => createServiceColumns({ onEdit: options.onEdit, onDelete: options.onDelete }),
+    [options.onEdit, options.onDelete]
+  )
+
   const table = useReactTable({
     data,
-    columns: serviceColumns,
+    columns,
     state: {
       sorting,
       columnFilters,
@@ -46,9 +56,9 @@ export const useServiceTable = (data: SummaryService[]) => {
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     filterFns: {
-      fuzzy: fuzzyFilter, // 👈 Agrega el filtro fuzzy
+      fuzzy: fuzzyFilter,
     },
-    globalFilterFn: fuzzyFilter, // 👈 Usa fuzzy para el filtro global
+    globalFilterFn: fuzzyFilter,
   })
 
   return {

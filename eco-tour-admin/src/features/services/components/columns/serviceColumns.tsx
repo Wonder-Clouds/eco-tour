@@ -1,5 +1,5 @@
 // src/features/services/components/columns/serviceColumns.tsx
-import { createColumnHelper } from '@tanstack/react-table';
+import { createColumnHelper, ColumnDef } from '@tanstack/react-table';
 import { PriceCell } from '../cells/PriceCell';
 import { ActionsCell } from '../cells/ActionsCell';
 import { SummaryService } from '@/types/service.type';
@@ -48,7 +48,12 @@ const getTypeStyles = (type: string) => {
   return styles[type] || { borderColor: '#6b7280', color: '#374151', bgColor: '#f3f4f6' };
 };
 
-export const serviceColumns = [
+interface ServiceColumnsOptions {
+  onEdit?: (serviceId: string) => void;
+  onDelete?: (serviceId: string) => void;
+}
+
+export const createServiceColumns = (options: ServiceColumnsOptions = {}): ColumnDef<SummaryService, any>[] => [
   columnHelper.display({
     id: 'cover',
     header: '',
@@ -97,6 +102,12 @@ export const serviceColumns = [
   columnHelper.display({
     id: 'actions',
     header: 'Acciones',
-    cell: (info) => <ActionsCell service={info.row.original} />,
+    cell: (info) => (
+      <ActionsCell
+        service={info.row.original}
+        onEdit={options.onEdit}
+        onDelete={options.onDelete}
+      />
+    ),
   }),
 ];
