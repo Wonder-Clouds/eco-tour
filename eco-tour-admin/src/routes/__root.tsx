@@ -10,7 +10,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import Header from '../components/Header'
-import Sidebar from '../components/Sidebar'
+import Sidebar from '../components/navigation/Sidebar'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 
 import appCss from '../styles.css?url'
@@ -68,7 +68,6 @@ function RootLayout({ children }: { children: React.ReactNode }) {
     setIsMounted(true)
   }, [])
 
-  // Durante SSR, mostrar loading
   if (!isMounted) {
     return (
       <div className="flex items-center justify-center h-screen">

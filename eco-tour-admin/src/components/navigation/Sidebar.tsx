@@ -1,7 +1,8 @@
 import { Link, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useAuth } from '@/features/auth/hooks/useAuth'
-import { Home, Map, Package, LogOut, Menu, X } from 'lucide-react'
+import { LogOut, Menu, X } from 'lucide-react'
+import { SIDEBAR_ITEMS } from './sidebar-items'
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -22,20 +23,12 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`${
-        isOpen ? 'w-72' : 'w-24'
-      } h-screen transition-all duration-300 flex flex-col`}
-      style={{
-        backgroundColor: '#ffffff',
-        borderRight: '1px solid #000000',
-      }}
+      className={`bg-[#F0FFDF] ${isOpen ? 'w-68' : 'w-24'
+        } h-screen transition-all duration-300 flex flex-col`}
     >
       {/* Header */}
       <div
-        className="h-16 px-5 flex items-center gap-4"
-        style={{
-          borderBottom: '1px solid #000000',
-        }}
+        className="h-16 px-5 border-b border-gray-300 flex items-center gap-4"
       >
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -49,52 +42,46 @@ export default function Sidebar() {
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-        {isOpen && (
-          <div className="flex items-center gap-3">
-            <img src="/ecotour-logo.svg" alt="Eco Tour" className="h-8" />
-          </div>
-        )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-8">
+      <nav className="flex-1 px-4 py-8 gap-10 flex flex-col">
+        {
+          isOpen ? (
+            <div className="flex items-center gap-3 mx-4">
+              <img src="/ecotour-logo.svg" alt="Eco Tour" className="h-12" />
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 mx-4">
+              <img src="/icon.png" alt="Eco Tour" className="h-8" />
+            </div>
+          )
+        }
         <ul className="space-y-3">
-          <li>
-            <Link
-              to="/"
-              className={`sidebar-link ${isActive('/') ? 'sidebar-link-active' : ''} ${!isOpen ? 'justify-center' : ''}`}
-            >
-              <Home size={22} />
-              {isOpen && <span className="font-semibold text-base">Inicio</span>}
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/services"
-              className={`sidebar-link ${isActive('/services') ? 'sidebar-link-active' : ''} ${!isOpen ? 'justify-center' : ''}`}
-            >
-              <Map size={22} />
-              {isOpen && <span className="font-semibold text-base">Servicios</span>}
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/packages"
-              className={`sidebar-link ${isActive('/packages') ? 'sidebar-link-active' : ''} ${!isOpen ? 'justify-center' : ''}`}
-            >
-              <Package size={22} />
-              {isOpen && <span className="font-semibold text-base">Paquetes</span>}
-            </Link>
-          </li>
+          {SIDEBAR_ITEMS.map((item) => {
+            const Icon = item.icon
+
+            return (
+              <li key={item.to}>
+                <Link
+                  to={item.to}
+                  className={`sidebar-link ${isActive(item.to) ? 'sidebar-link-active' : ''} ${!isOpen ? 'justify-center' : ''}`}
+                >
+                  <Icon size={22} />
+                  {isOpen && (
+                    <span className="font-semibold text-base">{item.label}</span>
+                  )}
+                </Link>
+              </li>
+            )
+          })}
         </ul>
+
       </nav>
 
       {/* Footer */}
       <div
         className="p-4"
-        style={{
-          borderTop: '1px solid #000000',
-        }}
       >
         <button
           onClick={() => logout()}
