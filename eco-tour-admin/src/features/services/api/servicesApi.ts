@@ -5,8 +5,33 @@ import { Itinerary } from '@/types/itinerary.type'
 import { Data } from '@/types/data.type'
 import { Media } from '@/types/media.type'
 
-export const getServices = async (): Promise<SummaryService[]> => {
-  const response = await api.get<PaginatedResponse<SummaryService>>('/service/summary/')
+// ==================== FILTERS ====================
+
+export interface ServiceFilters {
+  search?: string
+  price_min?: number
+  price_max?: number
+  type?: TypeService
+  duration_min?: number
+  duration_max?: number
+}
+
+export const getServices = async (filters?: ServiceFilters): Promise<SummaryService[]> => {
+  const params = new URLSearchParams()
+
+  if (filters) {
+    if (filters.search) params.append('search', filters.search)
+    if (filters.price_min !== undefined) params.append('price_min', filters.price_min.toString())
+    if (filters.price_max !== undefined) params.append('price_max', filters.price_max.toString())
+    if (filters.type) params.append('type', filters.type)
+    if (filters.duration_min !== undefined) params.append('duration_min', filters.duration_min.toString())
+    if (filters.duration_max !== undefined) params.append('duration_max', filters.duration_max.toString())
+  }
+
+  const queryString = params.toString()
+  const url = queryString ? `/service/summary/?${queryString}` : '/service/summary/'
+
+  const response = await api.get<PaginatedResponse<SummaryService>>(url)
   return response.data.results
 }
 

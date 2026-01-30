@@ -10,20 +10,10 @@ interface Props {
 }
 
 export const ServicesTable = ({ data, onEdit, onDelete }: Props) => {
-  const { table, globalFilter, setGlobalFilter } = useServiceTable(data, { onEdit, onDelete });
+  const { table } = useServiceTable(data, { onEdit, onDelete });
 
   return (
     <div className="space-y-4">
-      {/* Filtro de búsqueda global */}
-      <div className="flex justify-between items-center">
-        <input
-          type="text"
-          value={globalFilter ?? ''}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          placeholder="Buscar servicios..."
-          className="px-4 py-2 border rounded-lg"
-        />
-      </div>
 
       {/* Tabla */}
       <div className="overflow-x-auto border rounded-lg">
