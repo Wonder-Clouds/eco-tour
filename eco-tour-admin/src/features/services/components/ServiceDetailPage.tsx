@@ -1,6 +1,9 @@
-import { Link } from '@tanstack/react-router'
+import { useState } from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { useService } from '../hooks/useService'
+import { useUpdateService } from '../hooks/useUpdateService'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { EditServiceModal } from './EditServiceModal'
 import {
   ArrowLeft,
   Clock,
@@ -8,7 +11,8 @@ import {
   Image as ImageIcon,
   FileText,
   Calendar,
-  Info
+  Info,
+  X
 } from 'lucide-react'
 
 interface Props {
@@ -57,6 +61,20 @@ const formatPrice = (price: string) => {
 
 export const ServiceDetailPage = ({ serviceId }: Props) => {
   const { data: service, isLoading, error } = useService(serviceId)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const navigate = useNavigate()
+  const { deleteService } = useUpdateService(serviceId)
+
+  const handleDelete = () => {
+    if (confirm('¿Estás seguro de eliminar este servicio? Esta acción no se puede deshacer.')) {
+      deleteService.mutate(undefined, {
+        onSuccess: () => {
+          navigate({ to: '/services' })
+        },
+      })
+    }
+  }
 
   if (isLoading) {
     return (
@@ -77,6 +95,7 @@ export const ServiceDetailPage = ({ serviceId }: Props) => {
   const typeStyles = getTypeStyles(service.type)
   const coverImage = service.media?.find(m => m.is_cover)?.file
   const galleryImages = service.media?.filter(m => !m.is_cover) || []
+
 
   return (
     <div className="p-8" style={{ backgroundColor: '#fafafa', minHeight: '100%' }}>
@@ -111,67 +130,79 @@ export const ServiceDetailPage = ({ serviceId }: Props) => {
         <div className="lg:col-span-2 space-y-6">
           {/* Cover Image */}
           {coverImage && (
-            <Card className="border-0 shadow-md overflow-hidden">
+            <div
+              className="w-full h-64 rounded-lg shadow-md overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+              onClick={() => setSelectedImage(coverImage)}
+            >
               <img
                 src={coverImage}
                 alt={service.title}
-                className="w-full h-64 object-cover"
+                className="w-full h-full object-cover"
               />
-            </Card>
+            </div>
           )}
 
           {/* Resumen */}
-          <Card className="border-0 shadow-md">
+          <Card className="border-0 shadow-md overflow-hidden">
             <CardHeader>
               <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
                 <Info size={20} />
                 Resumen
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-gray-700">{service.summary}</p>
+            <CardContent className="overflow-hidden">
+              <div
+                className="text-gray-700 prose prose-sm max-w-none break-words"
+                dangerouslySetInnerHTML={{ __html: service.summary }}
+              />
             </CardContent>
           </Card>
 
           {/* Incluye / No incluye */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-md overflow-hidden">
               <CardHeader>
                 <CardTitle className="text-green-600 flex items-center gap-2">
                   ✓ Incluye
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 whitespace-pre-line">{service.includes}</p>
+              <CardContent className="overflow-hidden">
+                <div
+                  className="text-gray-700 prose prose-sm max-w-none break-words"
+                  dangerouslySetInnerHTML={{ __html: service.includes }}
+                />
               </CardContent>
             </Card>
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-md overflow-hidden">
               <CardHeader>
                 <CardTitle className="text-red-600 flex items-center gap-2">
                   ✗ No Incluye
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 whitespace-pre-line">{service.excludes}</p>
+              <CardContent className="overflow-hidden">
+                <div
+                  className="text-gray-700 prose prose-sm max-w-none break-words"
+                  dangerouslySetInnerHTML={{ __html: service.excludes }}
+                />
               </CardContent>
             </Card>
           </div>
 
           {/* Itinerario */}
           {service.itinerary && service.itinerary.length > 0 && (
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-md overflow-hidden">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
                   <Calendar size={20} />
                   Itinerario
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 overflow-hidden">
                 {service.itinerary.map((item) => (
-                  <div key={item.id} className="border-l-4 pl-4 py-2" style={{ borderColor: '#00bf35' }}>
+                  <div key={item.id} className="border-l-4 pl-4 py-2 overflow-hidden" style={{ borderColor: '#00bf35' }}>
                     <h4 className="font-semibold text-lg">{item.title}</h4>
                     <div
-                      className="text-gray-600 mt-2"
+                      className="text-gray-600 mt-2 prose prose-sm max-w-none break-words"
                       dangerouslySetInnerHTML={{ __html: item.description }}
                     />
                   </div>
@@ -182,19 +213,19 @@ export const ServiceDetailPage = ({ serviceId }: Props) => {
 
           {/* Datos adicionales */}
           {service.data && service.data.length > 0 && (
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-md overflow-hidden">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
                   <FileText size={20} />
                   Información Adicional
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 overflow-hidden">
                 {service.data.map((item) => (
-                  <div key={item.id} className="border-b pb-4 last:border-b-0">
+                  <div key={item.id} className="border-b pb-4 last:border-b-0 overflow-hidden">
                     <h4 className="font-semibold">{item.title}</h4>
                     <div
-                      className="text-gray-600 mt-1"
+                      className="text-gray-600 mt-1 prose prose-sm max-w-none break-words"
                       dangerouslySetInnerHTML={{ __html: item.description }}
                     />
                   </div>
@@ -205,7 +236,7 @@ export const ServiceDetailPage = ({ serviceId }: Props) => {
 
           {/* Galería */}
           {galleryImages.length > 0 && (
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-md overflow-hidden">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
                   <ImageIcon size={20} />
@@ -215,12 +246,18 @@ export const ServiceDetailPage = ({ serviceId }: Props) => {
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {galleryImages.map((media) => (
-                    <div key={media.id} className="relative group">
-                      <img
-                        src={media.file}
-                        alt={media.title}
-                        className="w-full h-32 object-cover rounded-lg"
-                      />
+                    <div
+                      key={media.id}
+                      className="relative group cursor-pointer"
+                      onClick={() => setSelectedImage(media.file)}
+                    >
+                      <div className="w-full h-32 overflow-hidden rounded-lg">
+                        <img
+                          src={media.file}
+                          alt={media.title}
+                          className="w-full h-32 object-cover rounded-lg hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
                       {media.title && (
                         <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-2 rounded-b-lg opacity-0 group-hover:opacity-100 transition">
                           {media.title}
@@ -274,6 +311,7 @@ export const ServiceDetailPage = ({ serviceId }: Props) => {
           <Card className="border-0 shadow-md">
             <CardContent className="pt-6 space-y-3">
               <button
+                onClick={() => setIsEditModalOpen(true)}
                 className="w-full py-3 rounded-lg font-medium transition"
                 style={{ backgroundColor: '#00bf35', color: '#ffffff' }}
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#00932c'}
@@ -282,7 +320,9 @@ export const ServiceDetailPage = ({ serviceId }: Props) => {
                 Editar Servicio
               </button>
               <button
-                className="w-full py-3 rounded-lg font-medium transition border"
+                onClick={handleDelete}
+                disabled={deleteService.isPending}
+                className="w-full py-3 rounded-lg font-medium transition border disabled:opacity-50"
                 style={{ borderColor: '#dc2626', color: '#dc2626' }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#fef2f2'
@@ -291,12 +331,40 @@ export const ServiceDetailPage = ({ serviceId }: Props) => {
                   e.currentTarget.style.backgroundColor = 'transparent'
                 }}
               >
-                Eliminar Servicio
+                {deleteService.isPending ? 'Eliminando...' : 'Eliminar Servicio'}
               </button>
             </CardContent>
           </Card>
         </div>
       </div>
+
+      {/* Modal para ver imagen en grande */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
+            onClick={() => setSelectedImage(null)}
+          >
+            <X size={32} />
+          </button>
+          <img
+            src={selectedImage}
+            alt="Imagen ampliada"
+            className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+
+      {/* Modal de edición */}
+      <EditServiceModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        service={service}
+      />
     </div>
   )
 }

@@ -5,10 +5,12 @@ import { SummaryService } from '@/types/service.type';
 
 interface Props {
   data: SummaryService[];
+  onEdit?: (serviceId: string) => void;
+  onDelete?: (serviceId: string) => void;
 }
 
-export const ServicesTable = ({ data }: Props) => {
-  const { table, globalFilter, setGlobalFilter } = useServiceTable(data);
+export const ServicesTable = ({ data, onEdit, onDelete }: Props) => {
+  const { table, globalFilter, setGlobalFilter } = useServiceTable(data, { onEdit, onDelete });
 
   return (
     <div className="space-y-4">
