@@ -2,13 +2,92 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { PriceCell } from '../cells/PriceCell';
 import { ActionsCell } from '../cells/ActionsCell';
-import { Service } from '@/types/service.type';
+import { SummaryService } from '@/types/service.type';
 
-const columnHelper = createColumnHelper<Service>();
+const columnHelper = createColumnHelper<SummaryService>();
+
+// Componente para mostrar el cover o la primera letra del título
+const CoverCell = ({ cover, title }: { cover?: string; title: string }) => {
+  if (cover) {
+    return (
+      <img
+        src={cover}
+        alt={title}
+        className="w-10 h-10 rounded-lg object-cover"
+      />
+    );
+  }
+
+  return (
+    <div
+      className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-lg"
+      style={{ backgroundColor: '#00bf35' }}
+    >
+      {title.charAt(0).toUpperCase()}
+    </div>
+  );
+};
+
+// Función para formatear el tipo de servicio
+const formatType = (type: string) => {
+  const types: Record<string, string> = {
+    group: 'General',
+    arbitrary: 'Arbitrario',
+    private: 'Privado',
+  };
+  return types[type] || type;
+};
+
+// Función para obtener los estilos del tipo
+const getTypeStyles = (type: string) => {
+  const styles: Record<string, { borderColor: string; color: string; bgColor: string }> = {
+    private: { borderColor: '#dc2626', color: '#dc2626', bgColor: '#fef2f2' },
+    group: { borderColor: '#00bf35', color: '#00932c', bgColor: '#edfff2' },
+    arbitrary: { borderColor: '#f59e0b', color: '#d97706', bgColor: '#fffbeb' },
+  };
+  return styles[type] || { borderColor: '#6b7280', color: '#374151', bgColor: '#f3f4f6' };
+};
 
 export const serviceColumns = [
+  columnHelper.display({
+    id: 'cover',
+    header: '',
+    cell: (info) => (
+      <CoverCell
+        cover={info.row.original.cover}
+        title={info.row.original.title}
+      />
+    ),
+  }),
   columnHelper.accessor('title', {
     header: 'Título',
+    cell: (info) => (
+      <span className="font-medium" style={{ color: '#000000' }}>
+        {info.getValue()}
+      </span>
+    ),
+  }),
+  columnHelper.accessor('type', {
+    header: 'Tipo',
+    cell: (info) => {
+      const type = info.getValue();
+      const styles = getTypeStyles(type);
+      return (
+        <span
+          className="px-3 py-1 rounded-full text-xs font-medium border"
+          style={{
+            borderColor: styles.borderColor,
+            color: styles.color,
+            backgroundColor: styles.bgColor
+          }}
+        >
+          {formatType(type)}
+        </span>
+      );
+    },
+  }),
+  columnHelper.accessor('duration', {
+    header: 'Duración',
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor('price', {

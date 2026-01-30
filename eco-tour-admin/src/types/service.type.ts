@@ -18,6 +18,17 @@ export interface Service {
   type: TypeService
   itinerary?: Itinerary[]
   data?: Data[]
-  price: number
+  price: string
   media?: Media[]
+  created_at?: string
+  updated_at?: string
+}
+
+export interface SummaryService {
+  id: string
+  title: string
+  type: TypeService
+  price: string
+  cover?: string
+  duration: string
 }

@@ -1,20 +1,13 @@
 meta {
-  name: Get Service
+  name: List Sumary Service
   type: http
-  seq: 1
+  seq: 9
 }
 
 get {
-  url: http://localhost:8000/api/service/
+  url: http://localhost:8000/api/service/summary/
   body: none
   auth: bearer
-}
-
-params:query {
-  ~search: Ica
-  ~price_min: 100
-  ~price_max: 600000
-  ~type: private
 }
 
 auth:bearer {

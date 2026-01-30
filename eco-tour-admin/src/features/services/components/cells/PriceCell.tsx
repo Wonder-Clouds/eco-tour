@@ -9,5 +9,5 @@ export const PriceCell = ({ price }: Props) => {
     currency: 'PEN',
   }).format(parseFloat(price));
 
-  return <span className="font-semibold">{formatted}</span>;
+  return <span className="font-semibold" style={{ color: '#000000' }}>{formatted}</span>;
 };

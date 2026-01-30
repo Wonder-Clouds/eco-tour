@@ -7,12 +7,15 @@ meta {
 post {
   url: http://localhost:8000/api/service/all-in-one-service/
   body: multipartForm
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NzM0NjYxLCJpYXQiOjE3Njk3MzEwNjEsImp0aSI6IjUxYTQ3ZGE4NGZjYjQ2ZWE4OTZiODE4Y2RmOWUzMmFhIiwidXNlcl9pZCI6IjEifQ.BbZU4qP03HVgfgD9klbwGS9KZ0Ia_lsRh8k3ETpQCrQ
 }
 
 body:multipart-form {
   title: Ica 2D/3N
-  duration: 4
   summary: Es una viaje a Ica
   includes: Incluye Guias
   excludes: Todo

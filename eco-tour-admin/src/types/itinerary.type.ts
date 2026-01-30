@@ -3,4 +3,6 @@ export interface Itinerary {
   title: string
   description: string
   service: string
+  created_at?: string
+  updated_at?: string
 }

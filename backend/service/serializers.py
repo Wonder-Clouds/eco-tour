@@ -11,6 +11,36 @@ from media.serializers import MediaSerializer
 from .models import Service
 
 
+class ServiceSummarySerializer(serializers.ModelSerializer):
+    """Serializer para listar servicios con campos resumidos"""
+    cover = serializers.SerializerMethodField()
+    duration = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Service
+        fields = ['id', 'title', 'type', 'price', 'cover', 'duration']
+
+    def get_cover(self, obj):
+        """Retorna la URL del media que tiene is_cover=True"""
+        cover_media = obj.media.filter(is_cover=True).first()
+        if not cover_media:
+            return None
+        if cover_media.file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(cover_media.file.url)
+            return cover_media.file.url
+        if cover_media.url:
+            return cover_media.url
+        return None
+
+    def get_duration(self, obj):
+        """Retorna la duración concatenando duration_value y duration_unit"""
+        if obj.duration_value is None and obj.duration_unit is None:
+            return None
+        return f"{obj.duration_value} {obj.duration_unit}"
+
+
 class ServiceSerializer(serializers.ModelSerializer):
     data = DataSerializer(many=True, read_only=True)
     media = MediaSerializer(many=True, read_only=True)

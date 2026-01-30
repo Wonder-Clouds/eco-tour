@@ -1,10 +1,10 @@
 // src/features/services/components/ServicesTable.tsx
 import { flexRender } from '@tanstack/react-table';
 import { useServiceTable } from '../hooks/useServiceTable';
-import { Service } from '@/types/service.type';
+import { SummaryService } from '@/types/service.type';
 
 interface Props {
-  data: Service[];
+  data: SummaryService[];
 }
 
 export const ServicesTable = ({ data }: Props) => {

@@ -19,7 +19,7 @@ from data.serializers import BulkCreateDataSerializer
 from shared.pagination import CustomPagination
 from .filters import ServiceFilter
 from .models import Service
-from .serializers import ServiceSerializer, ServiceAllInOneSerializer
+from .serializers import ServiceSerializer, ServiceAllInOneSerializer, ServiceSummarySerializer
 
 
 # Create your views here.
@@ -33,6 +33,28 @@ class ServiceViewSet(viewsets.ModelViewSet):
     ordering_fields = ['price', 'duration_value', 'created_at']
     ordering = ['-created_at']
     serializer_class = ServiceSerializer
+
+    @action(detail=False, methods=['get'], url_path='summary')
+    def summary(self, request):
+        """
+        Lista de servicios con campos resumidos:
+        - id
+        - title
+        - type
+        - price
+        - cover (URL del media con is_cover=True)
+        - duration (concatenación de duration_value y duration_unit)
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Aplicar paginación
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = ServiceSummarySerializer(page, many=True, context={'request': request})
+            return self.get_paginated_response(serializer.data)
+
+        serializer = ServiceSummarySerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
 
 
     # Action to upload an image associated with a service

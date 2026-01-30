@@ -11,10 +11,10 @@ import {
   type FilterFn,
 } from '@tanstack/react-table'
 import { serviceColumns } from '../components/columns/serviceColumns'
-import { Service } from '@/types/service.type'
+import { SummaryService } from '@/types/service.type'
 
 // Función de filtro fuzzy
-const fuzzyFilter: FilterFn<Service> = (row, columnId, value, addMeta) => {
+const fuzzyFilter: FilterFn<SummaryService> = (row, columnId, value) => {
   const itemValue = row.getValue(columnId)
 
   if (itemValue == null) return false
@@ -25,7 +25,7 @@ const fuzzyFilter: FilterFn<Service> = (row, columnId, value, addMeta) => {
   return cellValue.includes(searchValue)
 }
 
-export const useServiceTable = (data: Service[]) => {
+export const useServiceTable = (data: SummaryService[]) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState('')
