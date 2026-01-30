@@ -26,7 +26,6 @@ function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setLocalError(null)
-
     if (!username || !password) {
       setLocalError('Usuario y contraseña son requeridos')
       return

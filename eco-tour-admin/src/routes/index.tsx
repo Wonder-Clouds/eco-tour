@@ -101,7 +101,7 @@ const Dashboard = () => {
     <div className="p-8" style={{ backgroundColor: '#fafafa', minHeight: '100%' }}>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2" style={{ color: '#085f24' }}>
+        <h1 className="text-3xl font-bold text-primary mb-2">
           Bienvenido a Eco Tour Admin
         </h1>
         <p className="text-gray-600">
@@ -190,12 +190,12 @@ const Dashboard = () => {
               <AreaChart data={reservasMensuales}>
                 <defs>
                   <linearGradient id="colorReservas" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#00bf35" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#00bf35" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#00bf35" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#00bf35" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorIngresos" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#085f24" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#085f24" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#085f24" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#085f24" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -321,9 +321,8 @@ const Dashboard = () => {
                 return (
                   <div
                     key={tarea.id}
-                    className={`flex items-start gap-3 p-3 rounded-lg border transition cursor-pointer hover:shadow-sm ${
-                      tarea.completed ? 'bg-gray-50 opacity-60' : 'bg-white'
-                    }`}
+                    className={`flex items-start gap-3 p-3 rounded-lg border transition cursor-pointer hover:shadow-sm ${tarea.completed ? 'bg-gray-50 opacity-60' : 'bg-white'
+                      }`}
                     style={{ borderColor: '#e5e7eb' }}
                   >
                     <div className="mt-0.5 flex-shrink-0">
