@@ -3,11 +3,8 @@ import { Bell, User } from 'lucide-react'
 export default function Header() {
   return (
     <header
-      className="h-16 px-4 flex items-center justify-between"
+      className="h-16 px-4 flex items-center justify-end border-b border-black"
     >
-      <div className='p-4 text-2xl text-primary font-bold'>
-        <h3>Eco Tour</h3>
-      </div>
       <div className="flex items-center gap-4">
         <button
           className="p-2 rounded-lg transition hover:bg-gray-100"

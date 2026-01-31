@@ -1,7 +1,7 @@
 import { Link, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useAuth } from '@/features/auth/hooks/useAuth'
-import { LogOut, Menu, X } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 import { SIDEBAR_ITEMS } from './sidebar-items'
 
 export default function Sidebar() {
@@ -23,40 +23,27 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`bg-[#F0FFDF] ${isOpen ? 'w-68' : 'w-24'
+      className={`bg-white border-r border-black ${isOpen ? 'w-68' : 'w-24'
         } h-screen transition-all duration-300 flex flex-col`}
     >
-      {/* Header */}
+      {/* Header con Logo como botón */}
       <div
-        className="h-16 px-5 border-b border-gray-300 flex items-center gap-4"
+        className="h-16 px-5 border-b border-black flex items-center gap-4"
       >
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="p-3 rounded-lg transition-all duration-200"
-          style={{
-            color: '#000000',
-            backgroundColor: hoveredItem === 'menu' ? '#e5e7eb' : 'transparent',
-          }}
-          onMouseEnter={() => setHoveredItem('menu')}
-          onMouseLeave={() => setHoveredItem(null)}
+          className="p-2 rounded-lg transition-all duration-200 hover:bg-gray-100"
         >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {isOpen ? (
+            <img src="/ecotour-logo.svg" alt="Eco Tour" className="h-10" />
+          ) : (
+            <img src="/icon.png" alt="Eco Tour" className="h-10" />
+          )}
         </button>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-4 py-8 gap-10 flex flex-col">
-        {
-          isOpen ? (
-            <div className="flex items-center gap-3 mx-4">
-              <img src="/ecotour-logo.svg" alt="Eco Tour" className="h-12" />
-            </div>
-          ) : (
-            <div className="flex items-center gap-3 mx-4">
-              <img src="/icon.png" alt="Eco Tour" className="h-8" />
-            </div>
-          )
-        }
         <ul className="space-y-3">
           {SIDEBAR_ITEMS.map((item) => {
             const Icon = item.icon
