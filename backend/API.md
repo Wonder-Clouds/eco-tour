@@ -591,6 +591,12 @@ Este módulo nos permite gestionar las pendientes de cada usuario
 Este endpoint nos permite listar el _todo_ de un usuario, este está relacionado con el JWT del usuario autenticado.
 - Get Todo: http://localhost:8000/api/todo/
 
+### Filters
+- Filtros para _todo_ `http://localhost:8000/api/todo/?q=ar&priority=hard` es un filtro con búsqueda `or` para los siguientes campos:
+  - title: Filtrar por título
+  - description: Filtrar por descripción
+  - Y un filtro por prioridad `http://localhost:8000/api/todo/?priority=hard este es de tipo `and` 
+
 ### Post ToDo
 Este endpoint nos permite crear un _todo_ pasando en el cuerpo los datos requeridos
 - Post ToDo: http://localhost:8000/api/todo/

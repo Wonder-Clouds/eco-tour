@@ -16,6 +16,7 @@ import {
   Plus,
   X,
   Loader2,
+  Search,
 } from 'lucide-react'
 import {
   AreaChart,
@@ -37,7 +38,7 @@ import { useTodos } from '@/features/todos/hooks/useTodos'
 import { useCreateTodo, useChangeStatus } from '@/features/todos/hooks/useTodoMutations'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Todo, TodoPriority } from '@/types/todo.type'
+import { Todo, TodoPriority, TodoFilters } from '@/types/todo.type'
 
 // Helper para obtener colores de prioridad
 const getPriorityColor = (priority: TodoPriority) => {
@@ -110,7 +111,13 @@ const proximosViajes = [
 
 
 const Dashboard = () => {
-  const { data: todos = [] as Todo[], isLoading: isLoadingTodos } = useTodos()
+  // Filtros para ToDo
+  const [todoFilters, setTodoFilters] = useState<TodoFilters>({
+    q: '',
+    priority: '',
+  })
+
+  const { data: todos = [] as Todo[], isLoading: isLoadingTodos } = useTodos(todoFilters)
   const createTodoMutation = useCreateTodo()
   const changeStatusMutation = useChangeStatus()
 
@@ -145,17 +152,13 @@ const Dashboard = () => {
   return (
     <div className="p-8 min-h-max">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-primary mb-2">
-            Bienvenido a Eco Tour Admin
-          </h1>
-          <p className="text-gray-600">
-            Panel de administración del sistema - Resumen general
-          </p>
-        </div>
-
-        <UserMenu />
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-primary mb-2">
+          Bienvenido a Eco Tour Admin
+        </h1>
+        <p className="text-gray-600">
+          Panel de administración del sistema - Resumen general
+        </p>
       </div>
 
       {/* KPIs principales */}
@@ -369,6 +372,51 @@ const Dashboard = () => {
             </div>
           </CardHeader>
           <CardContent className="pt-0">
+            {/* Filtros de búsqueda */}
+            <div className="mb-3 space-y-2">
+              <div className="relative">
+
+                <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Buscar tareas..."
+                  value={todoFilters.q || ''}
+                  onChange={(e) => setTodoFilters((prev) => ({ ...prev, q: e.target.value }))}
+                  className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500"
+                />
+              </div>
+              <div className="flex gap-1.5 flex-wrap">
+                <button
+                  onClick={() => setTodoFilters((prev) => ({ ...prev, priority: '' }))}
+                  className={`px-2 py-0.5 text-xs rounded-full border transition ${
+                    !todoFilters.priority ? 'bg-gray-200 text-gray-700' : 'bg-white text-gray-500 hover:bg-gray-50'
+                  }`}
+                >
+                  Todas
+                </button>
+                {(['low', 'medium', 'hard'] as TodoPriority[]).map((p) => {
+                  const colors = getPriorityColor(p)
+                  const isActive = todoFilters.priority === p
+                  return (
+                    <button
+                      key={p}
+                      onClick={() => setTodoFilters((prev) => ({ ...prev, priority: isActive ? '' : p }))}
+                      className={`px-2 py-0.5 text-xs rounded-full border transition ${
+                        isActive ? 'ring-1 ring-offset-1 ring-gray-400' : ''
+                      }`}
+                      style={{
+                        backgroundColor: colors.bg,
+                        color: colors.text,
+                        borderColor: colors.border,
+                      }}
+                    >
+                      {colors.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
             {/* Formulario para agregar tarea */}
             {showAddTodo && (
               <div className="mb-4 p-3 rounded-lg border border-dashed border-gray-300 bg-gray-50">

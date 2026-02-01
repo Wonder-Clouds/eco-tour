@@ -10,6 +10,11 @@ export interface Todo {
   created_at: string
 }
 
+export interface TodoFilters {
+  q?: string
+  priority?: TodoPriority | ''
+}
+
 export interface CreateTodoInput {
   title: string
   description?: string
