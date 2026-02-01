@@ -23,12 +23,12 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`bg-white border-r border-black ${isOpen ? 'w-68' : 'w-24'
+      className={`bg-sidebar py-5 ${isOpen ? 'w-68' : 'w-24'
         } h-screen transition-all duration-300 flex flex-col`}
     >
       {/* Header con Logo como botón */}
       <div
-        className="h-16 px-5 border-b border-black flex items-center gap-4"
+        className="h-16 px-5 flex items-center gap-4"
       >
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -43,7 +43,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-8 gap-10 flex flex-col">
+      <nav className="flex-1 p-4 gap-10 flex flex-col">
         <ul className="space-y-3">
           {SIDEBAR_ITEMS.map((item) => {
             const Icon = item.icon
@@ -72,7 +72,7 @@ export default function Sidebar() {
       >
         <button
           onClick={() => logout()}
-          className={`flex items-center gap-4 w-full px-4 py-4 rounded-lg transition-all duration-200 font-semibold ${!isOpen ? 'justify-center' : ''}`}
+          className={`flex items-center gap-4 w-full px-4 rounded-lg transition-all duration-200 font-semibold ${!isOpen ? 'justify-center' : ''}`}
           style={{
             color: '#dc2626',
             backgroundColor: hoveredItem === 'logout' ? '#fef2f2' : 'transparent',

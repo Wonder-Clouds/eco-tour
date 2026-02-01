@@ -31,6 +31,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
+import UserMenu from '@/components/shared/UserMenu'
 
 // Datos de ejemplo para los gráficos
 const reservasMensuales = [
@@ -49,9 +50,9 @@ const reservasMensuales = [
 ]
 
 const serviciosPorTipo = [
-  { name: 'Privado', value: 35, color: '#dc2626' },
-  { name: 'Grupal', value: 45, color: '#00bf35' },
-  { name: 'Arbitrario', value: 20, color: '#f59e0b' },
+  { name: 'Privado', value: 35, color: '#3B82F6' },
+  { name: 'Grupal', value: 45, color: '#22C55E' },
+  { name: 'Arbitrario', value: 20, color: '#F97316' },
 ]
 
 const destinosPopulares = [
@@ -98,15 +99,19 @@ const getPriorityColor = (priority: string) => {
 
 const Dashboard = () => {
   return (
-    <div className="p-8" style={{ backgroundColor: '#fafafa', minHeight: '100%' }}>
+    <div className="p-8 min-h-max">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-primary mb-2">
-          Bienvenido a Eco Tour Admin
-        </h1>
-        <p className="text-gray-600">
-          Panel de administración del sistema - Resumen general
-        </p>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-primary mb-2">
+            Bienvenido a Eco Tour Admin
+          </h1>
+          <p className="text-gray-600">
+            Panel de administración del sistema - Resumen general
+          </p>
+        </div>
+
+        <UserMenu />
       </div>
 
       {/* KPIs principales */}
