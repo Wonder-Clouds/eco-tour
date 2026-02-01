@@ -585,5 +585,40 @@ Este endpoint nos permite obtener la lista de países disponibles para asignar a
 ]
 ```
 
+## ToDo
+Este módulo nos permite gestionar las pendientes de cada usuario
+### Get Todo by User
+Este endpoint nos permite listar el _todo_ de un usuario, este está relacionado con el JWT del usuario autenticado.
+- Get Todo: http://localhost:8000/api/todo/
+
+### Post ToDo
+Este endpoint nos permite crear un _todo_ pasando en el cuerpo los datos requeridos
+- Post ToDo: http://localhost:8000/api/todo/
+- Body:
+```json
+{
+  "title": "Creaer Articulo",
+  "description": "Se necesita crear el articulo numero 2"
+} 
+```
+
+### Patch ToDo
+Este endpoint nos permite actualizar un _todo_ pasando solo lo que se desea actualizar o todo el cuerpo.
+- Patch: http://localhost:8000/api/todo/54e6dcea-be7f-4d67-8f9a-a0e584253792/
+- Body: 
+```json
+{
+  "title": "Crear Articulo Actualizado",
+  "description": "Se necesita crear el articulo numero 2 con mas detalles"
+}
+```
+
+### Action
+#### Change Status
+Este endpoint nos permite cambiar el estado de un _todo_ pasando el id por la url
+- change-status: `POST` http://localhost:8000/api/todo/54e6dcea-be7f-4d67-8f9a-a0e584253792/change-status/
+
+
 # TODO:
+
 ## DOCUMENTAR TODO RELACIONADO A AUDITLOG

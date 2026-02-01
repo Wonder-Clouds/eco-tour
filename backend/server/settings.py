@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'reserve',
     'supplier',
     'pay',
+    'todo',
 
     # Third party apps
     'corsheaders',
