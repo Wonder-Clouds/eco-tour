@@ -3,6 +3,7 @@ from safedelete.models import SafeDeleteModel, SOFT_DELETE
 from tinymce.models import HTMLField
 import uuid
 from service.models import Service
+from auditlog.registry import auditlog
 
 # Create your models here.
 class Data(SafeDeleteModel):
@@ -19,4 +20,5 @@ class Data(SafeDeleteModel):
 
     def __str__(self):
         return self.title
-    
+
+auditlog.register(Data)

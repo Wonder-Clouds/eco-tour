@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from safedelete.models import SafeDeleteModel, SOFT_DELETE_CASCADE
 from tinymce.models import HTMLField
+from auditlog.registry import auditlog
 import uuid
 from media.models import Media
 
@@ -52,3 +53,4 @@ class Service(SafeDeleteModel):
             return self.duration_value * 24 * 7
         return self.duration_value
 
+auditlog.register(Service)

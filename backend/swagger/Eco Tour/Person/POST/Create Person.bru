@@ -7,19 +7,24 @@ meta {
 post {
   url: http://127.0.0.1:8000/api/person/
   body: json
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5ODI1NTE5LCJpYXQiOjE3Njk4MjE5MTksImp0aSI6IjUyYjU5MDgzMzcwMjQ3MzE5NzM4Yjg0NGU4MzkwMmQzIiwidXNlcl9pZCI6IjEifQ.F6pIkFAfdtbkHPKho22sUrcr3sq7A8YDm4Ke7Sa4k3Y
 }
 
 body:json {
-    {
-      "first_name": "Maria",
-      "last_name": "del Barrio",
-      "email": "maria.del_bario@example.com",
-      "phone_number": "+34600111222",
-      "passport_number": "F2233445",
-      "birth_date": "1997-08-11",
-      "nationality": "Española"
+   {
+      "first_name": "Valentina",
+      "last_name": "Rios Martinez",
+      "email": "valentina.rios@example.com",
+      "phone_number": "+5491122334455",
+      "passport_number": "A7788990",
+      "birth_date": "2000-01-30",
+      "nationality": "AR"
     }
+  
 }
 
 settings {

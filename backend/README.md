@@ -16,7 +16,7 @@ Para el desarrollo del sistema se ha diseñado el siguiente diagrama de clases:
 
 ## Modulo Usuarios
 - El sistema debe permitir la creación de usuarios con diferentes roles y permisos - PENDING
-- El sistema debe permitir la autenticación de usuarios - PENDING
+- El sistema debe permitir la autenticación de usuarios - DONE
 - El sistema debe permitir la gestión de perfiles de usuario - PENDING
 - El sistema debe permitir la asignación de roles y permisos a los usuarios - PENDING
 
@@ -36,10 +36,11 @@ Para el desarrollo del sistema se ha diseñado el siguiente diagrama de clases:
 - El sistema debe poder gestionar los tours de horas, días o varios días - DONE
 - El sistema debe poder hacer filtros para servicios y paquetes: - DONE
   - Rango de precios - DONE
-  - Duración del tour - PENDING
-  - Tipo de servicio turístico - PENDING
-- El sistema debe poder buscar por nombre de servicio turístico o paquete turístico - PENDING
-- Los precios de los servicios turísticos deben ser dinámicos por mes - PENDING
+  - Duración del tour - DONE
+  - Tipo de servicio turístico - DONE
+- El sistema debe poder buscar por nombre de servicio turístico o paquete turístico - DONE
+- Los precios de los servicios turísticos deben ser dinámicos por mes - DONE
+- Los precios deben ser en dólares americanos (USD) - PENDING
 
 #### TODO:
 - Desplegar después de la entrega del módulo de servicios - PENDIENTE
@@ -60,5 +61,20 @@ Para el desarrollo del sistema se ha diseñado el siguiente diagrama de clases:
 - Modificar durante el versionado de una reserva el estado de la reserva
 - Durante la creación de la reserva, se debe poder asignar diferentes fechas o hasta con dias de descanso sin actividad entre actividades, esto por cada reserva individual/personalizada
 - Debe poderse agregar un costo extra por viajero en caso de viajes, vuelos y otras actividades que lo requieran
+- Los precios son en dólares americanos (USD)
+
+## Módulo de clientes
+- El módulo nos debe poder permitir crear personas como clientes potenciales o clientes reales - DONE
+- El módulo por cliente nos debe poder permitir almacenar la siguiente información:
+  - un identificador unico que sea los 6 primeros dígitos de un UUID - DONE
+  - nombre completo - DONE
+  - correo electrónico - DONE
+  - número de teléfono - DONE
+  - Número de pasaporte - DONE
+  - cumpleaños - DONE
+  - nacionalidad - DONE
+  - grupo al que pertenece (Un cliente puede estar en uno, muchos o ningún grupo) - PENDING 
+  - documentos adjuntos (Imágenes, PDF y Notas) - DONE
+  - nos debe poder permitir buscar a los clientes por nombre completo, passport, correo electrónico, número telefónico, nacionalidad - DONE
 
 ## Módulo de Operaciones

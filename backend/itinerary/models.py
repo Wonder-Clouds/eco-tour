@@ -1,6 +1,7 @@
 from django.db import models
 from safedelete.models import SafeDeleteModel, SOFT_DELETE
 from tinymce.models import HTMLField
+from auditlog.registry import auditlog
 import uuid
 
 from service.models import Service
@@ -21,3 +22,6 @@ class Itinerary(SafeDeleteModel):
 
     def __str__(self):
         return self.title
+
+auditlog.register(Itinerary)
+

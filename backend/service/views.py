@@ -37,7 +37,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='summary')
     def summary(self, request):
         """
-        Lista de servicios con campos resumidos:
+        List of services with summarized fields:
         - id
         - title
         - type

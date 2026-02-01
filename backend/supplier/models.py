@@ -1,6 +1,7 @@
 from django.db import models
 from safedelete.models import SafeDeleteModel, SOFT_DELETE
 from tinymce.models import HTMLField
+from auditlog.registry import auditlog
 import uuid
 
 
@@ -27,4 +28,6 @@ class Supplier(SafeDeleteModel):
 
     def __str__(self):
         return self.name
-    
+
+auditlog.register(Supplier)
+
