@@ -10,6 +10,7 @@ import {
   CardDescription,
   CardHeader,
 } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
@@ -48,66 +49,69 @@ function LoginPage() {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen"
-      style={{ backgroundColor: '#ffffff' }}
+      className="flex items-center justify-center h-screen"
     >
-      <Card className="w-full max-w-md shadow-lg border-0">
-        <CardHeader className="space-y-4 text-center">
-          <div className="flex justify-center">
-            <img src="/ecotour-logo.svg" alt="Eco Tour" className="h-16" />
-          </div>
-          <CardDescription>
-            Inicia sesión en tu cuenta
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Usuario</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Ingresa tu usuario"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                disabled={isLoading}
-                className="w-full"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Contraseña</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Ingresa tu contraseña"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-                className="w-full"
-              />
-            </div>
-
-            {(error || localError) && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-sm text-red-700">{error || localError}</p>
-              </div>
-            )}
-
-            <Button
-              type="submit"
+      <div className="w-1/2 p-18 h-full bg-[url('/bg-login.png')] bg-cover flex flex-col gap-10">
+        {/* Header */}
+        <div className="">
+          <img src="/ecotour-logo.svg" alt="Eco Tour" className="h-12" />
+        </div>
+        <div className="flex flex-col justify-center h-full text-white">
+          <h2 className="text-8xl font-extrabold mb-24">Bienvenido de vuelta!</h2>
+        </div>
+      </div>
+      <div className="w-1/2 p-30 flex flex-col justify-center h-full gap-15">
+        <div className="space-y-5">
+          <h1 className="text-4xl font-bold text-foreground">Iniciar sesión</h1>
+          <span>Bienvenido de vuelta! Por favor inicia sesión con tu cuenta.</span>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="space-y-2">
+            <Label className="text-xl" htmlFor="username">Usuario</Label>
+            <Input
+              id="username"
+              type="text"
+              placeholder="Ingresa tu usuario"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               disabled={isLoading}
-              className="w-full"
-              size="lg"
-              style={{
-                backgroundColor: '#085f24',
-                color: '#ffffff',
-              }}
-            >
-              {isLoading ? 'Cargando...' : 'Ingresar'}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+              className="w-full py-6"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-xl" htmlFor="password">Contraseña</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Ingresa tu contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
+              className="w-full py-6"
+            />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox id="remember-me" disabled={isLoading} />
+            <Label className="text-base" htmlFor="remember-me">Recuérdame</Label>
+          </div>
+
+          {(error || localError) && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-700">{error || localError}</p>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-primary cursor-pointer py-7 text-base"
+            size="lg"
+          >
+            {isLoading ? 'Cargando...' : 'Ingresar'}
+          </Button>
+        </form>
+      </div>
     </div>
   )
 }
