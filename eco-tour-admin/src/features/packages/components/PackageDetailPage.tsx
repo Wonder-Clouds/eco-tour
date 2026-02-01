@@ -27,19 +27,6 @@ const formatPrice = (price: number | undefined) => {
   }).format(price)
 }
 
-// Función para formatear duración
-const formatDuration = (hours: number | undefined) => {
-  if (!hours) return 'No especificado'
-  if (hours < 24) {
-    return `${hours} hora${hours !== 1 ? 's' : ''}`
-  }
-  const days = Math.floor(hours / 24)
-  const remainingHours = hours % 24
-  if (remainingHours === 0) {
-    return `${days} día${days !== 1 ? 's' : ''}`
-  }
-  return `${days} día${days !== 1 ? 's' : ''} y ${remainingHours} hora${remainingHours !== 1 ? 's' : ''}`
-}
 
 export const PackageDetailPage = ({ packageId }: Props) => {
   const { data: pkg, isLoading, error } = usePackage(packageId)
