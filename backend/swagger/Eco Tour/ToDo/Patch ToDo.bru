@@ -1,0 +1,27 @@
+meta {
+  name: Patch ToDo
+  type: http
+  seq: 4
+}
+
+patch {
+  url: http://localhost:8000/api/todo/54e6dcea-be7f-4d67-8f9a-a0e584253792/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5OTYwNjA5LCJpYXQiOjE3Njk5NTcwMDksImp0aSI6ImYxZWYxZGFhZmM5NzQ1MGY4MDhiOGUxZmRmNmI3ZWM2IiwidXNlcl9pZCI6IjIifQ.AcMbtwdnImlUjI9KNFRMRaEhOD7WB8DAJYu_bv9AHuU
+}
+
+body:json {
+  {
+    "title": "Articulo Importante",
+    "description": "Articulo importante"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

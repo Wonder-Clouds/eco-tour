@@ -1,0 +1,20 @@
+meta {
+  name: Get ToDo by User
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8000/api/todo/
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5OTU5MTI0LCJpYXQiOjE3Njk5NTU1MjQsImp0aSI6IjY1OGE2NmE4N2RjNjQ5MWI5OGUyMGYzMDNmNmRmMDE4IiwidXNlcl9pZCI6IjEifQ.NjlP0lKYtVpJWHx6lq3Mhphb_80yU8yD9RPOZMI3xpM
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
