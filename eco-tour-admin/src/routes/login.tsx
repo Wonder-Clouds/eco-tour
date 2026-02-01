@@ -54,7 +54,16 @@ function LoginPage() {
       <div className="w-1/2 p-18 h-full bg-[url('/bg-login.png')] bg-cover flex flex-col gap-10">
         {/* Header */}
         <div className="">
-          <img src="/ecotour-logo.svg" alt="Eco Tour" className="h-12" />
+          {/* Icono base en gris claro */}
+          <img
+            src="/icon.png"
+            alt="Loading"
+            className="inset-0 h-12"
+            style={{
+              filter: 'brightness(1.8) saturate(0)',
+              opacity: 0.3,
+            }}
+          />
         </div>
         <div className="flex flex-col justify-center h-full text-white">
           <h2 className="text-8xl font-extrabold mb-24">Bienvenido de vuelta!</h2>
@@ -62,12 +71,12 @@ function LoginPage() {
       </div>
       <div className="w-1/2 p-30 flex flex-col justify-center h-full gap-15">
         <div className="space-y-5">
-          <h1 className="text-4xl font-bold text-foreground">Iniciar sesión</h1>
-          <span>Bienvenido de vuelta! Por favor inicia sesión con tu cuenta.</span>
+          <h1 className="text-5xl font-bold text-foreground">Iniciar sesión</h1>
+          <span className="text-xl">Bienvenido de vuelta! Por favor inicia sesión con tu cuenta.</span>
         </div>
         <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="space-y-2">
-            <Label className="text-xl" htmlFor="username">Usuario</Label>
+          <div className="space-y-3">
+            <Label className="text-2xl" htmlFor="username">Usuario</Label>
             <Input
               id="username"
               type="text"
@@ -75,11 +84,11 @@ function LoginPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               disabled={isLoading}
-              className="w-full py-6"
+              className="w-full py-6 text-base!"
             />
           </div>
-          <div className="space-y-2">
-            <Label className="text-xl" htmlFor="password">Contraseña</Label>
+          <div className="space-y-3">
+            <Label className="text-2xl" htmlFor="password">Contraseña</Label>
             <Input
               id="password"
               type="password"
@@ -87,7 +96,7 @@ function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
-              className="w-full py-6"
+              className="w-full py-6 text-base!"
             />
           </div>
 
