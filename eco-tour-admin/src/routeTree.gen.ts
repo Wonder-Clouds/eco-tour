@@ -10,17 +10,25 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as PersonsRouteImport } from './routes/persons'
 import { Route as PackagesRouteImport } from './routes/packages'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
+import { Route as PersonsIndexRouteImport } from './routes/persons.index'
 import { Route as PackagesIndexRouteImport } from './routes/packages.index'
 import { Route as ServicesIdRouteImport } from './routes/services.$id'
+import { Route as PersonsIdRouteImport } from './routes/persons.$id'
 import { Route as PackagesIdRouteImport } from './routes/packages.$id'
 
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PersonsRoute = PersonsRouteImport.update({
+  id: '/persons',
+  path: '/persons',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PackagesRoute = PackagesRouteImport.update({
@@ -43,6 +51,11 @@ const ServicesIndexRoute = ServicesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ServicesRoute,
 } as any)
+const PersonsIndexRoute = PersonsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PersonsRoute,
+} as any)
 const PackagesIndexRoute = PackagesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -52,6 +65,11 @@ const ServicesIdRoute = ServicesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => ServicesRoute,
+} as any)
+const PersonsIdRoute = PersonsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PersonsRoute,
 } as any)
 const PackagesIdRoute = PackagesIdRouteImport.update({
   id: '/$id',
@@ -63,18 +81,23 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/packages': typeof PackagesRouteWithChildren
+  '/persons': typeof PersonsRouteWithChildren
   '/services': typeof ServicesRouteWithChildren
   '/packages/$id': typeof PackagesIdRoute
+  '/persons/$id': typeof PersonsIdRoute
   '/services/$id': typeof ServicesIdRoute
   '/packages/': typeof PackagesIndexRoute
+  '/persons/': typeof PersonsIndexRoute
   '/services/': typeof ServicesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/packages/$id': typeof PackagesIdRoute
+  '/persons/$id': typeof PersonsIdRoute
   '/services/$id': typeof ServicesIdRoute
   '/packages': typeof PackagesIndexRoute
+  '/persons': typeof PersonsIndexRoute
   '/services': typeof ServicesIndexRoute
 }
 export interface FileRoutesById {
@@ -82,10 +105,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/packages': typeof PackagesRouteWithChildren
+  '/persons': typeof PersonsRouteWithChildren
   '/services': typeof ServicesRouteWithChildren
   '/packages/$id': typeof PackagesIdRoute
+  '/persons/$id': typeof PersonsIdRoute
   '/services/$id': typeof ServicesIdRoute
   '/packages/': typeof PackagesIndexRoute
+  '/persons/': typeof PersonsIndexRoute
   '/services/': typeof ServicesIndexRoute
 }
 export interface FileRouteTypes {
@@ -94,28 +120,36 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/packages'
+    | '/persons'
     | '/services'
     | '/packages/$id'
+    | '/persons/$id'
     | '/services/$id'
     | '/packages/'
+    | '/persons/'
     | '/services/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/packages/$id'
+    | '/persons/$id'
     | '/services/$id'
     | '/packages'
+    | '/persons'
     | '/services'
   id:
     | '__root__'
     | '/'
     | '/login'
     | '/packages'
+    | '/persons'
     | '/services'
     | '/packages/$id'
+    | '/persons/$id'
     | '/services/$id'
     | '/packages/'
+    | '/persons/'
     | '/services/'
   fileRoutesById: FileRoutesById
 }
@@ -123,6 +157,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
   PackagesRoute: typeof PackagesRouteWithChildren
+  PersonsRoute: typeof PersonsRouteWithChildren
   ServicesRoute: typeof ServicesRouteWithChildren
 }
 
@@ -133,6 +168,13 @@ declare module '@tanstack/react-router' {
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/persons': {
+      id: '/persons'
+      path: '/persons'
+      fullPath: '/persons'
+      preLoaderRoute: typeof PersonsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/packages': {
@@ -163,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesIndexRouteImport
       parentRoute: typeof ServicesRoute
     }
+    '/persons/': {
+      id: '/persons/'
+      path: '/'
+      fullPath: '/persons/'
+      preLoaderRoute: typeof PersonsIndexRouteImport
+      parentRoute: typeof PersonsRoute
+    }
     '/packages/': {
       id: '/packages/'
       path: '/'
@@ -176,6 +225,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/services/$id'
       preLoaderRoute: typeof ServicesIdRouteImport
       parentRoute: typeof ServicesRoute
+    }
+    '/persons/$id': {
+      id: '/persons/$id'
+      path: '/$id'
+      fullPath: '/persons/$id'
+      preLoaderRoute: typeof PersonsIdRouteImport
+      parentRoute: typeof PersonsRoute
     }
     '/packages/$id': {
       id: '/packages/$id'
@@ -201,6 +257,19 @@ const PackagesRouteWithChildren = PackagesRoute._addFileChildren(
   PackagesRouteChildren,
 )
 
+interface PersonsRouteChildren {
+  PersonsIdRoute: typeof PersonsIdRoute
+  PersonsIndexRoute: typeof PersonsIndexRoute
+}
+
+const PersonsRouteChildren: PersonsRouteChildren = {
+  PersonsIdRoute: PersonsIdRoute,
+  PersonsIndexRoute: PersonsIndexRoute,
+}
+
+const PersonsRouteWithChildren =
+  PersonsRoute._addFileChildren(PersonsRouteChildren)
+
 interface ServicesRouteChildren {
   ServicesIdRoute: typeof ServicesIdRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
@@ -219,6 +288,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
   PackagesRoute: PackagesRouteWithChildren,
+  PersonsRoute: PersonsRouteWithChildren,
   ServicesRoute: ServicesRouteWithChildren,
 }
 export const routeTree = rootRouteImport

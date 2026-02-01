@@ -1,5 +1,6 @@
 from django.db import models
 from safedelete.models import SafeDeleteModel, SOFT_DELETE
+from auditlog.registry import auditlog
 import uuid
 
 from group.models import Group
@@ -116,3 +117,7 @@ class ServiceQuotePerson(SafeDeleteModel):
 
     def __str__(self):
         return f"{self.service.title} in Quote {self.quote.id}"
+
+auditlog.register(Quote)
+auditlog.register(ServiceQuotePerson)
+

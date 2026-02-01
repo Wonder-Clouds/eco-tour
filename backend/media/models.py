@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from safedelete.models import SafeDeleteModel, SOFT_DELETE
+from auditlog.registry import auditlog
 import uuid
 
 from shared.functions import validate_file_type, validate_image_type
@@ -39,4 +40,6 @@ class Media(SafeDeleteModel):
 
     def __str__(self):
         return f"{self.type_media} of {self.content_object}"
-    
+
+auditlog.register(Media)
+

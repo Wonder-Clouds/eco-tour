@@ -24,6 +24,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView
 )
+from shared.views import CountryListView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -42,7 +43,8 @@ urlpatterns = [
     path('api/', include('person.urls')),
     path('api/', include('expense.urls')),
     path('api/', include('pay.urls')),
-
+    path('api/', include('audit.urls')),
+    path('api/countries/', CountryListView.as_view()),
     path('tinymce/', include('tinymce.urls')),
 ]
 

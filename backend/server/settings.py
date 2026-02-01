@@ -32,7 +32,9 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-pfg@8zgf@e_#m4rcpf1
 DEBUG = True
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
+# CORS: Permitir todos los orígenes
+CORS_ALLOW_ALL_ORIGINS = True
+
 CORS_ALLOW_METHODS = [
     "DELETE",
     "GET",
@@ -87,6 +89,8 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'django_filters',
     'rest_framework_simplejwt',
+    'django_countries',
+    'auditlog',
 ]
 
 MIDDLEWARE = [
@@ -98,6 +102,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'auditlog.middleware.AuditlogMiddleware',
 ]
 
 ROOT_URLCONF = 'server.urls'

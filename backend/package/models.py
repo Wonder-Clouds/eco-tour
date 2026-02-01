@@ -1,6 +1,7 @@
 from django.db import models
 from safedelete.models import SafeDeleteModel, SOFT_DELETE_CASCADE
 from tinymce.models import HTMLField
+from auditlog.registry import auditlog
 import uuid
 
 from service.models import Service
@@ -101,3 +102,7 @@ class PackageService(models.Model):
 
     def __str__(self):
         return f"{self.package.title} - {self.service.title} (Orden: {self.order})"
+
+auditlog.register(Package)
+auditlog.register(PackageService)
+

@@ -1,5 +1,6 @@
 from django.db import models
 from safedelete.models import SafeDeleteModel, SOFT_DELETE
+from auditlog.registry import auditlog
 import uuid
 from shared.enums import COIN_CHOICES
 from group.models import Group
@@ -23,4 +24,6 @@ class Expense(SafeDeleteModel):
 
     def __str__(self):
         return f"Expense {self.id} - {self.amount}"
-    
+
+auditlog.register(Expense)
+

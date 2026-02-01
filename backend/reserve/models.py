@@ -1,5 +1,6 @@
 from django.db import models
 from safedelete.models import SafeDeleteModel, SOFT_DELETE
+from auditlog.registry import auditlog
 import uuid
 from supplier.models import Supplier
 from shared.enums import COIN_CHOICES
@@ -33,4 +34,6 @@ class Reserve(SafeDeleteModel):
 
     def __str__(self):
         return f"Reserve {self.id} - {self.status}"
-    
+
+auditlog.register(Reserve)
+

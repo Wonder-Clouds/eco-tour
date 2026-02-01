@@ -486,3 +486,104 @@ Este endpoint nos permite obtener un resumen de todos los _package_ con los sigu
   - price
   - services_count (Número total de servicios en el paquete)
   - total_duration (Duración total del paquete en días)
+
+
+## Módulo Personas (Clientes)
+### Get Person
+Estos endpoints nos permite listar los _Person_ ya sea todos o solo uno pasando él id
+- Get Person: http://127.0.0.1:8000/api/person/
+- Get Person by Id: http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567
+
+### Filters
+- Filtros para _person_ `http://localhost:8000/api/person/summary/?q=Cris` es un filtro con busqueda `or` para los siguientes campos:
+  - first_name: Filtrar por nombre
+  - last_name: Filtrar por apellido
+  - email: Filtrar por email
+  - phone_number: Filtrar por número de teléfono q
+- Y un filtro por nacionalidad `http://localhost:8000/api/person/summary/?nationality=US` este es de tipo `and`
+
+### Post Client
+Este endpoint nos permite crear un _person_ pasando en el cuerpo los datos requeridos
+- Post Client: http://127.0.0.1:8000/api/person/
+- Body:
+```json
+ {
+    "first_name": "Valentina",
+    "last_name": "Rios Martinez",
+    "email": "valentina.rios@example.com",
+    "phone_number": "+5491122334455",
+    "passport_number": "A7788990",
+    "birth_date": "2000-01-30",
+    "nationality": "AR"
+  }
+```
+
+### Patch Person
+Este endpoint nos permite actualizar un _person_ pasando solo lo que se desea actualizar o todo el cuerpo.
+- Patch: http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567/
+- Body:
+```json
+{
+    "first_name": "Martin",
+    "nationality": "Americana"
+}
+```
+
+### Delete Person
+Este endpoint nos permite eliminar un _person_ pasando el id
+- Delete: http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567/
+
+### Actions
+#### Upload Document
+Este endpoint nos permite subir un documento y relacionarlo al _person_ pasado por la url, todo lo que se sube aqui esta en categoria _document_.
+- upload-document: `POST` http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567/upload-document/
+- Body: Form-Data
+    - title: Documento del cliente
+    - description: Este es un documento del cliente
+    - file: (Seleccionar archivo de documento)
+
+#### Upload Image
+Este endpoint nos permite subir una imagen y relacionarla al _person_ pasado por la url, todo lo que se sube aqui esta en categoria _image.
+- upload-image: `POST` http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567/upload-media/
+- Body: Form-Data
+    - title: Imagen del cliente
+    - description: Esta es una imagen del cliente
+    - file: (Seleccionar archivo de imagen)
+
+#### Get Summary Person
+Este endpoint nos permite obtener un resumen de todos los _person_ con los siguientes campos:
+- Get Summary Person: http://127.0.0.1:8000/api/person/summary
+- Campos:
+  - id
+  - first_name
+  - last_name
+  - email
+  - phone_number
+  - nationality
+  - created_at
+  - updated_at
+
+### Countries
+Este endpoint nos permite obtener la lista de países disponibles para asignar a la nacionalidad de un cliente.
+- Get Countries: http://localhost:8000/api/countries/
+- Response:
+```json
+[
+  {
+    "value": "US",
+    "label": "United States"
+  },
+  {
+    "value": "CA",
+    "label": "Canada"
+  },
+  {
+    "value": "GB",
+    "label": "United Kingdom"
+  },
+  ...
+]
+```
+
+# TODO:
+## DOCUMENTAR TODO RELACIONADO A AUDITLOG

@@ -5,14 +5,19 @@ meta {
 }
 
 patch {
-  url: http://127.0.0.1:8000/api/person/7b5d118e-5e0c-4d70-be52-be9788062ff5/
+  url: http://127.0.0.1:8000/api/person/1785f4cb-37c2-40f7-832f-85e7cbf55a7a/
   body: json
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5ODI1NTE5LCJpYXQiOjE3Njk4MjE5MTksImp0aSI6IjUyYjU5MDgzMzcwMjQ3MzE5NzM4Yjg0NGU4MzkwMmQzIiwidXNlcl9pZCI6IjEifQ.F6pIkFAfdtbkHPKho22sUrcr3sq7A8YDm4Ke7Sa4k3Y
 }
 
 body:json {
   {
-      "first_name": "Martin"
+      "first_name": "Martin",
+      "nationality": "US"
   }
   
 }

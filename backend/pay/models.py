@@ -1,6 +1,7 @@
 from django.db import models
 from safedelete.models import SafeDeleteModel, SOFT_DELETE
 from tinymce.models import HTMLField
+from auditlog.registry import auditlog
 import uuid
 from quote.models import Quote
 from shared.enums import COIN_CHOICES
@@ -23,3 +24,5 @@ class Pay(SafeDeleteModel):
 
     def __str__(self):
         return f"Pay {self.quote} - {self.amount}"
+
+auditlog.register(Pay)
