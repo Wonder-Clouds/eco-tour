@@ -3,6 +3,7 @@ import { Bell, StickyNote, Plus, CheckCircle2, Circle, Loader2, X, Pencil } from
 import { useTodos } from '@/features/todos/hooks/useTodos'
 import { useCreateTodo, useChangeStatus, useUpdateTodo } from '@/features/todos/hooks/useTodoMutations'
 import { Todo, TodoPriority } from '@/types/todo.type'
+import { ThemeToggle } from './shared/ThemeToggle'
 
 // Helper para obtener colores de prioridad
 const getPriorityColor = (priority: TodoPriority) => {
@@ -104,16 +105,18 @@ export default function Header() {
   const pendingCount = todos.filter((t) => !t.is_completed).length
 
   return (
-    <header className="h-16 px-6 flex items-center justify-end bg-white border-b border-gray-200 shrink-0">
+    <header className="h-16 px-6 flex items-center justify-end bg-background white border-b border-gray-200 shrink-0">
       {/* Acciones del header */}
       <div className="flex items-center gap-3">
+        <div>
+          <ThemeToggle />
+        </div>
         {/* Botón de ToDo con dropdown */}
         <div className="relative" ref={panelRef}>
           <button
             onClick={() => setShowTodoPanel(!showTodoPanel)}
-            className={`relative p-2.5 rounded-full transition-all group ${
-              showTodoPanel ? 'bg-green-100' : 'hover:bg-green-50'
-            }`}
+            className={`relative p-2.5 rounded-full transition-all group ${showTodoPanel ? 'bg-green-100' : 'hover:bg-green-50'
+              }`}
             title="Mis tareas"
           >
             <StickyNote size={20} className={`${showTodoPanel ? 'text-green-600' : 'text-gray-600 group-hover:text-green-600'}`} />
@@ -182,9 +185,8 @@ export default function Header() {
                           key={p}
                           type="button"
                           onClick={() => setNewTodoPriority(p)}
-                          className={`px-2.5 py-1 text-xs rounded-full border transition ${
-                            newTodoPriority === p ? 'ring-2 ring-offset-1 ring-gray-400' : ''
-                          }`}
+                          className={`px-2.5 py-1 text-xs rounded-full border transition ${newTodoPriority === p ? 'ring-2 ring-offset-1 ring-gray-400' : ''
+                            }`}
                           style={{
                             backgroundColor: colors.bg,
                             color: colors.text,
@@ -229,9 +231,8 @@ export default function Header() {
                     return (
                       <div
                         key={todo.id}
-                        className={`flex items-start gap-3 px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition ${
-                          todo.is_completed ? 'opacity-50' : ''
-                        }`}
+                        className={`flex items-start gap-3 px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition ${todo.is_completed ? 'opacity-50' : ''
+                          }`}
                       >
                         <button
                           onClick={() => changeStatusMutation.mutate(todo.id)}
