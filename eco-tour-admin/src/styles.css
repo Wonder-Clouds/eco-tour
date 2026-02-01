@@ -20,7 +20,7 @@ code {
 
 :root {
   --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.278 0.033 256.848);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
@@ -68,9 +68,9 @@ code {
 }
 
 .dark {
-  --background: oklch(0.141 0.005 285.823);
+  --background: oklch(0.1885 0.0243 283.83);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.141 0.005 285.823);
+  --card: oklch(0.2364 0.0229 284.51);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.141 0.005 285.823);
   --popover-foreground: oklch(0.985 0 0);
@@ -92,7 +92,8 @@ code {
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.006 285.885);
+  
+  --sidebar: oklch(0.2364 0.0229 284.51);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -146,8 +147,7 @@ code {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply text-foreground;
-    background-color: #fafafa;
+    @apply bg-background text-foreground;
   }
 }
 
@@ -201,7 +201,6 @@ code {
   color: #9ca3af;
 }
 
-/* Estilos para contenido HTML parseado */
 .prose {
   color: #374151;
   max-width: 100%;
@@ -287,3 +286,15 @@ code {
   font-size: 0.875rem;
 }
 
+@keyframes reveal-color {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.animate-reveal-color {
+  animation: reveal-color 1.5s ease-in-out infinite;
+}
