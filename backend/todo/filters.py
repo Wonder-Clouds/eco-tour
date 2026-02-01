@@ -1,0 +1,19 @@
+import django_filters
+from django.db.models import Q
+from .models import Todo
+
+
+class TodoFilter(django_filters.FilterSet):
+    q = django_filters.CharFilter(method='filter_custom', label="Buscar por título o descripción")
+    priority = django_filters.ChoiceFilter(field_name='priority', choices=Todo.PRIORITY_CHOICES)
+    is_completed = django_filters.BooleanFilter(field_name='is_completed')
+
+    class Meta:
+        model = Todo
+        fields = ['q', 'priority', 'is_completed']
+
+    def filter_custom(self, queryset, name, value):
+        return queryset.filter(
+            Q(title__icontains=value) |
+            Q(description__icontains=value)
+        )

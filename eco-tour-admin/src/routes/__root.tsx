@@ -10,6 +10,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import Sidebar from '../components/navigation/Sidebar'
+import Header from '../components/Header'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 
 import appCss from '../styles.css?url'
@@ -95,8 +96,9 @@ function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <main className="flex-1 overflow-auto">
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header />
+        <main className="flex-1 overflow-auto bg-gray-50">
           <Outlet />
         </main>
       </div>

@@ -1,0 +1,28 @@
+meta {
+  name: Create ToDo
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8000/api/todo/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5OTY5NjY4LCJpYXQiOjE3Njk5NjYwNjgsImp0aSI6ImE2ZTNiY2E3MjAzZDRmOGM5MGEyNGEzYmViOGExNGI1IiwidXNlcl9pZCI6IjEifQ.rlr-gLlZry1byejKkziVUpQviI_bF_X8tuX28DDHqkw
+}
+
+body:json {
+  {
+    "title": "Creaer Articulo",
+    "description": "Se necesita crear el articulo numero 2",
+    "priority": "hard"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useState } from 'react'
 import {
   Settings,
   Users,
@@ -13,7 +14,9 @@ import {
   CheckCircle2,
   Circle,
   Plus,
-  User
+  X,
+  Loader2,
+  Search,
 } from 'lucide-react'
 import {
   AreaChart,
@@ -31,7 +34,35 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import UserMenu from '@/components/shared/UserMenu'
+import { useTodos } from '@/features/todos/hooks/useTodos'
+import { useCreateTodo, useChangeStatus } from '@/features/todos/hooks/useTodoMutations'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Todo, TodoPriority, TodoFilters } from '@/types/todo.type'
+
+// Helper para obtener colores de prioridad
+const getPriorityColor = (priority: TodoPriority) => {
+  switch (priority) {
+    case 'hard':
+      return { bg: '#fef2f2', text: '#dc2626', border: '#fecaca', label: 'Alta' }
+    case 'medium':
+      return { bg: '#fffbeb', text: '#d97706', border: '#fde68a', label: 'Media' }
+    case 'low':
+      return { bg: '#edfff2', text: '#00932c', border: '#afffc6', label: 'Baja' }
+    default:
+      return { bg: '#f3f4f6', text: '#6b7280', border: '#e5e7eb', label: 'Normal' }
+  }
+}
+
+// Helper para formatear fecha
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('es-PE', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
+}
 
 // Datos de ejemplo para los gráficos
 const reservasMensuales = [
@@ -78,40 +109,56 @@ const proximosViajes = [
   { id: 4, servicio: 'Montaña de Colores', fecha: '02 Feb 2026', pasajeros: 10, guia: 'Ana Torres' },
 ]
 
-// Datos de ejemplo para ToDo (maqueta)
-const tareasPendientes = [
-  { id: 1, title: 'Confirmar reserva Machu Picchu grupo 12 pax', completed: false, assignee: 'Carlos M.', priority: 'alta', dueDate: '30 Ene' },
-  { id: 2, title: 'Actualizar precios temporada alta', completed: true, assignee: 'Admin', priority: 'media', dueDate: '28 Ene' },
-  { id: 3, title: 'Responder consultas pendientes (5)', completed: false, assignee: 'María G.', priority: 'alta', dueDate: '29 Ene' },
-  { id: 4, title: 'Subir fotos nuevas Valle Sagrado', completed: false, assignee: 'Pedro Q.', priority: 'baja', dueDate: '02 Feb' },
-  { id: 5, title: 'Verificar disponibilidad guías febrero', completed: false, assignee: 'Admin', priority: 'media', dueDate: '31 Ene' },
-  { id: 6, title: 'Enviar itinerario cliente VIP', completed: true, assignee: 'Ana T.', priority: 'alta', dueDate: '27 Ene' },
-]
-
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case 'alta': return { bg: '#fef2f2', text: '#dc2626', border: '#fecaca' }
-    case 'media': return { bg: '#fffbeb', text: '#d97706', border: '#fde68a' }
-    case 'baja': return { bg: '#edfff2', text: '#00932c', border: '#afffc6' }
-    default: return { bg: '#f3f4f6', text: '#6b7280', border: '#e5e7eb' }
-  }
-}
 
 const Dashboard = () => {
+  // Filtros para ToDo
+  const [todoFilters, setTodoFilters] = useState<TodoFilters>({
+    q: '',
+    priority: '',
+  })
+
+  const { data: todos = [] as Todo[], isLoading: isLoadingTodos } = useTodos(todoFilters)
+  const createTodoMutation = useCreateTodo()
+  const changeStatusMutation = useChangeStatus()
+
+  const [showAddTodo, setShowAddTodo] = useState(false)
+  const [newTodoTitle, setNewTodoTitle] = useState('')
+  const [newTodoDescription, setNewTodoDescription] = useState('')
+  const [newTodoPriority, setNewTodoPriority] = useState<TodoPriority>('medium')
+
+  const completedCount = todos.filter((t) => t.is_completed).length
+  const pendingCount = todos.filter((t) => !t.is_completed).length
+
+  const handleAddTodo = async () => {
+    if (!newTodoTitle.trim()) return
+
+    await createTodoMutation.mutateAsync({
+      title: newTodoTitle,
+      description: newTodoDescription || undefined,
+      priority: newTodoPriority,
+    })
+
+    setNewTodoTitle('')
+    setNewTodoDescription('')
+    setNewTodoPriority('medium')
+    setShowAddTodo(false)
+  }
+
+  const handleToggleStatus = async (id: string) => {
+    await changeStatusMutation.mutateAsync(id)
+  }
+
+
   return (
     <div className="p-8 min-h-max">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-primary mb-2">
-            Bienvenido a Eco Tour Admin
-          </h1>
-          <p className="text-gray-600">
-            Panel de administración del sistema - Resumen general
-          </p>
-        </div>
-
-        <UserMenu />
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-primary mb-2">
+          Bienvenido a Eco Tour Admin
+        </h1>
+        <p className="text-gray-600">
+          Panel de administración del sistema - Resumen general
+        </p>
       </div>
 
       {/* KPIs principales */}
@@ -299,71 +346,193 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* ToDo - Tareas Pendientes (Maqueta) */}
+        {/* ToDo - Tareas Pendientes (Funcional) */}
         <Card className="border-0 shadow-md">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2" style={{ color: '#085f24' }}>
                 <CheckCircle2 size={20} />
-                Tareas Pendientes
+                Mis Tareas
               </CardTitle>
               <button
+                onClick={() => setShowAddTodo(!showAddTodo)}
                 className="p-1.5 rounded-lg hover:bg-gray-100 transition"
-                title="Agregar tarea (próximamente)"
+                title="Agregar tarea"
               >
-                <Plus size={18} className="text-gray-500" />
+                {showAddTodo ? (
+                  <X size={18} className="text-gray-500" />
+                ) : (
+                  <Plus size={18} className="text-gray-500" />
+                )}
               </button>
             </div>
             <div className="flex gap-4 text-xs mt-2">
-              <span className="text-green-600">✓ 2 completadas</span>
-              <span className="text-gray-500">○ 4 pendientes</span>
+              <span className="text-green-600">✓ {completedCount} completadas</span>
+              <span className="text-gray-500">○ {pendingCount} pendientes</span>
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="space-y-2 max-h-[280px] overflow-y-auto">
-              {tareasPendientes.map((tarea) => {
-                const priorityColors = getPriorityColor(tarea.priority)
-                return (
-                  <div
-                    key={tarea.id}
-                    className={`flex items-start gap-3 p-3 rounded-lg border transition cursor-pointer hover:shadow-sm ${tarea.completed ? 'bg-gray-50 opacity-60' : 'bg-white'
+            {/* Filtros de búsqueda */}
+            <div className="mb-3 space-y-2">
+              <div className="relative">
+
+                <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Buscar tareas..."
+                  value={todoFilters.q || ''}
+                  onChange={(e) => setTodoFilters((prev) => ({ ...prev, q: e.target.value }))}
+                  className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500"
+                />
+              </div>
+              <div className="flex gap-1.5 flex-wrap">
+                <button
+                  onClick={() => setTodoFilters((prev) => ({ ...prev, priority: '' }))}
+                  className={`px-2 py-0.5 text-xs rounded-full border transition ${
+                    !todoFilters.priority ? 'bg-gray-200 text-gray-700' : 'bg-white text-gray-500 hover:bg-gray-50'
+                  }`}
+                >
+                  Todas
+                </button>
+                {(['low', 'medium', 'hard'] as TodoPriority[]).map((p) => {
+                  const colors = getPriorityColor(p)
+                  const isActive = todoFilters.priority === p
+                  return (
+                    <button
+                      key={p}
+                      onClick={() => setTodoFilters((prev) => ({ ...prev, priority: isActive ? '' : p }))}
+                      className={`px-2 py-0.5 text-xs rounded-full border transition ${
+                        isActive ? 'ring-1 ring-offset-1 ring-gray-400' : ''
                       }`}
-                    style={{ borderColor: '#e5e7eb' }}
-                  >
-                    <div className="mt-0.5 flex-shrink-0">
-                      {tarea.completed ? (
-                        <CheckCircle2 size={18} style={{ color: '#00932c' }} />
-                      ) : (
-                        <Circle size={18} className="text-gray-300" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-sm ${tarea.completed ? 'line-through text-gray-400' : 'text-gray-700'}`}>
-                        {tarea.title}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                        <span
-                          className="text-xs px-2 py-0.5 rounded-full"
-                          style={{
-                            backgroundColor: priorityColors.bg,
-                            color: priorityColors.text,
-                            border: `1px solid ${priorityColors.border}`
-                          }}
-                        >
-                          {tarea.priority}
-                        </span>
-                        <span className="text-xs text-gray-400 flex items-center gap-1">
-                          <User size={12} />
-                          {tarea.assignee}
-                        </span>
-                        <span className="text-xs text-gray-400">
-                          {tarea.dueDate}
-                        </span>
+                      style={{
+                        backgroundColor: colors.bg,
+                        color: colors.text,
+                        borderColor: colors.border,
+                      }}
+                    >
+                      {colors.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Formulario para agregar tarea */}
+            {showAddTodo && (
+              <div className="mb-4 p-3 rounded-lg border border-dashed border-gray-300 bg-gray-50">
+                <Input
+                  placeholder="Título de la tarea"
+                  value={newTodoTitle}
+                  onChange={(e) => setNewTodoTitle(e.target.value)}
+                  className="mb-2"
+                />
+                <Input
+                  placeholder="Descripción (opcional)"
+                  value={newTodoDescription}
+                  onChange={(e) => setNewTodoDescription(e.target.value)}
+                  className="mb-2"
+                />
+                {/* Selector de prioridad */}
+                <div className="flex gap-2 mb-3">
+                  {(['low', 'medium', 'hard'] as TodoPriority[]).map((p) => {
+                    const colors = getPriorityColor(p)
+                    return (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setNewTodoPriority(p)}
+                        className={`px-3 py-1 text-xs rounded-full border transition ${
+                          newTodoPriority === p ? 'ring-2 ring-offset-1 ring-gray-400' : ''
+                        }`}
+                        style={{
+                          backgroundColor: colors.bg,
+                          color: colors.text,
+                          borderColor: colors.border,
+                        }}
+                      >
+                        {colors.label}
+                      </button>
+                    )
+                  })}
+                </div>
+                <Button
+                  onClick={handleAddTodo}
+                  disabled={!newTodoTitle.trim() || createTodoMutation.isPending}
+                  className="w-full"
+                  style={{ backgroundColor: '#00bf35' }}
+                >
+                  {createTodoMutation.isPending ? (
+                    <Loader2 className="animate-spin" size={16} />
+                  ) : (
+                    'Agregar Tarea'
+                  )}
+                </Button>
+              </div>
+            )}
+
+            {/* Lista de tareas */}
+            <div className="space-y-2 max-h-[320px] overflow-y-auto">
+              {isLoadingTodos ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="animate-spin text-gray-400" size={24} />
+                </div>
+              ) : todos.length === 0 ? (
+                <div className="text-center py-8 text-gray-400 text-sm">
+                  No hay tareas pendientes
+                </div>
+              ) : (
+                todos.map((todo) => {
+                  const priorityColors = getPriorityColor(todo.priority)
+                  return (
+                    <div
+                      key={todo.id}
+                      className={`flex items-start gap-3 p-3 rounded-lg border transition hover:shadow-sm ${
+                        todo.is_completed ? 'bg-gray-50 opacity-60' : 'bg-white'
+                      }`}
+                      style={{ borderColor: '#e5e7eb' }}
+                    >
+                      <button
+                        onClick={() => handleToggleStatus(todo.id)}
+                        className="mt-0.5 shrink-0"
+                        disabled={changeStatusMutation.isPending}
+                      >
+                        {changeStatusMutation.isPending ? (
+                          <Loader2 size={18} className="animate-spin text-gray-400" />
+                        ) : todo.is_completed ? (
+                          <CheckCircle2 size={18} style={{ color: '#00932c' }} />
+                        ) : (
+                          <Circle size={18} className="text-gray-300 hover:text-gray-400" />
+                        )}
+                      </button>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium ${todo.is_completed ? 'line-through text-gray-400' : 'text-gray-700'}`}>
+                          {todo.title}
+                        </p>
+                        {todo.description && (
+                          <p className={`text-xs mt-1 ${todo.is_completed ? 'text-gray-300' : 'text-gray-500'}`}>
+                            {todo.description}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-2 mt-2 flex-wrap">
+                          <span
+                            className="text-xs px-2 py-0.5 rounded-full"
+                            style={{
+                              backgroundColor: priorityColors.bg,
+                              color: priorityColors.text,
+                              border: `1px solid ${priorityColors.border}`,
+                            }}
+                          >
+                            {priorityColors.label}
+                          </span>
+                          <span className="text-xs text-gray-400">
+                            {formatDate(todo.created_at)}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )
-              })}
+                  )
+                })
+              )}
             </div>
           </CardContent>
         </Card>
