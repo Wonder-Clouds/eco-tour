@@ -77,4 +77,70 @@ Para el desarrollo del sistema se ha diseñado el siguiente diagrama de clases:
   - documentos adjuntos (Imágenes, PDF y Notas) - DONE
   - nos debe poder permitir buscar a los clientes por nombre completo, passport, correo electrónico, número telefónico, nacionalidad - DONE
 
-## Módulo de Operaciones
+## Estructura del Proyecto
+
+```
+backend/
+├── api/                    # Aplicación principal de Django
+│   ├── audit/             # Módulo de auditoría
+│   ├── data/              # Módulo de datos adicionales
+│   ├── expense/           # Módulo de gastos
+│   ├── group/             # Módulo de grupos de usuarios
+│   ├── itinerary/         # Módulo de itinerarios
+│   ├── media/             # Módulo de medios (imágenes, videos)
+│   ├── package/           # Módulo de paquetes turísticos
+│   ├── pay/               # Módulo de pagos
+│   ├── person/            # Módulo de personas/clientes
+│   ├── quote/             # Módulo de cotizaciones
+│   ├── reserve/           # Módulo de reservas
+│   ├── service/           # Módulo de servicios turísticos
+│   ├── supplier/          # Módulo de proveedores
+│   └── todo/              # Módulo de tareas
+├── server/                # Configuración principal de Django
+├── shared/                # Utilidades compartidas
+│   ├── enums.py          # Enumeraciones del sistema
+│   ├── functions.py      # Funciones reutilizables
+│   ├── pagination.py     # Configuración de paginación
+│   └── views.py          # Vistas compartidas
+├── swagger/               # Documentación API (Swagger/OpenAPI)
+├── manage.py              # Script de gestión de Django
+├── requirements.txt       # Dependencias del proyecto
+└── podman-compose.yml     # Configuración de contenedores
+```
+
+## Configuración del Proyecto
+
+### Requisitos
+- Python 3.8+
+- PostgreSQL
+- Django 3.2+
+
+### Instalación
+```bash
+# Crear entorno virtual
+python -m venv env
+
+# Activar entorno virtual
+source env/bin/activate
+
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Ejecutar migraciones
+python manage.py migrate
+
+# Crear superusuario
+python manage.py createsuperuser
+
+# Iniciar servidor
+python manage.py runserver
+```
+
+### Ejecución con Docker
+```bash
+podman-compose up
+```
+
+## Notas Importantes
+- Ver [API.md](API.md) para detalles específicos de endpoints
+- Ver [NOTES.md](NOTES.md) para notas técnicas adicionales
