@@ -17,14 +17,14 @@ export const ServicesTable = ({ data, onEdit, onDelete }: Props) => {
 
       {/* Tabla */}
       <div className="overflow-x-auto border rounded-lg">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-table-foreground">
+          <thead className="bg-table">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    className="px-6 py-3 text-left text-xs font-medium text-table-foreground uppercase tracking-wider cursor-pointer"
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     {flexRender(
@@ -40,7 +40,7 @@ export const ServicesTable = ({ data, onEdit, onDelete }: Props) => {
               </tr>
             ))}
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-table divide-y divide-table">
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id} className="hover:bg-gray-50">
                 {row.getVisibleCells().map((cell) => (

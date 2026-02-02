@@ -163,9 +163,9 @@ const Dashboard = () => {
 
       {/* KPIs principales */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="border-0 shadow-md">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+        <Card className="border-0 shadow-md gap-0">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-xl font-medium text-gray-600">
               Total Servicios
             </CardTitle>
             <Settings size={20} style={{ color: '#00bf35' }} />
@@ -181,7 +181,7 @@ const Dashboard = () => {
 
         <Card className="border-0 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-xl font-medium text-gray-600">
               Usuarios Activos
             </CardTitle>
             <Users size={20} style={{ color: '#00bf35' }} />
@@ -197,7 +197,7 @@ const Dashboard = () => {
 
         <Card className="border-0 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-xl font-medium text-gray-600">
               Reservas del Mes
             </CardTitle>
             <Calendar size={20} style={{ color: '#00bf35' }} />
@@ -213,7 +213,7 @@ const Dashboard = () => {
 
         <Card className="border-0 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-xl font-medium text-gray-600">
               Ingresos del Mes
             </CardTitle>
             <TrendingUp size={20} style={{ color: '#00bf35' }} />
@@ -388,9 +388,8 @@ const Dashboard = () => {
               <div className="flex gap-1.5 flex-wrap">
                 <button
                   onClick={() => setTodoFilters((prev) => ({ ...prev, priority: '' }))}
-                  className={`px-2 py-0.5 text-xs rounded-full border transition ${
-                    !todoFilters.priority ? 'bg-gray-200 text-gray-700' : 'bg-white text-gray-500 hover:bg-gray-50'
-                  }`}
+                  className={`px-2 py-0.5 text-xs rounded-full border transition ${!todoFilters.priority ? 'bg-gray-200 text-gray-700' : 'bg-white text-gray-500 hover:bg-gray-50'
+                    }`}
                 >
                   Todas
                 </button>
@@ -401,9 +400,8 @@ const Dashboard = () => {
                     <button
                       key={p}
                       onClick={() => setTodoFilters((prev) => ({ ...prev, priority: isActive ? '' : p }))}
-                      className={`px-2 py-0.5 text-xs rounded-full border transition ${
-                        isActive ? 'ring-1 ring-offset-1 ring-gray-400' : ''
-                      }`}
+                      className={`px-2 py-0.5 text-xs rounded-full border transition ${isActive ? 'ring-1 ring-offset-1 ring-gray-400' : ''
+                        }`}
                       style={{
                         backgroundColor: colors.bg,
                         color: colors.text,
@@ -441,9 +439,8 @@ const Dashboard = () => {
                         key={p}
                         type="button"
                         onClick={() => setNewTodoPriority(p)}
-                        className={`px-3 py-1 text-xs rounded-full border transition ${
-                          newTodoPriority === p ? 'ring-2 ring-offset-1 ring-gray-400' : ''
-                        }`}
+                        className={`px-3 py-1 text-xs rounded-full border transition ${newTodoPriority === p ? 'ring-2 ring-offset-1 ring-gray-400' : ''
+                          }`}
                         style={{
                           backgroundColor: colors.bg,
                           color: colors.text,
@@ -486,9 +483,8 @@ const Dashboard = () => {
                   return (
                     <div
                       key={todo.id}
-                      className={`flex items-start gap-3 p-3 rounded-lg border transition hover:shadow-sm ${
-                        todo.is_completed ? 'bg-gray-50 opacity-60' : 'bg-white'
-                      }`}
+                      className={`flex items-start gap-3 p-3 rounded-lg border transition hover:shadow-sm ${todo.is_completed ? 'bg-gray-50 opacity-60' : 'bg-white'
+                        }`}
                       style={{ borderColor: '#e5e7eb' }}
                     >
                       <button
