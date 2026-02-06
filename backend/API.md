@@ -6,31 +6,46 @@ La API utiliza autenticación basada en tokens. Para obtener un token, envía un
 Para este endpoint se debe enviar las credenciales de un usuario ya creado en el sistema para obtener el token de autenticación.
 - token: `POST` http://localhost:8000/api/token/
 - Body: 
-```json
-{
-  "username": "tu_usuario",
-  "password": "tu_contraseña"
-}
-```
+  ```json
+  {
+    "username": "tu_usuario",
+    "password": "tu_contraseña"
+  }
+  ```
+- Respuesta:
+  ```json
+  {
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MDkwODE5NSwiaWF0IjoxNzcwMzAzMzk1LCJqdGkiOiI5YTBlYWY4MjJmMmE0ODNmYWYwN2YwNmNhYWMwOGMxNSIsInVzZXJfaWQiOiIxIn0.BAun8aqbQCLY-M6vNrdbN9zd3r6xmzgap2VxY89QcrU",
+    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMzA2OTk1LCJpYXQiOjE3NzAzMDMzOTUsImp0aSI6IjFmN2MwYmNmODExMDQxMzI4OTg0Y2QyNjQ2ZDdiODMwIiwidXNlcl9pZCI6IjEifQ.-64DvAK7J47y_gqqu5NmrzcoShogfnWVCzOOpKlbxt8"
+  }
+  ```
+
 ### Refresh Token
 Para este endpoint se debe enviar el token de refresco obtenido en el paso anterior para obtener un nuevo token de acceso.
 - refresh: `POST` http://localhost:8000/api/token//refresh/
 - Body:
-```json
-{
-  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MDE1NTY0NywiaWF0IjoxNzY5NTUwODQ3LCJqdGkiOiJkZmMzMDJkYmVkNTA0OGI2YThkZDMxZWQxOTYxOTJjMCIsInVzZXJfaWQiOiIxIn0.2Rt54pNB8HojbXQf9j8ZjBZFVsvrf2THaGgBplIvEu0"
-}
-```
+  ```json
+  {
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MDE1NTY0NywiaWF0IjoxNzY5NTUwODQ3LCJqdGkiOiJkZmMzMDJkYmVkNTA0OGI2YThkZDMxZWQxOTYxOTJjMCIsInVzZXJfaWQiOiIxIn0.2Rt54pNB8HojbXQf9j8ZjBZFVsvrf2THaGgBplIvEu0"
+  }
+  ```
+- Respuesta:
+  ```json
+  {
+    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMzA3MjM0LCJpYXQiOjE3NzAzMDM2MzQsImp0aSI6IjRjNWE4OTQ0ZDhhZjQ5YjU5ZWUxZDdlYzY4M2E1ZGJhIiwidXNlcl9pZCI6IjEifQ.5iagooC_u5Mgb_N28L5BUW3CwDQOFnZq1ibAC_nHRdQ"
+  }
+  ```
 
 ### Verify Token
 Para este endpoint se debe enviar el token de acceso para verificar su validez.
 - verify: `POST` http://localhost:8000/api/token//verify/
 - Body:
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NTU0NDQ3LCJpYXQiOjE3Njk1NTA4NDcsImp0aSI6IjYzY2YyZGI3LWY0ZTItNDI3Yi1iZjhiLTU3ZGI3Y2E3Y2E0NyIsInVzZXJfaWQiOiIxIn0.o8kVbX1jz4Z8KX1F1Z5xX9ZkY1j3QF1Z5xX9ZkY1j3QF1Z5xX9ZkY1j3QF1Z5xX9ZkY1j3QF1Z5xX9ZkY"
-}
-```
+  ```json
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NTU0NDQ3LCJpYXQiOjE3Njk1NTA4NDcsImp0aSI6IjYzY2YyZGI3LWY0ZTItNDI3Yi1iZjhiLTU3ZGI3Y2E3Y2E0NyIsInVzZXJfaWQiOiIxIn0.o8kVbX1jz4Z8KX1F1Z5xX9ZkY1j3QF1Z5xX9ZkY1j3QF1Z5xX9ZkY1j3QF1Z5xX9ZkY1j3QF1Z5xX9ZkY"
+  }
+  ```
+- Respuesta: Código de estado `200 OK`
 
 >A partir de ahora todos los endpoints requieren el token de acceso en el encabezado de autorización:
 > Authorization: Bearer <tu_token_de_acceso>
@@ -42,99 +57,234 @@ Para este endpoint se debe enviar el token de acceso para verificar su validez.
 Estos endpoints nos permite listar los _itinerary_ ya sea todos o solo uno pasando el id
   - Get Itinerary: http://localhost:8000/api/itinerary/
   - Get Itinerary by Id: http://localhost:8000/api/itinerary/d7082bc8-c3a2-4e15-b315-73638b7fb9af
+- Respuesta:
+  ```json
+  {
+    "count": 4,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": "6415afe9-4b4e-4d4e-acea-96a715d734fe",
+        "title": "Dia 1: Viaje a Aguas Calientes",
+        "description": "<p>Traslado&nbsp;desde&nbsp;Cusco&nbsp;hacia&nbsp;la&nbsp;estación&nbsp;de&nbsp;tren&nbsp;y&nbsp;viaje&nbsp;panorámico&nbsp;hasta&nbsp;Aguas&nbsp;Calientes.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;descanso&nbsp;y&nbsp;aclimatación.</p>",
+        "service": "b881501f-7335-42f8-a8a5-5e36e6aa6af1",
+        "created_at": "2026-01-30T02:13:30.758655Z",
+        "updated_at": "2026-01-30T02:36:59.768525Z"
+      },
+      ...
+    ]
+  }
+  ```
 
 ### Post Itinerary
 Este endpoint nos permite crear un _itinerary_ pasando en el cuerpo el id del _service_
   - Post Itinerary: http://localhost:8000/api/itinerary/9dbc92c2-94aa-40ed-9f16-77f4a091d633/
-      - Body:
-          ```json
-            {
-              "title": "Salida a comer HeladoO",
-              "description": "Salimos a comer helado",
-              "service": "f10d84ef-a560-4d77-8509-bb0795c1c8b5"
-            }
-          ```
+  - Body:
+    ```json
+    {
+      "title": "Salida a comer HeladoO",
+      "description": "Salimos a comer helado",
+      "service": "f10d84ef-a560-4d77-8509-bb0795c1c8b5"
+    } 
+    ```
+  - Respuesta:
+    ```json
+    {
+    "id": "f9215f7e-ec66-4d8f-a16a-eb755367b892",
+    "title": "Salida a comer HeladoO",
+    "description": "Salimos a comer helado",
+    "service": "757d6e95-1bd0-401a-aa6a-2d18721a4706",
+    "created_at": "2026-02-05T15:05:33.691389Z",
+    "updated_at": "2026-02-05T15:05:33.691404Z"
+    }
+    ```
+  
 
 ### Patch Itinerary
 Este endpoint nos permite actualizar un _itinerary_ pasando solo lo que se desea actualizar o todo el cuerpo.
   - Patch: http://localhost:8000/api/itinerary/787245ce-db27-4bef-a834-7ad1a2294d70/
-    - Body:
-        ```json
-          {
-            "title": "Salida a comer Parrilla"
-          }
-        ```
+  - Body:
+      ```json
+        {
+          "title": "Salida a comer Parrilla"
+        }
+      ```
+  - Respuesta: 
+    ```json
+      {
+        "id": "f9215f7e-ec66-4d8f-a16a-eb755367b892",
+        "title": "Salida a comer Parrilla",
+        "description": "Salimos a comer helado",
+        "service": "757d6e95-1bd0-401a-aa6a-2d18721a4706",
+        "created_at": "2026-02-05T15:05:33.691389Z",
+        "updated_at": "2026-02-05T15:05:33.691404Z"
+      }
+    ```
 
 ### Delete Itinerary
 Este endopoint nos permite eliminar un _itinerary_ pasando el id
   - Delete: http://localhost:8000/api/itinerary/9dbc92c2-94aa-40ed-9f16-77f4a091d633/
+  - Respuesta: Código de estado `204 No Content`
   
 ### Action
 #### Add Itinerary
-Este endpoint nos permite pasar por la url el id del servicio al cual se quiere relacionar durante la creacion de un _itinerary_
+Este endpoint nos permite pasar por la url el id del servicio al cual se quiere relacionar durante la creación de un _itinerary_
   - add-itinerary: `POST` http://localhost:8000/api/itinerary/f10d84ef-a560-4d77-8509-bb0795c1c8b5/add-itinerary/
   - Body: 
     ```json
       {
-        "title": "Salida al Parque,
+        "title": "Salida al Parque",
         "description": "Salimos a comer helado"  
       }
     ```
-    
+  - Respuesta: 
+    ```json
+    {
+      "id": "7c81823e-d45f-480d-9374-0222b3e13814",
+      "title": "Salida a comer Helado 2",
+      "description": "Salimos a comer helado",
+      "service": "757d6e95-1bd0-401a-aa6a-2d18721a4706",
+      "created_at": "2026-02-05T15:10:06.302587Z",
+      "updated_at": "2026-02-05T15:10:06.302599Z"
+    }
+    ```
 ## Media
 
 ### Get Media
 Estos endpoints nos permite poder listar los _media_ ya sea todo los _media_ o solo uno pasando id
   - Get Media: http://localhost:8000/api/media/
   - Get Media by Id: http://localhost:8000/api/media/311d6136-ffe2-4e17-b09a-535cc1880732/
+  - Respuesta:
+    ```json
+      {
+        "count": 13,
+        "next": "http://localhost:8000/api/media/?limit=10&offset=10",
+        "previous": null,
+        "results": [
+          {
+            "id": "8a7b253e-6e10-4026-b9b9-8dac356cffbf",
+            "type_media": "image",
+            "file": "http://localhost:8000/media_files/media/2026/02/01/Espacioimpro_negativo.png",
+            "url": null,
+            "is_cover": false,
+            "created_at": "2026-02-01T05:05:44.190192Z",
+            "updated_at": "2026-02-01T15:13:53.766115Z",
+            "title": "Foto de Perfil",
+            "description": "Esta es la foto del colegio"
+          },
+          ...
+        ]
+      }
+    ```
+
 
 ### Delete Media
 Este endpoint nos permite eliminar un media pasando el id
   - Delete Media: http://localhost:8000/api/media/f7d12568-ac0a-4087-adb4-5ff6cf277c3b/
+  - Respuesta:
+  - Código de estado `204 No Content`
 
 ### Patch Media
 Este endpoint nos permite actualizar un _media_ pasando el id por el url
   - Patch: http://localhost:8000/api/media/311d6136-ffe2-4e17-b09a-535cc1880732/
   - Body: 
-  ```json
+    ```json
+      {
+        "title": "Imagen del tour a Cocalmayo",
+        "description": "Es una imagen de Cocalmayo"
+      }
+    ```
+  - Respuesta: 
+    ```json
     {
+      "id": "8a7b253e-6e10-4026-b9b9-8dac356cffbf",
+      "type_media": "image",
+      "file": "http://localhost:8000/media_files/media/2026/02/01/Espacioimpro_negativo.png",
+      "url": null,
+      "is_cover": false,
+      "created_at": "2026-02-01T05:05:44.190192Z",
+      "updated_at": "2026-02-05T17:41:55.432874Z",
       "title": "Imagen del tour a Cocalmayo",
       "description": "Es una imagen de Cocalmayo"
     }
-  ```
+    ```
+
 
 ## Data
 ### Get Data
 Estos endpoints nos permite poder listar los _data_ ya sea todo los _data_ o solo uno pasando id
   - Get Data: http://localhost:8000/api/data/
   - Get Data by Id: http://localhost:8000/api/data/632fb9c9-1e72-41a2-85a5-1918186c4f79
+    - Respuesta:
+    ```json
+      {
+      "count": 5,
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "id": "2d866d0c-45a0-44ad-a75c-8f049f67c80b",
+          "title": "Historia de Machu Picchu",
+          "description": "<ul><li>Machu&nbsp;Picchu&nbsp;fue&nbsp;construida&nbsp;en&nbsp;el&nbsp;siglo&nbsp;XV&nbsp;durante&nbsp;el&nbsp;gobierno&nbsp;del&nbsp;Inca&nbsp;Pachacútec.&nbsp;Es&nbsp;considerada&nbsp;una&nbsp;obra&nbsp;maestra&nbsp;de&nbsp;la&nbsp;arquitectura&nbsp;e&nbsp;ingeniería&nbsp;inca,&nbsp;adaptada&nbsp;perfectamente&nbsp;a&nbsp;la&nbsp;geografía&nbsp;montañosa.</li></ul>",
+          "service": "b881501f-7335-42f8-a8a5-5e36e6aa6af1",
+          "created_at": "2026-01-30T02:13:30.760516Z",
+          "updated_at": "2026-01-30T02:37:06.786470Z"
+        }, 
+      ...
+       ] 
+      }
+    ```
 
 ### Post Data
-Este endpoint nos permite crear un _data_ pasando en el cuerpo el id del _service_
+Este endpoint nos permite crear una _data_ pasando en el cuerpo el id del _service_
   - Post: http://localhost:8000/api/data/
   - Body: 
-  ```json
-  {
-    "title": "Data 5",
-    "description": "Esta es la data 5",
-    "service": "f10d84ef-a560-4d77-8509-bb0795c1c8b5"
-  }
-  ```
+    ```json
+    {
+      "title": "Data 5",
+      "description": "Esta es la data 5",
+      "service": "f10d84ef-a560-4d77-8509-bb0795c1c8b5"
+    }
+    ```
+  - Respuesta:
+    ```json
+    {
+      "id": "e13b7892-cf4c-4b24-9646-25f58a84c210",
+      "title": "Data 5",
+      "description": "Esta es la data 5",
+      "service": "f10d84ef-a560-4d77-8509-bb0795c1c8b5",
+      "created_at": "2026-02-05T16:20:45.123456Z",
+      "updated_at": "2026-02-05T16:20:45.123456Z"
+    }
+    ```
 
 ### Patch Data
 Este endpoint nos permite actualizar un _data_ pasando solo lo que se desea actualizar o todo el cuerpo.
 - Patch: http://localhost:8000/api/data/e13b7892-cf4c-4b24-9646-25f58a84c210/
 - Body:
   ```json
-	{
-		"title": "Data 5",
-	  "description": "Esta es la data 5"
-	}
+    {
+      "title": "Data 5",
+      "description": "Esta es la data 5"
+    }
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "e13b7892-cf4c-4b24-9646-25f58a84c210",
+    "title": "Data 5",
+    "description": "Esta es la data 5",
+    "service": "f10d84ef-a560-4d77-8509-bb0795c1c8b5",
+    "created_at": "2026-02-05T16:20:45.123456Z",
+    "updated_at": "2026-02-05T16:30:00.654321Z"
+  }
   ```
 
 ### Delete Data
 Este endoint nos permite eliminar un _data_ pasando el id
 - Delete: http://localhost:8000/api/data/82dd975d-e723-43f9-aeed-0379f811bfe5/
+- Respuesta: Código de estado `204 No Content`
 
 ### Action
 #### Add Data
@@ -142,17 +292,251 @@ Este endpoint nos permite pasar por la url el id de la _data_ que se quiere rela
 - add-data: `POST` http://127.0.0.1:8000/api/data/f10d84ef-a560-4d77-8509-bb0795c1c8b5/add-data/
 - Body:
   ```json
-	{
+  {
       "title": "Data 5",
       "description": "Esta es la data 5"
-	}
+  }
   ```
+- Respuesta:
+    ```json
+    {
+        "id": "e13b7892-cf4c-4b24-9646-25f58a84c210",
+        "title": "Data 5",
+        "description": "Esta es la data 5",
+        "service": "f10d84ef-a560-4d77-8509-bb0795c1c8b5",
+        "created_at": "2026-02-05T16:20:45.123456Z",
+        "updated_at": "2026-02-05T16:20:45.123456Z"
+    }
+    ```
+
+## Price Rule
+Este endpoint nos permite manejar de forma más eficiente las reglas de precios para los tours de tipo grupal y privado, teniendo en el caso de tours privados la posibilidad de tener valores para `multiply` y `divide`, asi teniendo un mejor control de costos al momento de crear las cotizaciones. Para los tours grupales en este caso solo tendrían un PriceRule con el concepto de `multiply`.
+### Get PriceRule
+Estos endpoints nos permite listar los _price_rule_ ya sea todos o solo uno pasando el id
+- Get PriceRule: http://localhost:8000/api/price-rule/
+- Get PriceRule by Id: http://localhost:8000/api/price-rule/1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6/
+- Respuesta: 
+  ```json
+  {
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": "0225c4e2-5b5b-403c-a9e9-711db0ab0b15",
+        "service": "31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+        "concept": "Comida",
+        "amount": "50.00",
+        "calculation_type": "multiply",
+        "created_at": "2026-02-05T20:57:43.953155Z",
+        "updated_at": "2026-02-05T20:57:43.953167Z"
+      },
+      ...
+    ]
+  }
+  ```
+### Post PriceRule
+Este endpoint nos permite crear un _price_rule_ pasando en el cuerpo el id del _service_
+- Post PriceRule: http://localhost:8000/api/price-rule/
+- Body:
+  ```json
+  {
+    "service": "31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+    "concept": "Comida",
+    "calculation_type": "multiply",
+    "amount": 50
+  }
+  ```
+- Respuesta:
+  ```json
+  {
+    "id":"0225c4e2-5b5b-403c-a9e9-711db0ab0b15",
+    "service":"31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+    "concept":"Comida",
+    "amount":"50.00",
+    "calculation_type":"multiply",
+    "created_at":"2026-02-05T20:57:43.953155Z",
+    "updated_at":"2026-02-05T20:57:43.953167Z"
+  } 
+  ```
+
+### Patch PriceRule
+Este endpoint nos permite actualizar un _price_rule_ pasando solo lo que se desea actualizar o todo el cuerpo.
+- Patch: http://localhost:8000/api/price-rule/0225c4e2-5b5b-403c-a9e9-711db0ab0b15/
+- Body:
+    ```json
+    {
+      "concept": "Carpas"
+    }
+    ```
+- Respuesta: 
+  ```json
+  {
+    "id": "0225c4e2-5b5b-403c-a9e9-711db0ab0b15",
+    "concept": "Carpas",
+    "amount": "50.00",
+    "calculation_type": "multiply",
+    "created_at": "2026-02-05T20:57:43.953155Z",
+    "updated_at": "2026-02-05T21:07:52.829691Z"
+  }
+  ```
+
+### Delete PriceRule
+Este endpoint nos permite eliminar un _price_rule_ pasando el id
+- Delete: http://localhost:8000/api/price-rule/0225c4e2-5b5b-403c-a9e9-711db0ab0b15/
+- Respuesta: Código de estado `204 No Content`
+
+### Action
+#### Add PriceRule
+Este endpoint nos permite pasar por la url el id del servicio al cual se quiere relacionar durante la creación de un _price_rule_
+- add-price-rule: `POST` http://localhost:8000/api/price-rule/31032927-4533-4f0e-8e3f-f836eaeb2ddd/add-price-rule/
+- Body:
+  ```json
+  {
+    "concept": "Tour",
+    "calculation_type": "multiply",
+    "amount": 500
+  }
+  ```
+- Respuesta: 
+  ```json
+  {
+    "concept": "Tour",
+    "amount": "300.00",
+    "calculation_type": "multiply",
+    "service": "31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+    "created_at": "2026-02-06T15:49:34.136138Z",
+    "updated_at": "2026-02-06T15:49:34.136152Z"
+  }
+  ```
+
+## Pricing Tier
+Este endpoint nos permite manejar de forma más eficiente las reglas de precios para los tours de tipo arbitrario, en este caso este endpoint nos permite crear precios con base en rangos de personas.
+### Get PricingTier
+Estos endpoints nos permite listar los _pricing_tier_ ya sea todos o solo uno pasando el id
+- Get PricingTier: http://localhost:8000/api/pricing-tier/
+- Get PricingTier by Id: http://localhost:8000/api/pricing-tier/1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6/
+- Respuesta: 
+  ```json
+  {
+    "count": 2,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": "b1c2d3e4-f5g6-h7i8-j9k0-l1m2n3o4p5q6",
+        "service": "31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+        "min_people": 1,
+        "max_people": 5,
+        "total_price": "500.00",
+        "created_at": "2026-02-05T21:30:12.345678Z",
+        "updated_at": "2026-02-05T21:30:12.345678Z"
+      },
+      ...
+    ]
+  }
+  ```
+
+### Post PricingTier
+Este endpoint nos permite crear un _pricing_tier_ pasando en el cuerpo el id del _service_
+- Post PricingTier: http://localhost:8000/api/pricing-tier/
+- Body:
+  ```json
+  {
+    "service": "31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+    "min_people": 1,
+    "max_people": 5,
+    "total_price": 500
+  }
+  ```
+- Respuesta:
+    ```json
+    {
+        "id":"b1c2d3e4-f5g6-h7i8-j9k0-l1m2n3o4p5q6",
+        "service":"31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+        "min_people":1,
+        "max_people":5,
+        "total_price":"500.00",
+        "created_at":"2026-02-05T21:30:12.345678Z",
+        "updated_at":"2026-02-05T21:30:12.345678Z"
+    } 
+    ```
+
+### Patch PricingTier
+Este endpoint nos permite actualizar un _pricing_tier_ pasando solo lo que se desea actualizar o todo el cuerpo.
+- Patch: http://localhost:8000/api/pricing-tier/b1c2d3e4-f5g6-h7i8-j9k0-l1m2n3o4p5q6/
+- Body:
+  ```json
+    {
+      "total_price": 600
+    }
+  ```
+
+### Delete PricingTier
+Este endpoint nos permite eliminar un _pricing_tier_ pasando el id
+- Delete: http://localhost:8000/api/pricing-tier/b1c2d3e4-f5g6-h7i8-j9k0-l1m2n3o4p5q6/
+- Respuesta: Código de estado `204 No Content`
+
+### Action
+#### Add PricingTier
+Este endpoint nos permite pasar por la url el id del servicio al cual se quiere relacionar durante la creación de un _pricing_tier_
+- add-pricing-tier: `POST` http://localhost:8000/api/pricing-tier/31032927-4533-4f0e-8e3f-f836eaeb2ddd/add-pricing-tier/
+- Body:
+  ```json
+  {
+    "min_people": 6,
+    "max_people": 10,
+    "total_price": 900
+  }
+  ```
+- Respuesta: 
+  ```json
+  {
+    "service": "31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+    "min_people": 6,
+    "max_people": 10,
+    "total_price": "900.00",
+    "created_at": "2026-02-06T16:00:00.123456Z",
+    "updated_at": "2026-02-06T16:00:00.123456Z"
+  }
+  ```
+
 
 ## Service
 ### Get Service
 Estos endpoints nos permite listar los _service_ ya sea todos o solo uno pasando el id
 - Get Service: http://localhost:8000/api/service/
 - Get Service by Id: http://localhost:8000/api/service/3fc5e9c8-a976-43f5-8c89-ff49d27716ec/
+  ```json
+  {
+    "count": 8,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": "31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+        "title": "Tour 1",
+        "duration_value": 1,
+        "duration_unit": "weeks",
+        "duration_in_hours": 168,
+        "summary": "Tour 3",
+        "includes": "include all",
+        "excludes": "excludes all too",
+        "type": "group",
+        "itinerary": [],
+        "data": [],
+        "price": "6400.00",
+        "departure_time": "08:00:00",
+        "price_rules": [],
+        "pricing_tiers": [],
+        "media": [],
+        "created_at": "2026-02-05T19:49:04.522958Z",
+        "updated_at": "2026-02-05T19:49:04.522966Z"
+      },
+      ...
+    ]
+  }
+  ```
 
 ### Filters
 - Filtros para _service_ `http://localhost:8000/api/service/?search=Ica&price_min=100&price_max=600000&type=private&duration_min=40&duration_max=1080` que contiene lo siguiente:
@@ -168,32 +552,82 @@ Estos endpoints nos permite listar los _service_ ya sea todos o solo uno pasando
 Este endpoint nos permite crear un _service_, en este nos es necesario pasar los valores de los _media, _data_ y _itinerary_
 - Post Service: http://localhost:8000/api/service/
 - Body:
-```json
-{
-    "title": "Tour 4",
-    "duration_value": 2,
-    "duration_unit": "days",
+  ```json
+  {
+      "title": "Tour 4",
+      "duration_value": 2,
+      "duration_unit": "days",
+      "summary": "Tour 3",
+      "includes": "include all",
+      "excludes": "excludes all too",
+      "type": "group",
+      "price": 20.4,
+      "departure_time": "23:59:00"
+  }
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+    "title": "Tour 1",
+    "duration_value": 1,
+    "duration_unit": "weeks",
+    "duration_in_hours": 168,
     "summary": "Tour 3",
     "includes": "include all",
     "excludes": "excludes all too",
     "type": "group",
-    "price": 20.4
-}
-```
+    "itinerary": [],
+    "data": [],
+    "price": "20.40",
+    "departure_time": "23:59:00",
+    "price_rules": [],
+    "pricing_tiers": [],
+    "media": [],
+    "created_at": "2026-02-05T19:49:04.522958Z",
+    "updated_at": "2026-02-05T19:49:04.522966Z"
+  } 
+  ```
 
 ### Patch Service
 Este endpoint nos permite actualizar un _service_ pasando solo lo que se desea actualizar o todo el cuerpo.
 - Patch: http://localhost:8000/api/service/f10d84ef-a560-4d77-8509-bb0795c1c8b5/
 - Body: 
+    ```json
+      {
+        "price": 6400,
+        "departure_time": "08:00:00"
+      }
+    ```
+- Respuesta:
   ```json
-	{
-	    "price": 6400 
-	}
+      {
+        "id": "31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+        "title": "Tour 1",
+        "duration_value": 1,
+        "duration_unit": "weeks",
+        "duration_in_hours": 168,
+        "summary": "Tour 3",
+        "includes": "include all",
+        "excludes": "excludes all too",
+        "type": "group",
+        "itinerary": [],
+        "data": [],
+        "price": "6400.00",
+        "departure_time": "08:00:00",
+        "price_rules": [],
+        "pricing_tiers": [],
+        "media": [],
+        "created_at": "2026-02-05T19:49:04.522958Z",
+        "updated_at": "2026-02-05T19:49:04.522966Z"
+      }
   ```
 
 ### Delete Service
 Este endpoint nos permite eliminar un _service_ pasando el id
 - Delete: http://localhost:8000/api/service/2d616c5b-13e5-49d6-8568-d20749cc94e3/
+- Respuesta: Código de estado `204 No Content`
+
 
 ### Action
 #### Bulk Add Data
@@ -619,7 +1053,7 @@ Este endpoint nos permite actualizar un _todo_ pasando solo lo que se desea actu
 }
 ```
 
-### Action
+### Action}
 #### Change Status
 Este endpoint nos permite cambiar el estado de un _todo_ pasando el id por la url
 - change-status: `POST` http://localhost:8000/api/todo/54e6dcea-be7f-4d67-8f9a-a0e584253792/change-status/

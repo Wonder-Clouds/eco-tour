@@ -97,3 +97,8 @@ class BulkCreateDataSerializer(serializers.Serializer):
         self.context['errors'] = errors
         
         return validated_data
+
+class DataCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Data
+        fields = ['title', 'description']

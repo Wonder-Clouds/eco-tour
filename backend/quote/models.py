@@ -7,9 +7,16 @@ from group.models import Group
 from service.models import Service
 from person.models import Person
 
+class STATUS_QUOTE_CHOICES(models.TextChoices):
+    DRAFT = 'draft', 'Draft'
+    PENDING = 'pending', 'Pending'
+    APPROVED = 'approved', 'Approved'
+    REJECTED = 'rejected', 'Rejected'
+
+
 # Create your models here.
 class Quote(SafeDeleteModel):
-    
+
     STATUS_QUOTE_CHOICES = [
         ('draft', 'Draft'),
         ('pending', 'Pending'),

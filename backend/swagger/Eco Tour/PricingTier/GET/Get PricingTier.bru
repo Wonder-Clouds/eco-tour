@@ -1,0 +1,20 @@
+meta {
+  name: Get PricingTier
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8000/api/pricing-tier/
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMzk5MTk4LCJpYXQiOjE3NzAzOTU1OTgsImp0aSI6ImJjOTUzZDM3ODcwZjQyYzY5ZTUyMWRlODhkNDVmZGU2IiwidXNlcl9pZCI6IjEifQ.E1-44Zs5DFRA8nn3u7JuwBWk_wBIzZwLCa9uRYQfqRA
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

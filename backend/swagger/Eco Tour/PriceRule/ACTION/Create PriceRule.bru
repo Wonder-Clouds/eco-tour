@@ -1,0 +1,28 @@
+meta {
+  name: Create PriceRule
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/price-rule/31032927-4533-4f0e-8e3f-f836eaeb2ddd/add-price-rule/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMzk1ODYzLCJpYXQiOjE3NzAzOTIyNjMsImp0aSI6IjlmOGQwOWNkMmQ1ZTRkM2ViZjJlYmNiZDg3OGFmNGVmIiwidXNlcl9pZCI6IjEifQ.yoYMQ10Rsk9yCDJyh-BNHwR__uVsjH74LuwoisnQv9s
+}
+
+body:json {
+  { 
+    "concept": "Tour",
+    "amount": 300,
+    "calculation_type": "multiply"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

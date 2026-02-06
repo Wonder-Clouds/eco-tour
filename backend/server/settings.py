@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'reserve',
     'supplier',
     'pay',
+    'tag',
     'todo',
 
     # Third party apps

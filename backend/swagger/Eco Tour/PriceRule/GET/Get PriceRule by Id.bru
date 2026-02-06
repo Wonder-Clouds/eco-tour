@@ -1,0 +1,20 @@
+meta {
+  name: Get PriceRule by Id
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8000/api/price-rule/0225c4e2-5b5b-403c-a9e9-711db0ab0b15
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMzI4MDEyLCJpYXQiOjE3NzAzMjQ0MTIsImp0aSI6ImExZmNlOTUxY2QyMzQ4MTdhZTA2OTNjMDQ4NDY3NTYxIiwidXNlcl9pZCI6IjEifQ.L_2tI7oftzSXoWJ4ITrqTpEhsl8pQvq6hCew67uGVJ0
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

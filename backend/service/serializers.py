@@ -2,13 +2,122 @@ from rest_framework import serializers
 from django.db import transaction
 from django.contrib.contenttypes.models import ContentType
 
-from itinerary.serializers import ItinerarySerializer
+from itinerary.serializers import ItinerarySerializer, ItineraryCreateSerializer
 from itinerary.models import Itinerary
-from data.serializers import DataSerializer
+from data.serializers import DataSerializer, DataCreateSerializer
 from data.models import Data
 from media.models import Media
 from media.serializers import MediaSerializer
-from .models import Service
+from .models import Service, PricingTier, PriceRule
+
+
+class PriceRuleSerializer(serializers.ModelSerializer):
+    """Serializer for PriceRule with all fields read-only (used for listing)"""
+    class Meta:
+        model = PriceRule
+        fields = ['id', 'service', 'concept', 'amount', 'calculation_type', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class CreatePriceRuleSerializer(serializers.ModelSerializer):
+    """Serializer for creating PriceRule without service field (used in nested creation)"""
+    service = serializers.PrimaryKeyRelatedField(
+        queryset=Service.objects.all(),
+        required=False
+    )
+
+    class Meta:
+        model = PriceRule
+        fields = ['concept', 'amount', 'calculation_type', 'service', 'created_at', 'updated_at']
+
+    def create(self, validated_data):
+        service = self.context.get('service')
+        if not service:
+            raise serializers.ValidationError('Service context is missing.')
+
+        return PriceRule.objects.create(service=service, **validated_data)
+
+
+class PriceRuleUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for updating PriceRule"""
+    class Meta:
+        model = PriceRule
+        fields = ['id', 'concept', 'amount', 'calculation_type', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class PricingTierSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PricingTier
+        fields = ['id', 'service', 'total_price', 'min_people', 'max_people', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class PricingTierCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating PricingTier without service field (used in nested creation)"""
+    class Meta:
+        model = PricingTier
+        fields = ['min_people', 'max_people', 'total_price']
+
+
+class PricingTierUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for updating PricingTier"""
+    class Meta:
+        model = PricingTier
+        fields = ['id', 'min_people', 'max_people', 'total_price', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class BulkCreatePriceRuleSerializer(serializers.Serializer):
+    """Serializer for bulk creating price rules"""
+    items = CreatePriceRuleSerializer(many=True)
+
+    def create(self, validated_data):
+        service = self.context.get('service')
+        items_data = validated_data.get('items', [])
+        created_items = []
+        errors = []
+
+        for idx, item in enumerate(items_data):
+            try:
+                price_rule = PriceRule.objects.create(service=service, **item)
+                created_items.append(PriceRuleSerializer(price_rule).data)
+            except Exception as e:
+                errors.append({
+                    'index': idx,
+                    'error': str(e),
+                    'data': item
+                })
+
+        self.context['created_items'] = created_items
+        self.context['errors'] = errors
+        return created_items
+
+
+class BulkCreatePricingTierSerializer(serializers.Serializer):
+    """Serializer for bulk creating pricing tiers"""
+    items = PricingTierCreateSerializer(many=True)
+
+    def create(self, validated_data):
+        service = self.context.get('service')
+        items_data = validated_data.get('items', [])
+        created_items = []
+        errors = []
+
+        for idx, item in enumerate(items_data):
+            try:
+                pricing_tier = PricingTier.objects.create(service=service, **item)
+                created_items.append(PricingTierSerializer(pricing_tier).data)
+            except Exception as e:
+                errors.append({
+                    'index': idx,
+                    'error': str(e),
+                    'data': item
+                })
+
+        self.context['created_items'] = created_items
+        self.context['errors'] = errors
+        return created_items
 
 
 class ServiceSummarySerializer(serializers.ModelSerializer):
@@ -18,7 +127,7 @@ class ServiceSummarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Service
-        fields = ['id', 'title', 'type', 'price', 'cover', 'duration']
+        fields = ['id', 'title', 'type', 'price', 'cover', 'duration', 'departure_time']
 
     def get_cover(self, obj):
         """Retorna la URL del media que tiene is_cover=True"""
@@ -45,29 +154,32 @@ class ServiceSerializer(serializers.ModelSerializer):
     data = DataSerializer(many=True, read_only=True)
     media = MediaSerializer(many=True, read_only=True)
     itinerary = ItinerarySerializer(many=True, read_only=True)
+    price_rules = serializers.SerializerMethodField()
+    pricing_tiers = serializers.SerializerMethodField()
     duration_in_hours = serializers.ReadOnlyField()
 
     class Meta:
         model = Service
         fields = ['id', 'title', 'duration_value', 'duration_unit', 'duration_in_hours',
                   'summary', 'includes', 'excludes', 'type', 'itinerary', 'data', 'price',
+                  'departure_time', 'price_rules', 'pricing_tiers',
                   'media', 'created_at', 'updated_at']
 
+    def get_price_rules(self, obj):
+        price_rules = PriceRule.objects.filter(service=obj)
+        return PriceRuleSerializer(price_rules, many=True).data
 
-class ItineraryCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Itinerary
-        fields = ['title', 'description']
+    def get_pricing_tiers(self, obj):
+        pricing_tiers = PricingTier.objects.filter(service=obj)
+        return PricingTierSerializer(pricing_tiers, many=True).data
 
 
-class DataCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Data
-        fields = ['title', 'description']
 
 class ServiceAllInOneSerializer(serializers.ModelSerializer):
     itinerary = ItineraryCreateSerializer(many=True, write_only=True, required=False)
     data = DataCreateSerializer(many=True, write_only=True, required=False)
+    price_rules = CreatePriceRuleSerializer(many=True, write_only=True, required=False)
+    pricing_tiers = PricingTierCreateSerializer(many=True, write_only=True, required=False)
     media = serializers.ListField(
         write_only=True,
         required=False,
@@ -77,12 +189,15 @@ class ServiceAllInOneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = ['id', 'title', 'duration_value', 'duration_unit', 'summary', 'includes',
-                  'excludes', 'type', 'itinerary', 'data', 'price',
+                  'excludes', 'type', 'itinerary', 'data', 'price', 'departure_time',
+                  'price_rules', 'pricing_tiers',
                   'media', 'created_at', 'updated_at']
 
     def create(self, validated_data):
         itinerary_data = validated_data.pop('itinerary', [])
         data_data = validated_data.pop('data', [])
+        price_rules_data = validated_data.pop('price_rules', [])
+        pricing_tiers_data = validated_data.pop('pricing_tiers', [])
         media_data = validated_data.pop('media', [])
 
         with transaction.atomic():
@@ -95,6 +210,16 @@ class ServiceAllInOneSerializer(serializers.ModelSerializer):
             for item in data_data:
                 item.pop('service', None)
                 Data.objects.create(service=service, **item)
+
+            # Create price rules
+            for item in price_rules_data:
+                item.pop('service', None)
+                PriceRule.objects.create(service=service, **item)
+
+            # Create pricing tiers
+            for item in pricing_tiers_data:
+                item.pop('service', None)
+                PricingTier.objects.create(service=service, **item)
 
             # Create media items
             media_files = self.context.get('media_files', [])

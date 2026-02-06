@@ -1,0 +1,25 @@
+meta {
+  name: Post PricingTier
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/pricing-tier/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "service": "31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+      "min_people": 3,
+      "max_people": 5,
+      "total_price": 300
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

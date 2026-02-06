@@ -1,0 +1,29 @@
+meta {
+  name: Post PriceRule
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/price-rule/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMzI4MDEyLCJpYXQiOjE3NzAzMjQ0MTIsImp0aSI6ImExZmNlOTUxY2QyMzQ4MTdhZTA2OTNjMDQ4NDY3NTYxIiwidXNlcl9pZCI6IjEifQ.L_2tI7oftzSXoWJ4ITrqTpEhsl8pQvq6hCew67uGVJ0
+}
+
+body:json {
+  {
+    "service": "31032927-4533-4f0e-8e3f-f836eaeb2ddd",
+    "concept": "Autos",
+    "calculation_type": "divide",
+    "amount": 600
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

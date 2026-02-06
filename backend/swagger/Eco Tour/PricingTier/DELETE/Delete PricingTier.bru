@@ -1,0 +1,15 @@
+meta {
+  name: Delete PricingTier
+  type: http
+  seq: 1
+}
+
+delete {
+  url: http://localhost:8000/api/pricing-tier/b6cf8c43-4c98-44ba-bf55-c3a07bae50cb/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
