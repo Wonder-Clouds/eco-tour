@@ -22,7 +22,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`bg-white ${isOpen ? 'w-64' : 'w-20'} h-screen transition-all duration-300 flex flex-col border-r border-gray-200`}
+      className={`bg-background ${isOpen ? 'w-64' : 'w-20'} h-screen transition-all duration-300 flex flex-col border-r border-gray-200`}
     >
       {/* Header con Logo */}
       <div className="h-16 px-4 flex items-center border-b border-gray-200">
@@ -53,10 +53,9 @@ export default function Sidebar() {
                     flex items-center gap-3 px-4 py-3 rounded-lg
                     transition-all duration-200 font-medium
                     ${!isOpen ? 'justify-center' : ''}
-                    ${
-                      active
-                        ? 'bg-[#00bf35] text-white shadow-md hover:bg-[#00932c]'
-                        : 'text-gray-600 hover:bg-[#d6ffe2] hover:text-[#085f24]'
+                    ${active
+                      ? 'bg-[#00bf35] text-white shadow-md hover:bg-[#00932c]'
+                      : 'text-gray-600 hover:bg-[#d6ffe2] hover:text-[#085f24]'
                     }
                   `}
                   title={!isOpen ? item.label : undefined}
@@ -71,7 +70,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t border-gray-200">
+      <div className="p-3">
         <button
           onClick={() => logout()}
           className={`

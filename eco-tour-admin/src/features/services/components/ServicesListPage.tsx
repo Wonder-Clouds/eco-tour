@@ -50,7 +50,7 @@ export const ServicesListPage = () => {
   }
 
   return (
-    <div className="p-8" style={{ backgroundColor: '#fafafa', minHeight: '100%' }}>
+    <div className="p-8">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1
@@ -82,7 +82,7 @@ export const ServicesListPage = () => {
         </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
+      <div className="space-y-6">
         {/* Filtros */}
         <ServiceFiltersComponent
           filters={filters}
