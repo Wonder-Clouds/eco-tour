@@ -45,6 +45,7 @@ urlpatterns = [
     path('api/', include('pay.urls')),
     path('api/', include('audit.urls')),
     path('api/', include('todo.urls')),
+    path('api/', include('tag.urls')),
     path('api/countries/', CountryListView.as_view()),
     path('tinymce/', include('tinymce.urls')),
 ]
