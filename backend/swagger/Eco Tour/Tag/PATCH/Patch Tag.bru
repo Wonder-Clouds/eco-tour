@@ -1,18 +1,18 @@
 meta {
-  name: Patch Service
+  name: Patch Tag
   type: http
   seq: 1
 }
 
 patch {
-  url: http://localhost:8000/api/service/51b0c356-79d2-4b1f-9951-650fb438aa3d/
+  url: http://127.0.0.1:8000/api/tag/46f43e61-0d27-4285-971d-2ed6ce13e5ad/
   body: json
   auth: inherit
 }
 
 body:json {
   {
-      "reference_price": 6400 
+    "name": "Naturaleza"
   }
 }
 

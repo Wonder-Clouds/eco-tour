@@ -7,7 +7,7 @@ meta {
 get {
   url: http://localhost:8000/api/package/
   body: none
-  auth: bearer
+  auth: inherit
 }
 
 params:query {
@@ -16,10 +16,6 @@ params:query {
   ~price_max: 100060
   ~total_duration_hours_min: 24
   ~total_duration_hours_max: 144
-}
-
-auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NzQ3NTY5LCJpYXQiOjE3Njk3NDM5NjksImp0aSI6IjA1MDA3NTJjYmYzOTQxZjg4NGEyZDlkOWMwNTEyMTEzIiwidXNlcl9pZCI6IjEifQ.tjkVNQs4bEf82tG52Bv9CFy8s6ZTUyHXgvN-cQJ6258
 }
 
 settings {

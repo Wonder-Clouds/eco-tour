@@ -5,6 +5,7 @@ from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 import uuid
 from media.models import Media
+from tag.models import Tag
 
 class DurationUnit(models.TextChoices):
     HOURS = 'hours', 'Hours'
@@ -38,9 +39,15 @@ class Service(SafeDeleteModel):
     summary = HTMLField()
     includes = HTMLField()
     excludes = HTMLField()
+    tags = models.ManyToManyField(Tag, blank=True, related_name='tags')
     type = models.CharField(max_length=50, choices=TypeService.choices, default=TypeService.GROUP)
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     departure_time = models.TimeField(null=True, blank=True)
+    reference_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00,
+        help_text="Reference price for the service"
+    )
 
     # Media files associated with the service
     media = GenericRelation(Media, content_type_field='content_type', object_id_field='object_id')

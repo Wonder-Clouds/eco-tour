@@ -13,6 +13,12 @@ class Package(SafeDeleteModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     description = HTMLField(blank=True)
+    reference_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00,
+        help_text="Reference price for the package"
+    )
     services = models.ManyToManyField(
         Service,
         through='PackageService',
@@ -25,12 +31,6 @@ class Package(SafeDeleteModel):
     def __str__(self):
         return self.title
 
-    @property
-    def price(self):
-        """Sum of all services' prices"""
-        return sum(
-            service.price for service in self.services.all()
-        )
 
     @property
     def total_duration(self) -> str:

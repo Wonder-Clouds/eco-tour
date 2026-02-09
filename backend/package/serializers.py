@@ -24,7 +24,7 @@ class PackageServiceSerializer(serializers.ModelSerializer):
             'duration_in_hours': obj.service.duration_in_hours,
             'duration_value': obj.service.duration_value,
             'duration_unit': obj.service.duration_unit,
-            'price': obj.service.price,
+            'reference_price': obj.service.reference_price,
         }
 
 class PackageServiceCreateSerializer(serializers.Serializer):
@@ -42,7 +42,7 @@ class PackageListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Package
         fields = [
-            'id', 'title', 'description', 'price', 'package_services',
+            'id', 'title', 'description', 'reference_price', 'package_services',
             'total_duration', 'total_duration_hours',
             'services_count', 'media', 'created_at', 'updated_at'
         ]
@@ -63,8 +63,7 @@ class PackageDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Package
         fields = [
-            'id', 'title', 'description', 'price',
-            'total_duration', 'total_duration_hours',
+            'id', 'title', 'description', 'reference_price', 'total_duration', 'total_duration_hours',
             'package_services', 'media', 'created_at', 'updated_at'
         ]
 
@@ -77,7 +76,25 @@ class PackageCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Package
-        fields = ['id', 'title', 'description', 'services']
+        fields = ['id', 'title', 'description', 'reference_price', 'services']
+
+    def validate_services(self, value):
+        """Validar que todos los service_id existan"""
+        if not value:
+            return value
+
+        service_ids = [item['service_id'] for item in value]
+        existing_services = Service.objects.filter(id__in=service_ids).values_list('id', flat=True)
+        existing_ids = set(str(sid) for sid in existing_services)
+
+        missing_ids = [str(sid) for sid in service_ids if str(sid) not in existing_ids]
+
+        if missing_ids:
+            raise serializers.ValidationError(
+                f"Los siguientes service_id no existen: {', '.join(missing_ids)}"
+            )
+
+        return value
 
     def create(self, validated_data):
         services_data = validated_data.pop('services', [])
@@ -116,11 +133,10 @@ class PackageSummarySerializer(serializers.ModelSerializer):
     """Serializer para listar paquetes con campos resumidos"""
     services_count = serializers.SerializerMethodField()
     total_duration = serializers.SerializerMethodField()
-    price = serializers.ReadOnlyField()
 
     class Meta:
         model = Package
-        fields = ['id', 'title', 'description', 'price', 'services_count', 'total_duration']
+        fields = ['id', 'title', 'description', 'reference_price', 'services_count', 'total_duration']
 
     def get_services_count(self, obj):
         """Retorna el número total de servicios en el paquete"""
