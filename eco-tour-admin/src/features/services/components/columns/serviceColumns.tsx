@@ -2,7 +2,7 @@
 import { createColumnHelper, ColumnDef } from '@tanstack/react-table';
 import { PriceCell } from '../cells/PriceCell';
 import { ActionsCell } from '../cells/ActionsCell';
-import { SummaryService } from '@/types/service.type';
+import { SummaryService, Tag } from '@/types/service.type';
 
 const columnHelper = createColumnHelper<SummaryService>();
 
@@ -28,10 +28,36 @@ const CoverCell = ({ cover, title }: { cover?: string; title: string }) => {
   );
 };
 
+// Componente para mostrar las etiquetas
+const TagsCell = ({ tags }: { tags?: Tag[] }) => {
+  if (!tags || tags.length === 0) {
+    return <span className="text-gray-400 text-sm">-</span>;
+  }
+
+  return (
+    <div className="flex flex-wrap gap-1 max-w-[200px]">
+      {tags.slice(0, 3).map((tag) => (
+        <span
+          key={tag.id}
+          className="px-2 py-0.5 rounded-full text-xs font-medium"
+          style={{ backgroundColor: '#edfff2', color: '#00932c' }}
+        >
+          {tag.name}
+        </span>
+      ))}
+      {tags.length > 3 && (
+        <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+          +{tags.length - 3}
+        </span>
+      )}
+    </div>
+  );
+};
+
 // Función para formatear el tipo de servicio
 const formatType = (type: string) => {
   const types: Record<string, string> = {
-    group: 'General',
+    group: 'Grupal',
     arbitrary: 'Arbitrario',
     private: 'Privado',
   };
@@ -91,13 +117,17 @@ export const createServiceColumns = (options: ServiceColumnsOptions = {}): Colum
       );
     },
   }),
+  columnHelper.accessor('tags', {
+    header: 'Etiquetas',
+    cell: (info) => <TagsCell tags={info.getValue()} />,
+  }),
   columnHelper.accessor('duration', {
     header: 'Duración',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('price', {
-    header: 'Precio',
-    cell: (info) => <PriceCell price={info.getValue()} />,
+  columnHelper.accessor('reference_price', {
+    header: 'Precio Ref.',
+    cell: (info) => <PriceCell price={info.getValue() || '0'} />,
   }),
   columnHelper.display({
     id: 'actions',

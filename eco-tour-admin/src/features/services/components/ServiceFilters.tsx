@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Search, Filter, X } from 'lucide-react'
 import { ServiceFilters } from '../api/servicesApi'
 import { TypeService } from '@/types/service.type'
+import { useTags } from '../hooks/useTags'
 
 interface Props {
   filters: ServiceFilters
@@ -11,6 +12,7 @@ interface Props {
 export const ServiceFiltersComponent = ({ filters, onFiltersChange }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [localFilters, setLocalFilters] = useState<ServiceFilters>(filters)
+  const { data: allTags = [] } = useTags()
 
   const handleSearchChange = (value: string) => {
     const newFilters = { ...filters, search: value || undefined }
@@ -29,10 +31,11 @@ export const ServiceFiltersComponent = ({ filters, onFiltersChange }: Props) => 
 
   const hasActiveFilters = !!(
     filters.type ||
-    filters.price_min !== undefined ||
-    filters.price_max !== undefined ||
+    filters.reference_price_min !== undefined ||
+    filters.reference_price_max !== undefined ||
     filters.duration_min !== undefined ||
-    filters.duration_max !== undefined
+    filters.duration_max !== undefined ||
+    filters.tags
   )
 
   return (
@@ -94,17 +97,17 @@ export const ServiceFiltersComponent = ({ filters, onFiltersChange }: Props) => 
               </select>
             </div>
 
-            {/* Precio mínimo */}
+            {/* Precio de Referencia mínimo */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Precio Mínimo
+                Precio Ref. Mínimo
               </label>
               <input
                 type="number"
-                value={localFilters.price_min ?? ''}
+                value={localFilters.reference_price_min ?? ''}
                 onChange={(e) => setLocalFilters({
                   ...localFilters,
-                  price_min: e.target.value ? Number(e.target.value) : undefined
+                  reference_price_min: e.target.value ? Number(e.target.value) : undefined
                 })}
                 placeholder="0"
                 min={0}
@@ -112,17 +115,17 @@ export const ServiceFiltersComponent = ({ filters, onFiltersChange }: Props) => 
               />
             </div>
 
-            {/* Precio máximo */}
+            {/* Precio de Referencia máximo */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Precio Máximo
+                Precio Ref. Máximo
               </label>
               <input
                 type="number"
-                value={localFilters.price_max ?? ''}
+                value={localFilters.reference_price_max ?? ''}
                 onChange={(e) => setLocalFilters({
                   ...localFilters,
-                  price_max: e.target.value ? Number(e.target.value) : undefined
+                  reference_price_max: e.target.value ? Number(e.target.value) : undefined
                 })}
                 placeholder="Sin límite"
                 min={0}
@@ -164,6 +167,47 @@ export const ServiceFiltersComponent = ({ filters, onFiltersChange }: Props) => 
                 min={0}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
+            </div>
+
+            {/* Etiquetas */}
+            <div className="md:col-span-2 lg:col-span-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Etiquetas
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {allTags.map((tag) => {
+                  const selectedTags = localFilters.tags?.split(',').filter(t => t) || []
+                  const isSelected = selectedTags.includes(tag.name)
+                  return (
+                    <button
+                      key={tag.id}
+                      type="button"
+                      onClick={() => {
+                        let newTags: string[]
+                        if (isSelected) {
+                          newTags = selectedTags.filter(t => t !== tag.name)
+                        } else {
+                          newTags = [...selectedTags, tag.name]
+                        }
+                        setLocalFilters({
+                          ...localFilters,
+                          tags: newTags.length > 0 ? newTags.join(',') : undefined
+                        })
+                      }}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium border transition ${
+                        isSelected
+                          ? 'border-green-500 bg-green-50 text-green-700'
+                          : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400'
+                      }`}
+                    >
+                      {tag.name}
+                    </button>
+                  )
+                })}
+                {allTags.length === 0 && (
+                  <span className="text-gray-400 text-sm">No hay etiquetas disponibles</span>
+                )}
+              </div>
             </div>
           </div>
 

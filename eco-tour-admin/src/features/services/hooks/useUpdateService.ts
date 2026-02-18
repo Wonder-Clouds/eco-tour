@@ -13,10 +13,19 @@ import {
   setCover,
   deleteMedia,
   updateMedia,
+  addPriceRule,
+  updatePriceRule,
+  deletePriceRule,
+  addPricingTier,
+  updatePricingTier,
+  deletePricingTier,
+  addTagsToService,
   UpdateServiceBasicData,
   ItineraryInput,
   DataInput,
   UploadImageInput,
+  PriceRuleInput,
+  PricingTierInput,
 } from '../api/servicesApi'
 
 export function useUpdateService(serviceId: string) {
@@ -102,6 +111,46 @@ export function useUpdateService(serviceId: string) {
     onSuccess: invalidateService,
   })
 
+  // Price Rules
+  const addPriceRuleMutation = useMutation({
+    mutationFn: (data: PriceRuleInput) => addPriceRule(serviceId, data),
+    onSuccess: invalidateService,
+  })
+
+  const updatePriceRuleMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<PriceRuleInput> }) =>
+      updatePriceRule(id, data),
+    onSuccess: invalidateService,
+  })
+
+  const deletePriceRuleMutation = useMutation({
+    mutationFn: (id: string) => deletePriceRule(id),
+    onSuccess: invalidateService,
+  })
+
+  // Pricing Tiers
+  const addPricingTierMutation = useMutation({
+    mutationFn: (data: PricingTierInput) => addPricingTier(serviceId, data),
+    onSuccess: invalidateService,
+  })
+
+  const updatePricingTierMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<PricingTierInput> }) =>
+      updatePricingTier(id, data),
+    onSuccess: invalidateService,
+  })
+
+  const deletePricingTierMutation = useMutation({
+    mutationFn: (id: string) => deletePricingTier(id),
+    onSuccess: invalidateService,
+  })
+
+  // Tags
+  const addTagsMutation = useMutation({
+    mutationFn: (tagIds: string[]) => addTagsToService(serviceId, tagIds),
+    onSuccess: invalidateService,
+  })
+
   return {
     // Basic
     updateBasic: updateBasicMutation,
@@ -120,5 +169,15 @@ export function useUpdateService(serviceId: string) {
     setCover: setCoverMutation,
     deleteMedia: deleteMediaMutation,
     updateMedia: updateMediaMutation,
+    // Price Rules
+    addPriceRule: addPriceRuleMutation,
+    updatePriceRule: updatePriceRuleMutation,
+    deletePriceRule: deletePriceRuleMutation,
+    // Pricing Tiers
+    addPricingTier: addPricingTierMutation,
+    updatePricingTier: updatePricingTierMutation,
+    deletePricingTier: deletePricingTierMutation,
+    // Tags
+    addTags: addTagsMutation,
   }
 }

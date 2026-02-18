@@ -4,9 +4,9 @@ interface Props {
 }
 
 export const PriceCell = ({ price }: Props) => {
-  const formatted = new Intl.NumberFormat('es-PE', {
+  const formatted = new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'PEN',
+    currency: 'USD',
   }).format(parseFloat(price));
 
   return <span className="font-semibold" style={{ color: '#000000' }}>{formatted}</span>;

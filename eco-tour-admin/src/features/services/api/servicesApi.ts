@@ -9,27 +9,32 @@ import { Media } from '@/types/media.type'
 
 export interface ServiceFilters {
   search?: string
-  price_min?: number
-  price_max?: number
+  reference_price_min?: number
+  reference_price_max?: number
   type?: TypeService
   duration_min?: number
   duration_max?: number
+  tags?: string
 }
 
 export const getServices = async (filters?: ServiceFilters): Promise<SummaryService[]> => {
   const params = new URLSearchParams()
 
+  // Obtener todos los resultados (limit alto para evitar paginación del servidor)
+  params.append('limit', '1000')
+
   if (filters) {
     if (filters.search) params.append('search', filters.search)
-    if (filters.price_min !== undefined) params.append('price_min', filters.price_min.toString())
-    if (filters.price_max !== undefined) params.append('price_max', filters.price_max.toString())
+    if (filters.reference_price_min !== undefined) params.append('reference_price_min', filters.reference_price_min.toString())
+    if (filters.reference_price_max !== undefined) params.append('reference_price_max', filters.reference_price_max.toString())
     if (filters.type) params.append('type', filters.type)
     if (filters.duration_min !== undefined) params.append('duration_min', filters.duration_min.toString())
     if (filters.duration_max !== undefined) params.append('duration_max', filters.duration_max.toString())
+    if (filters.tags) params.append('tags', filters.tags)
   }
 
   const queryString = params.toString()
-  const url = queryString ? `/service/summary/?${queryString}` : '/service/summary/'
+  const url = `/service/summary/?${queryString}`
 
   const response = await api.get<PaginatedResponse<SummaryService>>(url)
   return response.data.results
@@ -46,11 +51,15 @@ export interface CreateServiceData {
   includes: string
   excludes: string
   type: TypeService
-  price: string
+  reference_price: string
+  departure_time?: string
   duration_value: number
   duration_unit: DurationUnit
   data: { title: string; description: string }[]
   itinerary: { title: string; description: string }[]
+  price_rules?: { concept: string; amount: number; calculation_type: 'multiply' | 'divide' }[]
+  pricing_tiers?: { min_people: number; max_people: number; total_price: number }[]
+  tags?: string[]
   media: File[]
   cover: File | null
 }
@@ -63,11 +72,15 @@ export const createService = async (data: CreateServiceData): Promise<Service> =
   formData.append('includes', data.includes)
   formData.append('excludes', data.excludes)
   formData.append('type', data.type)
-  formData.append('price', data.price)
+  formData.append('reference_price', data.reference_price)
+  if (data.departure_time) formData.append('departure_time', data.departure_time)
   formData.append('duration_value', data.duration_value.toString())
   formData.append('duration_unit', data.duration_unit)
   formData.append('data', JSON.stringify(data.data))
   formData.append('itinerary', JSON.stringify(data.itinerary))
+  if (data.price_rules) formData.append('price_rules', JSON.stringify(data.price_rules))
+  if (data.pricing_tiers) formData.append('pricing_tiers', JSON.stringify(data.pricing_tiers))
+  if (data.tags) formData.append('tags', JSON.stringify(data.tags))
 
   data.media.forEach((file) => {
     formData.append('media', file)
@@ -94,7 +107,8 @@ export interface UpdateServiceBasicData {
   includes?: string
   excludes?: string
   type?: TypeService
-  price?: string
+  reference_price?: string
+  departure_time?: string
   duration_value?: number
   duration_unit?: DurationUnit
 }
@@ -195,3 +209,73 @@ export const updateMedia = async (id: string, data: { title?: string; descriptio
   return response.data
 }
 
+// ==================== TAGS ====================
+
+import { Tag, PriceRule, PricingTier, CalculationType } from '@/types/service.type'
+
+export const getTags = async (): Promise<Tag[]> => {
+  const response = await api.get<{ results: Tag[] }>('/tag/')
+  return response.data.results
+}
+
+export const createTag = async (name: string): Promise<Tag> => {
+  const response = await api.post<Tag>('/tag/', { name })
+  return response.data
+}
+
+export const updateTag = async (id: string, name: string): Promise<Tag> => {
+  const response = await api.patch<Tag>(`/tag/${id}/`, { name })
+  return response.data
+}
+
+export const deleteTag = async (id: string): Promise<void> => {
+  await api.delete(`/tag/${id}/`)
+}
+
+export const addTagsToService = async (serviceId: string, tagIds: string[]): Promise<void> => {
+  await api.post(`/service/${serviceId}/bulk-add-tags/`, { items: tagIds })
+}
+
+// ==================== PRICE RULES ====================
+
+export interface PriceRuleInput {
+  concept: string
+  amount: number
+  calculation_type: CalculationType
+}
+
+export const addPriceRule = async (serviceId: string, data: PriceRuleInput): Promise<PriceRule> => {
+  const response = await api.post<PriceRule>(`/price-rule/${serviceId}/add-price-rule/`, data)
+  return response.data
+}
+
+export const updatePriceRule = async (id: string, data: Partial<PriceRuleInput>): Promise<PriceRule> => {
+  const response = await api.patch<PriceRule>(`/price-rule/${id}/`, data)
+  return response.data
+}
+
+export const deletePriceRule = async (id: string): Promise<void> => {
+  await api.delete(`/price-rule/${id}/`)
+}
+
+// ==================== PRICING TIERS ====================
+
+export interface PricingTierInput {
+  min_people: number
+  max_people: number
+  total_price: number
+}
+
+export const addPricingTier = async (serviceId: string, data: PricingTierInput): Promise<PricingTier> => {
+  const response = await api.post<PricingTier>(`/pricing-tier/${serviceId}/add-pricing-tier/`, data)
+  return response.data
+}
+
+export const updatePricingTier = async (id: string, data: Partial<PricingTierInput>): Promise<PricingTier> => {
+  const response = await api.patch<PricingTier>(`/pricing-tier/${id}/`, data)
+  return response.data
+}
+
+export const deletePricingTier = async (id: string): Promise<void> => {
+  await api.delete(`/pricing-tier/${id}/`)
+}

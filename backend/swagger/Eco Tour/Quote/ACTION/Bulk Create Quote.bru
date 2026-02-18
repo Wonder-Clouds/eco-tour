@@ -1,0 +1,68 @@
+meta {
+  name: Bulk Create Quote
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8000/api/quote/bulk-create-quote/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "contact_info": "Cristian Monzon",
+    "services": [
+      {
+        "service_id": "cc5976ad-bb7b-49f3-b518-d5c9b0eeb8a1",
+        "person_temp_id": "contact",
+        "departure_date": "2026-05-10",
+        "notes": "Contacto principal toma este tour"
+      },
+      {
+        "service_id": "37a5f183-9aff-443e-96d3-8884ee992d18",
+        "person_temp_id": "temp-1",
+        "departure_date": "2026-05-10",
+        "notes": "Pasajero adicional",
+        "departure_time": "09:00:00"
+      },
+      {
+        "service_id": "37a5f183-9aff-443e-96d3-8884ee992d18",
+        "person_temp_id": "contact",
+        "departure_date": "2026-05-11",
+        "notes": "Servicio privado con hora específica"
+      },
+      {
+        "service_id": "268362a1-88ee-4289-ab02-3d219c8d07ea",
+        "person_temp_id": "temp-1",
+        "departure_date": "2026-05-11",
+        "notes": "Servicio privado con hora específica"
+      },
+      {
+        "service_id": "268362a1-88ee-4289-ab02-3d219c8d07ea",
+        "person_temp_id": "temp-2",
+        "departure_date": "2026-05-11",
+        "notes": "Servicio privado con hora específica"
+      },
+      {
+        "service_id": "86bdcdad-924e-4117-a54a-f75212a412ef",
+        "person_temp_id": "temp-2",
+        "departure_date": "2026-05-11",
+        "notes": "Servicio privado con hora específica"
+      },
+          {
+        "service_id": "86bdcdad-924e-4117-a54a-f75212a412ef",
+        "person_temp_id": "temp-1",
+        "departure_date": "2026-05-11",
+        "notes": "Servicio privado con hora específica"
+      }
+      
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -10,20 +10,30 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as QuotesRouteImport } from './routes/quotes'
 import { Route as PersonsRouteImport } from './routes/persons'
 import { Route as PackagesRouteImport } from './routes/packages'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
+import { Route as QuotesIndexRouteImport } from './routes/quotes.index'
 import { Route as PersonsIndexRouteImport } from './routes/persons.index'
 import { Route as PackagesIndexRouteImport } from './routes/packages.index'
 import { Route as ServicesIdRouteImport } from './routes/services.$id'
+import { Route as QuotesNewRouteImport } from './routes/quotes.new'
+import { Route as QuotesIdRouteImport } from './routes/quotes.$id'
 import { Route as PersonsIdRouteImport } from './routes/persons.$id'
 import { Route as PackagesIdRouteImport } from './routes/packages.$id'
+import { Route as QuotesIdEditRouteImport } from './routes/quotes.$id.edit'
 
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuotesRoute = QuotesRouteImport.update({
+  id: '/quotes',
+  path: '/quotes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PersonsRoute = PersonsRouteImport.update({
@@ -51,6 +61,11 @@ const ServicesIndexRoute = ServicesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ServicesRoute,
 } as any)
+const QuotesIndexRoute = QuotesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => QuotesRoute,
+} as any)
 const PersonsIndexRoute = PersonsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -66,6 +81,16 @@ const ServicesIdRoute = ServicesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ServicesRoute,
 } as any)
+const QuotesNewRoute = QuotesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => QuotesRoute,
+} as any)
+const QuotesIdRoute = QuotesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => QuotesRoute,
+} as any)
 const PersonsIdRoute = PersonsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -76,29 +101,43 @@ const PackagesIdRoute = PackagesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => PackagesRoute,
 } as any)
+const QuotesIdEditRoute = QuotesIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => QuotesIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/packages': typeof PackagesRouteWithChildren
   '/persons': typeof PersonsRouteWithChildren
+  '/quotes': typeof QuotesRouteWithChildren
   '/services': typeof ServicesRouteWithChildren
   '/packages/$id': typeof PackagesIdRoute
   '/persons/$id': typeof PersonsIdRoute
+  '/quotes/$id': typeof QuotesIdRouteWithChildren
+  '/quotes/new': typeof QuotesNewRoute
   '/services/$id': typeof ServicesIdRoute
   '/packages/': typeof PackagesIndexRoute
   '/persons/': typeof PersonsIndexRoute
+  '/quotes/': typeof QuotesIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/quotes/$id/edit': typeof QuotesIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/packages/$id': typeof PackagesIdRoute
   '/persons/$id': typeof PersonsIdRoute
+  '/quotes/$id': typeof QuotesIdRouteWithChildren
+  '/quotes/new': typeof QuotesNewRoute
   '/services/$id': typeof ServicesIdRoute
   '/packages': typeof PackagesIndexRoute
   '/persons': typeof PersonsIndexRoute
+  '/quotes': typeof QuotesIndexRoute
   '/services': typeof ServicesIndexRoute
+  '/quotes/$id/edit': typeof QuotesIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -106,13 +145,18 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/packages': typeof PackagesRouteWithChildren
   '/persons': typeof PersonsRouteWithChildren
+  '/quotes': typeof QuotesRouteWithChildren
   '/services': typeof ServicesRouteWithChildren
   '/packages/$id': typeof PackagesIdRoute
   '/persons/$id': typeof PersonsIdRoute
+  '/quotes/$id': typeof QuotesIdRouteWithChildren
+  '/quotes/new': typeof QuotesNewRoute
   '/services/$id': typeof ServicesIdRoute
   '/packages/': typeof PackagesIndexRoute
   '/persons/': typeof PersonsIndexRoute
+  '/quotes/': typeof QuotesIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/quotes/$id/edit': typeof QuotesIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,36 +165,50 @@ export interface FileRouteTypes {
     | '/login'
     | '/packages'
     | '/persons'
+    | '/quotes'
     | '/services'
     | '/packages/$id'
     | '/persons/$id'
+    | '/quotes/$id'
+    | '/quotes/new'
     | '/services/$id'
     | '/packages/'
     | '/persons/'
+    | '/quotes/'
     | '/services/'
+    | '/quotes/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/packages/$id'
     | '/persons/$id'
+    | '/quotes/$id'
+    | '/quotes/new'
     | '/services/$id'
     | '/packages'
     | '/persons'
+    | '/quotes'
     | '/services'
+    | '/quotes/$id/edit'
   id:
     | '__root__'
     | '/'
     | '/login'
     | '/packages'
     | '/persons'
+    | '/quotes'
     | '/services'
     | '/packages/$id'
     | '/persons/$id'
+    | '/quotes/$id'
+    | '/quotes/new'
     | '/services/$id'
     | '/packages/'
     | '/persons/'
+    | '/quotes/'
     | '/services/'
+    | '/quotes/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,6 +216,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PackagesRoute: typeof PackagesRouteWithChildren
   PersonsRoute: typeof PersonsRouteWithChildren
+  QuotesRoute: typeof QuotesRouteWithChildren
   ServicesRoute: typeof ServicesRouteWithChildren
 }
 
@@ -168,6 +227,13 @@ declare module '@tanstack/react-router' {
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quotes': {
+      id: '/quotes'
+      path: '/quotes'
+      fullPath: '/quotes'
+      preLoaderRoute: typeof QuotesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/persons': {
@@ -205,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesIndexRouteImport
       parentRoute: typeof ServicesRoute
     }
+    '/quotes/': {
+      id: '/quotes/'
+      path: '/'
+      fullPath: '/quotes/'
+      preLoaderRoute: typeof QuotesIndexRouteImport
+      parentRoute: typeof QuotesRoute
+    }
     '/persons/': {
       id: '/persons/'
       path: '/'
@@ -226,6 +299,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesIdRouteImport
       parentRoute: typeof ServicesRoute
     }
+    '/quotes/new': {
+      id: '/quotes/new'
+      path: '/new'
+      fullPath: '/quotes/new'
+      preLoaderRoute: typeof QuotesNewRouteImport
+      parentRoute: typeof QuotesRoute
+    }
+    '/quotes/$id': {
+      id: '/quotes/$id'
+      path: '/$id'
+      fullPath: '/quotes/$id'
+      preLoaderRoute: typeof QuotesIdRouteImport
+      parentRoute: typeof QuotesRoute
+    }
     '/persons/$id': {
       id: '/persons/$id'
       path: '/$id'
@@ -239,6 +326,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/packages/$id'
       preLoaderRoute: typeof PackagesIdRouteImport
       parentRoute: typeof PackagesRoute
+    }
+    '/quotes/$id/edit': {
+      id: '/quotes/$id/edit'
+      path: '/edit'
+      fullPath: '/quotes/$id/edit'
+      preLoaderRoute: typeof QuotesIdEditRouteImport
+      parentRoute: typeof QuotesIdRoute
     }
   }
 }
@@ -270,6 +364,33 @@ const PersonsRouteChildren: PersonsRouteChildren = {
 const PersonsRouteWithChildren =
   PersonsRoute._addFileChildren(PersonsRouteChildren)
 
+interface QuotesIdRouteChildren {
+  QuotesIdEditRoute: typeof QuotesIdEditRoute
+}
+
+const QuotesIdRouteChildren: QuotesIdRouteChildren = {
+  QuotesIdEditRoute: QuotesIdEditRoute,
+}
+
+const QuotesIdRouteWithChildren = QuotesIdRoute._addFileChildren(
+  QuotesIdRouteChildren,
+)
+
+interface QuotesRouteChildren {
+  QuotesIdRoute: typeof QuotesIdRouteWithChildren
+  QuotesNewRoute: typeof QuotesNewRoute
+  QuotesIndexRoute: typeof QuotesIndexRoute
+}
+
+const QuotesRouteChildren: QuotesRouteChildren = {
+  QuotesIdRoute: QuotesIdRouteWithChildren,
+  QuotesNewRoute: QuotesNewRoute,
+  QuotesIndexRoute: QuotesIndexRoute,
+}
+
+const QuotesRouteWithChildren =
+  QuotesRoute._addFileChildren(QuotesRouteChildren)
+
 interface ServicesRouteChildren {
   ServicesIdRoute: typeof ServicesIdRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
@@ -289,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PackagesRoute: PackagesRouteWithChildren,
   PersonsRoute: PersonsRouteWithChildren,
+  QuotesRoute: QuotesRouteWithChildren,
   ServicesRoute: ServicesRouteWithChildren,
 }
 export const routeTree = rootRouteImport

@@ -34,6 +34,7 @@ export const usePackageTable = (data: PackageSummary[], options: UsePackageTable
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    autoResetPageIndex: false,
   })
 
   return { table }

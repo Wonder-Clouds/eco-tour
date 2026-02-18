@@ -1,0 +1,835 @@
+import { useState } from 'react'
+import { useServices } from '@/features/services/hooks/useServices'
+import { useCountries } from '@/features/persons/hooks/useCountries'
+import { useBulkCreateQuote } from '../hooks/useQuoteMutations'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { BulkServiceInput } from '@/types/quote.type'
+import { SummaryService } from '@/types/service.type'
+import {
+  ArrowLeft,
+  Search,
+  Plus,
+  Trash2,
+  Save,
+  Loader2,
+  X,
+  Calendar,
+  Users,
+  ChevronRight,
+  MapPin,
+} from 'lucide-react'
+
+// Tipos
+interface Participant {
+  id: string
+  tempId: string
+  name: string
+  first_name: string
+  last_name: string
+  email: string
+  phone_number: string
+  passport_number: string
+  birth_date: string
+  nationality: string
+  isContact: boolean
+}
+
+interface ActivityAssignment {
+  id: string
+  service: SummaryService
+  departure_date: string
+  departure_time: string
+  notes: string
+  participants: string[]
+}
+
+// Utilidades
+const formatPrice = (price?: string | number) => {
+  if (price === undefined || price === null) return '$0.00'
+  const numPrice = typeof price === 'string' ? parseFloat(price) : price
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(numPrice)
+}
+
+const formatServiceType = (type: string) => {
+  const types: Record<string, string> = { group: 'Grupal', private: 'Privado', arbitrary: 'Arbitrario' }
+  return types[type] || type
+}
+
+const getTypeStyles = (type: string) => {
+  const styles: Record<string, { bg: string; text: string }> = {
+    private: { bg: '#fef2f2', text: '#dc2626' },
+    group: { bg: '#edfff2', text: '#00932c' },
+    arbitrary: { bg: '#fffbeb', text: '#d97706' },
+  }
+  return styles[type] || { bg: '#f3f4f6', text: '#374151' }
+}
+
+export const QuoteCreatePage = () => {
+  const { data: services = [], isLoading: isLoadingServices } = useServices()
+  const { data: countries = [] } = useCountries()
+  const bulkCreateMutation = useBulkCreateQuote()
+
+  // Estado - Participantes
+  const [participants, setParticipants] = useState<Participant[]>([
+    {
+      id: 'contact',
+      tempId: 'contact',
+      name: 'Contacto Principal',
+      first_name: '',
+      last_name: '',
+      email: '',
+      phone_number: '',
+      passport_number: '',
+      birth_date: '',
+      nationality: '',
+      isContact: true,
+    },
+  ])
+
+  // Estado - Actividades asignadas
+  const [activities, setActivities] = useState<ActivityAssignment[]>([])
+
+  // Estado - UI
+  const [serviceSearch, setServiceSearch] = useState('')
+  const [selectedActivity, setSelectedActivity] = useState<ActivityAssignment | null>(null)
+  const [editingParticipant, setEditingParticipant] = useState<string | null>(null)
+  const [notes, setNotes] = useState('')
+  const [validUntil, setValidUntil] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Filtrar servicios
+  const filteredServices = services.filter(
+    (s) =>
+      s.title.toLowerCase().includes(serviceSearch.toLowerCase()) ||
+      s.type.toLowerCase().includes(serviceSearch.toLowerCase())
+  )
+
+  // Filtrar servicios que NO están ya agregados
+  const availableServices = filteredServices.filter(
+    (s) => !activities.some((a) => a.service.id === s.id)
+  )
+
+  // Agregar participante
+  const handleAddParticipant = () => {
+    const newNum = participants.length
+    const newParticipant: Participant = {
+      id: `temp-${Date.now()}`,
+      tempId: `temp-${newNum}`,
+      name: `Pasajero #${newNum}`,
+      first_name: '',
+      last_name: '',
+      email: '',
+      phone_number: '',
+      passport_number: '',
+      birth_date: '',
+      nationality: '',
+      isContact: false,
+    }
+    setParticipants([...participants, newParticipant])
+  }
+
+  // Eliminar participante
+  const handleRemoveParticipant = (participantId: string) => {
+    if (participantId === 'contact') return
+    setParticipants(participants.filter((p) => p.id !== participantId))
+    setActivities(
+      activities.map((a) => ({
+        ...a,
+        participants: a.participants.filter((pid) => pid !== participantId),
+      }))
+    )
+  }
+
+  // Actualizar participante
+  const handleParticipantChange = (participantId: string, field: keyof Participant, value: string) => {
+    setParticipants(
+      participants.map((p) => {
+        if (p.id !== participantId) return p
+        const updated = { ...p, [field]: value }
+        if (field === 'first_name' || field === 'last_name') {
+          const firstName = field === 'first_name' ? value : p.first_name
+          const lastName = field === 'last_name' ? value : p.last_name
+          updated.name = `${firstName} ${lastName}`.trim() || (p.isContact ? 'Contacto Principal' : `Pasajero #${participants.indexOf(p)}`)
+        }
+        return updated
+      })
+    )
+  }
+
+  // Seleccionar actividad (servicio)
+  const handleSelectService = (service: SummaryService) => {
+    const newActivity: ActivityAssignment = {
+      id: `activity-${Date.now()}`,
+      service: service,
+      departure_date: '',
+      departure_time: '',
+      notes: '',
+      participants: [],
+    }
+    setActivities([...activities, newActivity])
+    setSelectedActivity(newActivity)
+  }
+
+  // Actualizar actividad
+  const handleActivityChange = (activityId: string, field: keyof ActivityAssignment, value: string) => {
+    const updated = activities.map((a) =>
+      a.id === activityId ? { ...a, [field]: value } : a
+    )
+    setActivities(updated)
+    if (selectedActivity?.id === activityId) {
+      setSelectedActivity({ ...selectedActivity, [field]: value })
+    }
+  }
+
+  // Toggle participante en actividad
+  const handleToggleParticipantInActivity = (activityId: string, participantId: string) => {
+    const updated = activities.map((a) => {
+      if (a.id !== activityId) return a
+      const isIn = a.participants.includes(participantId)
+      return {
+        ...a,
+        participants: isIn
+          ? a.participants.filter((pid) => pid !== participantId)
+          : [...a.participants, participantId],
+      }
+    })
+    setActivities(updated)
+
+    const updatedActivity = updated.find((a) => a.id === activityId)
+    if (selectedActivity?.id === activityId && updatedActivity) {
+      setSelectedActivity(updatedActivity)
+    }
+  }
+
+  // Eliminar actividad
+  const handleRemoveActivity = (activityId: string) => {
+    setActivities(activities.filter((a) => a.id !== activityId))
+    if (selectedActivity?.id === activityId) {
+      setSelectedActivity(null)
+    }
+  }
+
+  // Calcular total
+  const calculateTotal = () => {
+    return activities.reduce((sum, a) => {
+      const pricePerPerson = parseFloat(a.service.reference_price || '0')
+      return sum + pricePerPerson * a.participants.length
+    }, 0)
+  }
+
+  // Obtener nombre del contacto
+  const getContactName = () => {
+    const contact = participants.find((p) => p.isContact)
+    if (contact?.first_name || contact?.last_name) {
+      return `${contact.first_name} ${contact.last_name}`.trim()
+    }
+    return ''
+  }
+
+  // Validar
+  const canSubmit = () => {
+    const contactName = getContactName()
+    if (!contactName) return false
+    if (activities.length === 0) return false
+    return activities.every((a) => a.participants.length > 0 && a.departure_date)
+  }
+
+  // Submit
+  const handleSubmit = async () => {
+    if (isSubmitting) return
+
+    setIsSubmitting(true)
+
+    const servicesData: BulkServiceInput[] = []
+
+    for (const activity of activities) {
+      for (const participantId of activity.participants) {
+        const participant = participants.find((p) => p.id === participantId)
+        if (!participant) continue
+
+        servicesData.push({
+          service_id: activity.service.id,
+          person_temp_id: participant.tempId,
+          departure_date: activity.departure_date,
+          departure_time: activity.departure_time || undefined,
+          notes: activity.notes || undefined,
+        })
+      }
+    }
+
+    try {
+      const newQuote = await bulkCreateMutation.mutateAsync({
+        contact_info: getContactName(),
+        notes: notes || undefined,
+        valid_until: validUntil || undefined,
+        services: servicesData,
+      })
+
+      console.log('Cotización creada:', newQuote)
+
+      if (newQuote?.id) {
+        // Usar window.location.replace para evitar que el usuario vuelva atrás
+        window.location.replace(`/quotes/${newQuote.id}`)
+      } else {
+        // Si no hay id, ir al listado
+        window.location.replace('/quotes')
+      }
+    } catch (error) {
+      console.error('Error al crear cotización:', error)
+      alert('Error al crear la cotización')
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#fafafa' }}>
+      {/* Header Fijo con botón de crear siempre visible */}
+      <div className="sticky top-0 z-20 bg-white border-b shadow-sm">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-4">
+            <a href="/quotes" className="p-2 rounded-lg hover:bg-gray-100">
+              <ArrowLeft size={20} />
+            </a>
+            <div>
+              <h1 className="text-xl font-bold" style={{ color: '#085f24' }}>
+                Nueva Cotización
+              </h1>
+              <p className="text-sm text-gray-500">Selecciona actividades y asigna participantes</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {/* Resumen rápido */}
+            <div className="text-right mr-4">
+              <p className="text-xs text-gray-500">Total</p>
+              <p className="text-xl font-bold" style={{ color: '#00932c' }}>
+                {formatPrice(calculateTotal())}
+              </p>
+            </div>
+
+            <Button
+              onClick={handleSubmit}
+              disabled={!canSubmit() || isSubmitting || bulkCreateMutation.isPending}
+              style={{
+                backgroundColor: canSubmit() && !isSubmitting ? '#00bf35' : '#9ca3af',
+              }}
+            >
+              {isSubmitting || bulkCreateMutation.isPending ? (
+                <>
+                  <Loader2 className="animate-spin mr-2" size={16} />
+                  Creando...
+                </>
+              ) : (
+                <>
+                  <Save size={16} className="mr-2" />
+                  Crear Cotización
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Contenido principal */}
+      <div className="flex-1 flex">
+      {/* Panel Izquierdo - Lista de Actividades y Buscador */}
+      <div className="w-1/2 border-r bg-white flex flex-col">
+        {/* Info del grupo */}
+        <div className="p-4 border-b">
+          <div className="bg-gray-50 rounded-lg p-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Contacto Principal
+            </label>
+            <Input
+              value={getContactName()}
+              placeholder="Se actualiza automáticamente"
+              className="bg-white"
+              readOnly
+            />
+          </div>
+        </div>
+
+        {/* Actividades seleccionadas */}
+        <div className="p-6 border-b">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-semibold" style={{ color: '#085f24' }}>
+              Actividades ({activities.length})
+            </h2>
+          </div>
+
+          {activities.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              <MapPin size={32} className="mx-auto mb-2 opacity-50" />
+              <p>No hay actividades agregadas</p>
+              <p className="text-sm">Busca y selecciona actividades abajo</p>
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {activities.map((activity) => {
+                const typeStyles = getTypeStyles(activity.service.type)
+                const isSelected = selectedActivity?.id === activity.id
+                const hasParticipants = activity.participants.length > 0
+                const hasDate = !!activity.departure_date
+
+                return (
+                  <div
+                    key={activity.id}
+                    onClick={() => setSelectedActivity(activity)}
+                    className={`p-3 rounded-lg border cursor-pointer transition ${
+                      isSelected
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="font-medium text-sm">{activity.service.title}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span
+                            className="text-xs px-2 py-0.5 rounded-full"
+                            style={{ backgroundColor: typeStyles.bg, color: typeStyles.text }}
+                          >
+                            {formatServiceType(activity.service.type)}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {activity.participants.length} pax
+                          </span>
+                          {!hasParticipants && (
+                            <span className="text-xs text-red-500">Sin participantes</span>
+                          )}
+                          {!hasDate && (
+                            <span className="text-xs text-red-500">Sin fecha</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium" style={{ color: '#00932c' }}>
+                          {formatPrice(parseFloat(activity.service.reference_price || '0') * activity.participants.length)}
+                        </span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleRemoveActivity(activity.id)
+                          }}
+                          className="p-1 rounded hover:bg-red-100"
+                        >
+                          <Trash2 size={14} className="text-red-500" />
+                        </button>
+                        <ChevronRight size={16} className="text-gray-400" />
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Buscador de actividades */}
+        <div className="p-6 flex-1 overflow-hidden flex flex-col">
+          <h3 className="font-semibold mb-4" style={{ color: '#085f24' }}>
+            Agregar Actividad
+          </h3>
+
+          <div className="relative mb-4">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Input
+              value={serviceSearch}
+              onChange={(e) => setServiceSearch(e.target.value)}
+              placeholder="Buscar actividad..."
+              className="pl-10"
+            />
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
+            {isLoadingServices ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="animate-spin mr-2" size={20} />
+                <span className="text-gray-500">Cargando...</span>
+              </div>
+            ) : availableServices.length === 0 ? (
+              <div className="text-center py-8 text-gray-400">
+                <MapPin size={32} className="mx-auto mb-2 opacity-50" />
+                <p>No hay más actividades disponibles</p>
+                <p className="text-sm">Todas las actividades ya fueron agregadas</p>
+              </div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 sticky top-0">
+                  <tr>
+                    <th className="text-left p-2 font-medium text-gray-600">Título</th>
+                    <th className="text-left p-2 font-medium text-gray-600">Duración</th>
+                    <th className="text-left p-2 font-medium text-gray-600">Precio Ref.</th>
+                    <th className="text-left p-2 font-medium text-gray-600">Tipo</th>
+                    <th className="p-2"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {availableServices.map((service) => {
+                    const typeStyles = getTypeStyles(service.type)
+                    return (
+                      <tr key={service.id} className="border-b hover:bg-gray-50">
+                        <td className="p-2">
+                          <p className="font-medium">{service.title}</p>
+                        </td>
+                        <td className="p-2 text-gray-600">{service.duration}</td>
+                        <td className="p-2 font-medium" style={{ color: '#00932c' }}>
+                          {formatPrice(service.reference_price)}
+                        </td>
+                        <td className="p-2">
+                          <span
+                            className="text-xs px-2 py-1 rounded-full"
+                            style={{ backgroundColor: typeStyles.bg, color: typeStyles.text }}
+                          >
+                            {formatServiceType(service.type)}
+                          </span>
+                        </td>
+                        <td className="p-2">
+                          <Button
+                            size="sm"
+                            onClick={() => handleSelectService(service)}
+                            style={{ backgroundColor: '#00bf35' }}
+                          >
+                            <Plus size={14} className="mr-1" />
+                            Agregar
+                          </Button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Panel Derecho - Configuración de Actividad */}
+      <div className="w-1/2 flex flex-col">
+        {selectedActivity ? (
+          <>
+            {/* Header de actividad */}
+            <div className="p-6 border-b bg-white">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-lg font-bold" style={{ color: '#085f24' }}>
+                  {selectedActivity.service.title}
+                </h2>
+                <button
+                  onClick={() => setSelectedActivity(null)}
+                  className="p-2 rounded-lg hover:bg-gray-100"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="flex items-center gap-4 text-sm text-gray-600">
+                <span>{selectedActivity.service.duration}</span>
+                <span className="font-medium" style={{ color: '#00932c' }}>
+                  {formatPrice(selectedActivity.service.reference_price)} / persona
+                </span>
+              </div>
+            </div>
+
+            {/* Configuración */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {/* Fechas */}
+              <div className="bg-white rounded-lg p-4 border">
+                <h3 className="font-medium mb-4 flex items-center gap-2">
+                  <Calendar size={16} />
+                  Fecha y Hora
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Fecha de inicio *</label>
+                    <Input
+                      type="date"
+                      value={selectedActivity.departure_date}
+                      onChange={(e) =>
+                        handleActivityChange(selectedActivity.id, 'departure_date', e.target.value)
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Hora</label>
+                    <Input
+                      type="time"
+                      value={selectedActivity.departure_time}
+                      onChange={(e) =>
+                        handleActivityChange(selectedActivity.id, 'departure_time', e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Participantes */}
+              <div className="bg-white rounded-lg p-4 border">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-medium flex items-center gap-2">
+                    <Users size={16} />
+                    Participantes ({selectedActivity.participants.length})
+                  </h3>
+                  <Button variant="outline" size="sm" onClick={handleAddParticipant}>
+                    <Plus size={14} className="mr-1" />
+                    Nuevo
+                  </Button>
+                </div>
+
+                <div className="space-y-2">
+                  {participants.map((participant) => {
+                    const isInActivity = selectedActivity.participants.includes(participant.id)
+                    const isEditing = editingParticipant === participant.id
+
+                    return (
+                      <div key={participant.id}>
+                        <div
+                          className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition ${
+                            isInActivity
+                              ? 'border-green-500 bg-green-50'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isInActivity}
+                            onChange={() =>
+                              handleToggleParticipantInActivity(selectedActivity.id, participant.id)
+                            }
+                            className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">
+                                {participant.first_name || participant.last_name
+                                  ? `${participant.first_name} ${participant.last_name}`.trim()
+                                  : participant.name}
+                              </span>
+                              {participant.isContact && (
+                                <span className="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">
+                                  Líder de grupo
+                                </span>
+                              )}
+                            </div>
+                            {!participant.first_name && !participant.last_name && (
+                              <p className="text-xs text-gray-400">Sin datos personales</p>
+                            )}
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setEditingParticipant(isEditing ? null : participant.id)
+                            }}
+                            className="text-xs text-blue-600 hover:underline"
+                          >
+                            {isEditing ? 'Cerrar' : 'Editar datos'}
+                          </button>
+                          {!participant.isContact && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleRemoveParticipant(participant.id)
+                              }}
+                              className="p-1 rounded hover:bg-red-100"
+                            >
+                              <Trash2 size={14} className="text-red-500" />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Formulario de edición expandido */}
+                        {isEditing && (
+                          <div className="mt-2 p-4 bg-gray-50 rounded-lg border-l-4 border-l-blue-500">
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-xs text-gray-500 mb-1">Nombre</label>
+                                <Input
+                                  value={participant.first_name}
+                                  onChange={(e) =>
+                                    handleParticipantChange(participant.id, 'first_name', e.target.value)
+                                  }
+                                  placeholder="Nombre"
+                                  className="h-9"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs text-gray-500 mb-1">Apellido</label>
+                                <Input
+                                  value={participant.last_name}
+                                  onChange={(e) =>
+                                    handleParticipantChange(participant.id, 'last_name', e.target.value)
+                                  }
+                                  placeholder="Apellido"
+                                  className="h-9"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs text-gray-500 mb-1">Email</label>
+                                <Input
+                                  type="email"
+                                  value={participant.email}
+                                  onChange={(e) =>
+                                    handleParticipantChange(participant.id, 'email', e.target.value)
+                                  }
+                                  placeholder="Email"
+                                  className="h-9"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs text-gray-500 mb-1">Teléfono</label>
+                                <Input
+                                  value={participant.phone_number}
+                                  onChange={(e) =>
+                                    handleParticipantChange(participant.id, 'phone_number', e.target.value)
+                                  }
+                                  placeholder="Teléfono"
+                                  className="h-9"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs text-gray-500 mb-1">Pasaporte</label>
+                                <Input
+                                  value={participant.passport_number}
+                                  onChange={(e) =>
+                                    handleParticipantChange(participant.id, 'passport_number', e.target.value)
+                                  }
+                                  placeholder="Pasaporte"
+                                  className="h-9"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs text-gray-500 mb-1">Nacionalidad</label>
+                                <select
+                                  value={participant.nationality}
+                                  onChange={(e) =>
+                                    handleParticipantChange(participant.id, 'nationality', e.target.value)
+                                  }
+                                  className="w-full h-9 px-3 border border-gray-300 rounded-md text-sm"
+                                >
+                                  <option value="">Seleccionar...</option>
+                                  {countries.map((c) => (
+                                    <option key={c.value} value={c.value}>
+                                      {c.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Notas */}
+              <div className="bg-white rounded-lg p-4 border">
+                <h3 className="font-medium mb-4">Notas</h3>
+                <textarea
+                  value={selectedActivity.notes}
+                  onChange={(e) =>
+                    handleActivityChange(selectedActivity.id, 'notes', e.target.value)
+                  }
+                  placeholder="Notas para esta actividad..."
+                  className="w-full p-3 border rounded-md text-sm resize-none h-24"
+                />
+              </div>
+            </div>
+          </>
+        ) : (
+          // Sin actividad seleccionada - Mostrar resumen e info
+          <div className="flex-1 flex flex-col bg-gray-50">
+            <div className="p-6 bg-white border-b">
+              <h2 className="text-lg font-bold mb-4" style={{ color: '#085f24' }}>
+                Información General
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm text-gray-500 mb-1">Válido hasta</label>
+                  <Input
+                    type="date"
+                    value={validUntil}
+                    onChange={(e) => setValidUntil(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-500 mb-1">Notas generales</label>
+                  <textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Notas de la cotización..."
+                    className="w-full p-3 border rounded-md text-sm resize-none h-24"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Resumen de costos */}
+            <div className="p-6 flex-1">
+              <h2 className="text-lg font-bold mb-4" style={{ color: '#085f24' }}>
+                Resumen de Costos
+              </h2>
+
+              {activities.length === 0 ? (
+                <div className="text-center py-12 text-gray-400">
+                  <MapPin size={48} className="mx-auto mb-4 opacity-50" />
+                  <p className="text-lg">No hay actividades</p>
+                  <p className="text-sm mt-2">Busca y agrega actividades desde el panel izquierdo</p>
+                </div>
+              ) : (
+                <div className="bg-white rounded-lg border p-4">
+                  <div className="space-y-3">
+                    {activities.map((activity) => (
+                      <div
+                        key={activity.id}
+                        className="flex justify-between text-sm p-2 rounded hover:bg-gray-50 cursor-pointer"
+                        onClick={() => setSelectedActivity(activity)}
+                      >
+                        <div>
+                          <p className="font-medium">{activity.service.title}</p>
+                          <p className="text-xs text-gray-500">
+                            {activity.participants.length} participante(s)
+                          </p>
+                        </div>
+                        <span className="font-medium" style={{ color: '#00932c' }}>
+                          {formatPrice(
+                            parseFloat(activity.service.reference_price || '0') *
+                              activity.participants.length
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <hr className="my-4" />
+
+                  <div
+                    className="p-4 rounded-lg flex justify-between items-center"
+                    style={{ backgroundColor: '#edfff2' }}
+                  >
+                    <span className="font-semibold" style={{ color: '#085f24' }}>
+                      TOTAL
+                    </span>
+                    <span className="text-2xl font-bold" style={{ color: '#00932c' }}>
+                      {formatPrice(calculateTotal())}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {!canSubmit() && (
+              <div className="p-4 bg-white border-t text-center">
+                <p className="text-sm text-gray-400">
+                  Completa el contacto, agrega actividades con participantes y fechas
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+      </div>
+    </div>
+  )
+}
+

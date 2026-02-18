@@ -8,12 +8,15 @@ import {
 } from '@/types/package.type'
 import { PaginatedResponse } from '@/types/response.type'
 
+// Re-exportar tipos para uso en hooks
+export type { UpdatePackageInput, CreatePackageServiceInput }
+
 // ==================== FILTERS ====================
 
 export interface PackageFilters {
   search?: string
-  price_min?: number
-  price_max?: number
+  reference_price_min?: number
+  reference_price_max?: number
   total_duration_hours_min?: number
   total_duration_hours_max?: number
 }
@@ -23,16 +26,19 @@ export interface PackageFilters {
 export const getPackages = async (filters?: PackageFilters): Promise<PackageSummary[]> => {
   const params = new URLSearchParams()
 
+  // Obtener todos los resultados (limit alto para evitar paginación del servidor)
+  params.append('limit', '1000')
+
   if (filters) {
     if (filters.search) params.append('search', filters.search)
-    if (filters.price_min !== undefined) params.append('price_min', filters.price_min.toString())
-    if (filters.price_max !== undefined) params.append('price_max', filters.price_max.toString())
+    if (filters.reference_price_min !== undefined) params.append('reference_price_min', filters.reference_price_min.toString())
+    if (filters.reference_price_max !== undefined) params.append('reference_price_max', filters.reference_price_max.toString())
     if (filters.total_duration_hours_min !== undefined) params.append('total_duration_hours_min', filters.total_duration_hours_min.toString())
     if (filters.total_duration_hours_max !== undefined) params.append('total_duration_hours_max', filters.total_duration_hours_max.toString())
   }
 
   const queryString = params.toString()
-  const url = queryString ? `/package/summary/?${queryString}` : '/package/summary/'
+  const url = `/package/summary/?${queryString}`
 
   const response = await api.get<PaginatedResponse<PackageSummary>>(url)
   return response.data.results

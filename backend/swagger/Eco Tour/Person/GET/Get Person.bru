@@ -7,7 +7,7 @@ meta {
 get {
   url: http://127.0.0.1:8000/api/person/
   body: none
-  auth: bearer
+  auth: inherit
 }
 
 params:query {
@@ -16,10 +16,6 @@ params:query {
   ~last_name: cr
   ~phone_number: cr
   ~nationality: 
-}
-
-auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5OTIyMjU5LCJpYXQiOjE3Njk5MTg2NTksImp0aSI6ImI5ZGFmN2VmNWVhMjQ2ODRhOGU0ZDJmMTA5ZWNlNzM4IiwidXNlcl9pZCI6IjEifQ.EO6MH3Dtj7oFb25n40erFGtU8cOEzvF8-NsewBbxjwY
 }
 
 settings {

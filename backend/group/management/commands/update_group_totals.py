@@ -13,7 +13,7 @@ class Command(BaseCommand):
         
         for group in groups:
             old_total = group.total_people
-            new_total = group.update_total_people()
+            new_total = group.update_people_count()
             
             if old_total != new_total:
                 self.stdout.write(

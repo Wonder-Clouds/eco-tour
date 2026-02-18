@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { X, Plus, Trash2, Upload, Check } from 'lucide-react'
+import { X, Plus, Trash2, Upload, Check, Tag as TagIcon, Edit2 } from 'lucide-react'
 import ReactQuill from 'react-quill-new'
 import 'react-quill-new/dist/quill.snow.css'
 import { useUpdateService } from '../hooks/useUpdateService'
-import { Service, DurationUnit, TypeService } from '@/types/service.type'
+import { useTags, useTagMutations } from '../hooks/useTags'
+import { Service, DurationUnit, TypeService, PriceRule, PricingTier, Tag, CalculationType } from '@/types/service.type'
 import { Itinerary } from '@/types/itinerary.type'
 import { Data } from '@/types/data.type'
 
@@ -14,7 +15,7 @@ interface EditServiceModalProps {
   service: Service
 }
 
-type TabType = 'basic' | 'itinerary' | 'data' | 'media'
+type TabType = 'basic' | 'itinerary' | 'data' | 'media' | 'pricing' | 'tags'
 
 export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalProps) => {
   const [activeTab, setActiveTab] = useState<TabType>('basic')
@@ -25,7 +26,8 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
   const [includes, setIncludes] = useState(service.includes)
   const [excludes, setExcludes] = useState(service.excludes)
   const [type, setType] = useState<TypeService>(service.type)
-  const [price, setPrice] = useState(service.price)
+  const [referencePrice, setReferencePrice] = useState(service.reference_price)
+  const [departureTime, setDepartureTime] = useState(service.departure_time || '')
   const [durationValue, setDurationValue] = useState(service.duration_value)
   const [durationUnit, setDurationUnit] = useState<DurationUnit>(service.duration_unit)
 
@@ -44,7 +46,28 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
   const [newImageTitle, setNewImageTitle] = useState('')
   const [newCoverFile, setNewCoverFile] = useState<File | null>(null)
 
+  // Estados para price rules
+  const [newPriceRuleConcept, setNewPriceRuleConcept] = useState('')
+  const [newPriceRuleAmount, setNewPriceRuleAmount] = useState('')
+  const [newPriceRuleCalcType, setNewPriceRuleCalcType] = useState<CalculationType>('multiply')
+  const [editingPriceRule, setEditingPriceRule] = useState<PriceRule | null>(null)
+
+  // Estados para pricing tiers
+  const [newTierMinPeople, setNewTierMinPeople] = useState('')
+  const [newTierMaxPeople, setNewTierMaxPeople] = useState('')
+  const [newTierPrice, setNewTierPrice] = useState('')
+  const [editingPricingTier, setEditingPricingTier] = useState<PricingTier | null>(null)
+
+  // Estados para tags
+  const [newTagName, setNewTagName] = useState('')
+  const [editingTag, setEditingTag] = useState<Tag | null>(null)
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
+    service.tags?.map(t => t.id) || []
+  )
+
   const mutations = useUpdateService(service.id)
+  const { data: allTags = [] } = useTags()
+  const tagMutations = useTagMutations()
 
   // Resetear estados cuando cambia el servicio
   useEffect(() => {
@@ -53,9 +76,11 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
     setIncludes(service.includes)
     setExcludes(service.excludes)
     setType(service.type)
-    setPrice(service.price)
+    setReferencePrice(service.reference_price)
+    setDepartureTime(service.departure_time || '')
     setDurationValue(service.duration_value)
     setDurationUnit(service.duration_unit)
+    setSelectedTagIds(service.tags?.map(t => t.id) || [])
   }, [service])
 
   const handleSaveBasic = () => {
@@ -66,7 +91,8 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
         includes,
         excludes,
         type,
-        price,
+        reference_price: referencePrice,
+        departure_time: departureTime || undefined,
         duration_value: durationValue,
         duration_unit: durationUnit,
       },
@@ -175,6 +201,123 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
     }
   }
 
+  // ==================== PRICE RULE HANDLERS ====================
+
+  const handleAddPriceRule = () => {
+    if (!newPriceRuleConcept.trim() || !newPriceRuleAmount) return
+    mutations.addPriceRule.mutate(
+      {
+        concept: newPriceRuleConcept,
+        amount: Number(newPriceRuleAmount),
+        calculation_type: newPriceRuleCalcType,
+      },
+      {
+        onSuccess: () => {
+          setNewPriceRuleConcept('')
+          setNewPriceRuleAmount('')
+          setNewPriceRuleCalcType('multiply')
+        },
+      }
+    )
+  }
+
+  const handleUpdatePriceRule = () => {
+    if (!editingPriceRule) return
+    mutations.updatePriceRule.mutate(
+      {
+        id: editingPriceRule.id,
+        data: {
+          concept: editingPriceRule.concept,
+          amount: Number(editingPriceRule.amount),
+          calculation_type: editingPriceRule.calculation_type,
+        },
+      },
+      { onSuccess: () => setEditingPriceRule(null) }
+    )
+  }
+
+  const handleDeletePriceRule = (id: string) => {
+    if (confirm('¿Estás seguro de eliminar esta regla de precio?')) {
+      mutations.deletePriceRule.mutate(id)
+    }
+  }
+
+  // ==================== PRICING TIER HANDLERS ====================
+
+  const handleAddPricingTier = () => {
+    if (!newTierMinPeople || !newTierMaxPeople || !newTierPrice) return
+    mutations.addPricingTier.mutate(
+      {
+        min_people: Number(newTierMinPeople),
+        max_people: Number(newTierMaxPeople),
+        total_price: Number(newTierPrice),
+      },
+      {
+        onSuccess: () => {
+          setNewTierMinPeople('')
+          setNewTierMaxPeople('')
+          setNewTierPrice('')
+        },
+      }
+    )
+  }
+
+  const handleUpdatePricingTier = () => {
+    if (!editingPricingTier) return
+    mutations.updatePricingTier.mutate(
+      {
+        id: editingPricingTier.id,
+        data: {
+          min_people: editingPricingTier.min_people,
+          max_people: editingPricingTier.max_people,
+          total_price: Number(editingPricingTier.total_price),
+        },
+      },
+      { onSuccess: () => setEditingPricingTier(null) }
+    )
+  }
+
+  const handleDeletePricingTier = (id: string) => {
+    if (confirm('¿Estás seguro de eliminar este nivel de precio?')) {
+      mutations.deletePricingTier.mutate(id)
+    }
+  }
+
+  // ==================== TAG HANDLERS ====================
+
+  const handleCreateTag = () => {
+    if (!newTagName.trim()) return
+    tagMutations.createTag.mutate(newTagName, {
+      onSuccess: () => setNewTagName(''),
+    })
+  }
+
+  const handleUpdateTag = () => {
+    if (!editingTag) return
+    tagMutations.updateTag.mutate(
+      { id: editingTag.id, name: editingTag.name },
+      { onSuccess: () => setEditingTag(null) }
+    )
+  }
+
+  const handleDeleteTag = (id: string) => {
+    if (confirm('¿Estás seguro de eliminar esta etiqueta? Se eliminará de todos los servicios.')) {
+      tagMutations.deleteTag.mutate(id)
+    }
+  }
+
+  const handleToggleTag = (tagId: string) => {
+    if (selectedTagIds.includes(tagId)) {
+      setSelectedTagIds(selectedTagIds.filter(id => id !== tagId))
+    } else {
+      setSelectedTagIds([...selectedTagIds, tagId])
+    }
+  }
+
+  const handleSaveTags = () => {
+    mutations.addTags.mutate(selectedTagIds)
+  }
+
   if (!isOpen) return null
 
   // Verificar que estamos en el cliente
@@ -186,6 +329,8 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
     { key: 'itinerary', label: 'Itinerario' },
     { key: 'data', label: 'Info. Adicional' },
     { key: 'media', label: 'Multimedia' },
+    { key: 'pricing', label: 'Precios' },
+    { key: 'tags', label: 'Etiquetas' },
   ]
 
   const coverImage = service.media?.find((m) => m.is_cover)
@@ -261,15 +406,27 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Precio
+                    Precio de Referencia
                   </label>
                   <input
                     type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    value={referencePrice}
+                    onChange={(e) => setReferencePrice(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     min={0}
                     step="0.01"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Hora de Salida
+                  </label>
+                  <input
+                    type="time"
+                    value={departureTime}
+                    onChange={(e) => setDepartureTime(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
 
@@ -662,6 +819,385 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
                   >
                     {mutations.uploadImage.isPending ? 'Subiendo...' : 'Subir Imagen'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab: Precios (PriceRules y PricingTiers) */}
+          {activeTab === 'pricing' && (
+            <div className="space-y-8">
+              {/* Mensaje según tipo de servicio */}
+              <div className="p-4 rounded-lg" style={{ backgroundColor: '#edfff2' }}>
+                <p className="text-sm" style={{ color: '#085f24' }}>
+                  {service.type === 'group' && '📋 Servicio Grupal: Solo puede tener una regla de precio con tipo "multiplicar".'}
+                  {service.type === 'private' && '📋 Servicio Privado: Puede tener varias reglas de precio con tipos "multiplicar" o "dividir".'}
+                  {service.type === 'arbitrary' && '📋 Servicio Arbitrario: Solo usa niveles de precio (rangos de personas).'}
+                </p>
+              </div>
+
+              {/* Price Rules - Solo para group y private */}
+              {(service.type === 'group' || service.type === 'private') && (
+                <div>
+                  <h4 className="font-medium mb-4 flex items-center gap-2" style={{ color: '#085f24' }}>
+                    Reglas de Precio
+                  </h4>
+
+                  {/* Lista de price rules existentes */}
+                  <div className="space-y-3 mb-4">
+                    {service.price_rules?.map((rule) => (
+                      <div key={rule.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        {editingPriceRule?.id === rule.id ? (
+                          <>
+                            <input
+                              type="text"
+                              value={editingPriceRule.concept}
+                              onChange={(e) => setEditingPriceRule({ ...editingPriceRule, concept: e.target.value })}
+                              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                            />
+                            <input
+                              type="number"
+                              value={editingPriceRule.amount}
+                              onChange={(e) => setEditingPriceRule({ ...editingPriceRule, amount: e.target.value })}
+                              className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                            />
+                            <select
+                              value={editingPriceRule.calculation_type}
+                              onChange={(e) => setEditingPriceRule({ ...editingPriceRule, calculation_type: e.target.value as CalculationType })}
+                              className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                            >
+                              <option value="multiply">Multiplicar</option>
+                              {service.type === 'private' && <option value="divide">Dividir</option>}
+                            </select>
+                            <button
+                              onClick={handleUpdatePriceRule}
+                              className="p-2 text-green-600 hover:bg-green-100 rounded-lg"
+                            >
+                              <Check size={18} />
+                            </button>
+                            <button
+                              onClick={() => setEditingPriceRule(null)}
+                              className="p-2 text-gray-500 hover:bg-gray-200 rounded-lg"
+                            >
+                              <X size={18} />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <span className="flex-1 font-medium">{rule.concept}</span>
+                            <span className="text-gray-600">$ {rule.amount}</span>
+                            <span className="px-2 py-1 text-xs rounded-full" style={{
+                              backgroundColor: rule.calculation_type === 'multiply' ? '#edfff2' : '#fef2f2',
+                              color: rule.calculation_type === 'multiply' ? '#00932c' : '#dc2626'
+                            }}>
+                              {rule.calculation_type === 'multiply' ? 'Multiplicar' : 'Dividir'}
+                            </span>
+                            <button
+                              onClick={() => setEditingPriceRule(rule)}
+                              className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleDeletePriceRule(rule.id)}
+                              className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                    {(!service.price_rules || service.price_rules.length === 0) && (
+                      <p className="text-gray-500 text-sm italic">No hay reglas de precio configuradas.</p>
+                    )}
+                  </div>
+
+                  {/* Agregar nueva price rule */}
+                  {(service.type === 'private' || (service.type === 'group' && (!service.price_rules || service.price_rules.length === 0))) && (
+                    <div className="border-t border-gray-200 pt-4">
+                      <h5 className="text-sm font-medium mb-3">Agregar Nueva Regla</h5>
+                      <div className="flex gap-3">
+                        <input
+                          type="text"
+                          value={newPriceRuleConcept}
+                          onChange={(e) => setNewPriceRuleConcept(e.target.value)}
+                          placeholder="Concepto (ej: Transporte)"
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        />
+                        <input
+                          type="number"
+                          value={newPriceRuleAmount}
+                          onChange={(e) => setNewPriceRuleAmount(e.target.value)}
+                          placeholder="Monto"
+                          className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                          min={0}
+                          step="0.01"
+                        />
+                        <select
+                          value={newPriceRuleCalcType}
+                          onChange={(e) => setNewPriceRuleCalcType(e.target.value as CalculationType)}
+                          className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        >
+                          <option value="multiply">Multiplicar</option>
+                          {service.type === 'private' && <option value="divide">Dividir</option>}
+                        </select>
+                        <button
+                          onClick={handleAddPriceRule}
+                          disabled={mutations.addPriceRule.isPending}
+                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
+                        >
+                          <Plus size={18} />
+                          {mutations.addPriceRule.isPending ? 'Agregando...' : 'Agregar'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Pricing Tiers - Solo para arbitrary */}
+              {service.type === 'arbitrary' && (
+                <div>
+                  <h4 className="font-medium mb-4 flex items-center gap-2" style={{ color: '#085f24' }}>
+                    Niveles de Precio (por rango de personas)
+                  </h4>
+
+                  {/* Lista de pricing tiers existentes */}
+                  <div className="space-y-3 mb-4">
+                    {service.pricing_tiers?.map((tier) => (
+                      <div key={tier.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        {editingPricingTier?.id === tier.id ? (
+                          <>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="number"
+                                value={editingPricingTier.min_people}
+                                onChange={(e) => setEditingPricingTier({ ...editingPricingTier, min_people: Number(e.target.value) })}
+                                className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                min={1}
+                              />
+                              <span className="text-gray-500">a</span>
+                              <input
+                                type="number"
+                                value={editingPricingTier.max_people}
+                                onChange={(e) => setEditingPricingTier({ ...editingPricingTier, max_people: Number(e.target.value) })}
+                                className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                min={1}
+                              />
+                              <span className="text-gray-500">personas</span>
+                            </div>
+                            <input
+                              type="number"
+                              value={editingPricingTier.total_price}
+                              onChange={(e) => setEditingPricingTier({ ...editingPricingTier, total_price: e.target.value })}
+                              className="w-28 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                              min={0}
+                              step="0.01"
+                            />
+                            <button
+                              onClick={handleUpdatePricingTier}
+                              className="p-2 text-green-600 hover:bg-green-100 rounded-lg"
+                            >
+                              <Check size={18} />
+                            </button>
+                            <button
+                              onClick={() => setEditingPricingTier(null)}
+                              className="p-2 text-gray-500 hover:bg-gray-200 rounded-lg"
+                            >
+                              <X size={18} />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <span className="flex-1">
+                              <span className="font-medium">{tier.min_people} - {tier.max_people}</span>
+                              <span className="text-gray-500 ml-2">personas</span>
+                            </span>
+                            <span className="font-bold" style={{ color: '#085f24' }}>$ {tier.total_price}</span>
+                            <button
+                              onClick={() => setEditingPricingTier(tier)}
+                              className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleDeletePricingTier(tier.id)}
+                              className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                    {(!service.pricing_tiers || service.pricing_tiers.length === 0) && (
+                      <p className="text-gray-500 text-sm italic">No hay niveles de precio configurados.</p>
+                    )}
+                  </div>
+
+                  {/* Agregar nuevo pricing tier */}
+                  <div className="border-t border-gray-200 pt-4">
+                    <h5 className="text-sm font-medium mb-3">Agregar Nuevo Nivel</h5>
+                    <div className="flex gap-3 items-center">
+                      <input
+                        type="number"
+                        value={newTierMinPeople}
+                        onChange={(e) => setNewTierMinPeople(e.target.value)}
+                        placeholder="Mín"
+                        className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        min={1}
+                      />
+                      <span className="text-gray-500">a</span>
+                      <input
+                        type="number"
+                        value={newTierMaxPeople}
+                        onChange={(e) => setNewTierMaxPeople(e.target.value)}
+                        placeholder="Máx"
+                        className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        min={1}
+                      />
+                      <span className="text-gray-500">personas →</span>
+                      <input
+                        type="number"
+                        value={newTierPrice}
+                        onChange={(e) => setNewTierPrice(e.target.value)}
+                        placeholder="Precio total"
+                        className="w-28 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        min={0}
+                        step="0.01"
+                      />
+                      <button
+                        onClick={handleAddPricingTier}
+                        disabled={mutations.addPricingTier.isPending}
+                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
+                      >
+                        <Plus size={18} />
+                        {mutations.addPricingTier.isPending ? 'Agregando...' : 'Agregar'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Tab: Etiquetas */}
+          {activeTab === 'tags' && (
+            <div className="space-y-6">
+              {/* Etiquetas del servicio */}
+              <div>
+                <h4 className="font-medium mb-4 flex items-center gap-2" style={{ color: '#085f24' }}>
+                  <TagIcon size={18} />
+                  Etiquetas del Servicio
+                </h4>
+                <p className="text-sm text-gray-500 mb-4">
+                  Selecciona las etiquetas que aplican a este servicio y guarda los cambios.
+                </p>
+
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {allTags.map((tag) => (
+                    <button
+                      key={tag.id}
+                      onClick={() => handleToggleTag(tag.id)}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium border transition ${
+                        selectedTagIds.includes(tag.id)
+                          ? 'border-green-500 bg-green-50 text-green-700'
+                          : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400'
+                      }`}
+                    >
+                      {tag.name}
+                      {selectedTagIds.includes(tag.id) && <Check size={14} className="inline ml-1" />}
+                    </button>
+                  ))}
+                  {allTags.length === 0 && (
+                    <p className="text-gray-500 text-sm italic">No hay etiquetas disponibles. Crea una nueva abajo.</p>
+                  )}
+                </div>
+
+                <button
+                  onClick={handleSaveTags}
+                  disabled={mutations.addTags.isPending}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                >
+                  {mutations.addTags.isPending ? 'Guardando...' : 'Guardar Etiquetas del Servicio'}
+                </button>
+              </div>
+
+              {/* Gestionar etiquetas globales */}
+              <div className="border-t border-gray-200 pt-6">
+                <h4 className="font-medium mb-4" style={{ color: '#085f24' }}>
+                  Gestionar Etiquetas (Global)
+                </h4>
+                <p className="text-sm text-gray-500 mb-4">
+                  Estas etiquetas están disponibles para todos los servicios.
+                </p>
+
+                {/* Lista de etiquetas con edición */}
+                <div className="space-y-2 mb-4">
+                  {allTags.map((tag) => (
+                    <div key={tag.id} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                      {editingTag?.id === tag.id ? (
+                        <>
+                          <input
+                            type="text"
+                            value={editingTag.name}
+                            onChange={(e) => setEditingTag({ ...editingTag, name: e.target.value })}
+                            className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
+                          />
+                          <button
+                            onClick={handleUpdateTag}
+                            disabled={tagMutations.updateTag.isPending}
+                            className="p-1.5 text-green-600 hover:bg-green-100 rounded-lg"
+                          >
+                            <Check size={16} />
+                          </button>
+                          <button
+                            onClick={() => setEditingTag(null)}
+                            className="p-1.5 text-gray-500 hover:bg-gray-200 rounded-lg"
+                          >
+                            <X size={16} />
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <span className="flex-1 text-sm">{tag.name}</span>
+                          <button
+                            onClick={() => setEditingTag(tag)}
+                            className="p-1.5 text-blue-600 hover:bg-blue-100 rounded-lg"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteTag(tag.id)}
+                            disabled={tagMutations.deleteTag.isPending}
+                            className="p-1.5 text-red-600 hover:bg-red-100 rounded-lg"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Crear nueva etiqueta */}
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    value={newTagName}
+                    onChange={(e) => setNewTagName(e.target.value)}
+                    placeholder="Nombre de la nueva etiqueta"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  />
+                  <button
+                    onClick={handleCreateTag}
+                    disabled={tagMutations.createTag.isPending || !newTagName.trim()}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
+                  >
+                    <Plus size={18} />
+                    {tagMutations.createTag.isPending ? 'Creando...' : 'Crear Etiqueta'}
                   </button>
                 </div>
               </div>
