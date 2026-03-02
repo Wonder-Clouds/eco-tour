@@ -1,0 +1,16 @@
+meta {
+  name: Delete ServiceQuotePerson
+  type: http
+  seq: 1
+}
+
+delete {
+  url: http://localhost:8000/api/service-quote-person/956b2d34-f594-430a-ab6d-9504fcc19155/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

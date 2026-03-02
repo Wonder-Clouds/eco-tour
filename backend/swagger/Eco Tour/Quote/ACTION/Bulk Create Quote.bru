@@ -5,59 +5,124 @@ meta {
 }
 
 post {
-  url: http://localhost:8000/api/quote/bulk-create-quote/
+  url: http://localhost:8000/api/quote/all-in-one-quote/
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "contact_info": "Cristian Monzon",
+    "contact_info": {
+      "first_name": "Natalia",
+      "last_name": "Ríos",
+      "email": "n.rios@empresa.com",
+      "phone_number": "999888777",
+      "passport_number": "CO998877",
+      "nationality": "CO"
+    },
+    "notes": "Son Personas que ya vinieron antes al Peru",
     "services": [
       {
-        "service_id": "cc5976ad-bb7b-49f3-b518-d5c9b0eeb8a1",
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
         "person_temp_id": "contact",
         "departure_date": "2026-05-10",
-        "notes": "Contacto principal toma este tour"
+        "departure_time": "08:00:00",
+        "arrive_date": "2026-05-10",
+        "arrive_time": "12:00:00",
+        "notes": "Coordinadora del equipo"
       },
       {
-        "service_id": "37a5f183-9aff-443e-96d3-8884ee992d18",
-        "person_temp_id": "temp-1",
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "person_temp_id": "temp1",
         "departure_date": "2026-05-10",
-        "notes": "Pasajero adicional",
-        "departure_time": "09:00:00"
+        "departure_time": "08:00:00",
+        "arrive_date": "2026-05-10",
+        "arrive_time": "12:00:00",
+        "notes": "Asistente invitado"
       },
       {
-        "service_id": "37a5f183-9aff-443e-96d3-8884ee992d18",
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "person_temp_id": {
+          "first_name": "Felipe",
+          "last_name": "Castillo",
+          "email": "f.castillo@empresa.com",
+          "phone_number": "999888666",
+          "passport_number": "CO998866",
+          "nationality": "CO"
+        },
+        "departure_date": "2026-05-10",
+        "departure_time": "08:00:00",
+        "arrive_date": "2026-05-10",
+        "arrive_time": "12:00:00",
+        "notes": "Gerente de ventas"
+      },
+      {
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "person_temp_id": {
+          "first_name": "Carolina",
+          "last_name": "Vega",
+          "email": "c.vega@empresa.com",
+          "phone_number": "999888555",
+          "passport_number": "CO998855",
+          "nationality": "CO"
+        },
+        "departure_date": "2026-05-10",
+        "departure_time": "08:00:00",
+        "arrive_date": "2026-05-10",
+        "arrive_time": "12:00:00",
+        "notes": "Directora de marketing"
+      },
+  
+      {
+        "service_id": "7da1b512-b886-4471-bf14-f7b295990532",
         "person_temp_id": "contact",
         "departure_date": "2026-05-11",
-        "notes": "Servicio privado con hora específica"
+        "departure_time": "09:00:00",
+        "arrive_date": "2026-05-11",
+        "arrive_time": "13:30:00",
+        "notes": "Servicio adicional - traslado aeropuerto"
       },
       {
-        "service_id": "268362a1-88ee-4289-ab02-3d219c8d07ea",
-        "person_temp_id": "temp-1",
-        "departure_date": "2026-05-11",
-        "notes": "Servicio privado con hora específica"
+        "service_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+        "person_temp_id": "temp2",
+        "departure_date": "2026-05-12",
+        "departure_time": "07:30:00",
+        "arrive_date": "2026-05-12",
+        "arrive_time": "11:45:00",
+        "notes": "Participante extra"
       },
       {
-        "service_id": "268362a1-88ee-4289-ab02-3d219c8d07ea",
-        "person_temp_id": "temp-2",
-        "departure_date": "2026-05-11",
-        "notes": "Servicio privado con hora específica"
+        "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+        "person_temp_id": {
+          "first_name": "Luis",
+          "last_name": "Morales",
+          "email": "l.morales@empresa.com",
+          "phone_number": "999777444",
+          "passport_number": "CO112233",
+          "nationality": "CO"
+        },
+        "departure_date": "2026-05-13",
+        "departure_time": "10:15:00",
+        "arrive_date": "2026-05-13",
+        "arrive_time": "14:20:00",
+        "notes": "Supervisor regional"
       },
       {
-        "service_id": "86bdcdad-924e-4117-a54a-f75212a412ef",
-        "person_temp_id": "temp-2",
-        "departure_date": "2026-05-11",
-        "notes": "Servicio privado con hora específica"
-      },
-          {
-        "service_id": "86bdcdad-924e-4117-a54a-f75212a412ef",
-        "person_temp_id": "temp-1",
-        "departure_date": "2026-05-11",
-        "notes": "Servicio privado con hora específica"
+        "service_id": "553847c6-44b9-4f18-9870-b462943ab202",
+        "person_temp_id": {
+          "first_name": "Andrea",
+          "last_name": "Pardo",
+          "email": "a.pardo@empresa.com",
+          "phone_number": "999666333",
+          "passport_number": "CO445566",
+          "nationality": "CO"
+        },
+        "departure_date": "2026-05-14",
+        "departure_time": "06:45:00",
+        "arrive_date": "2026-05-14",
+        "arrive_time": "11:10:00",
+        "notes": "Invitada especial"
       }
-      
     ]
   }
 }

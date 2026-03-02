@@ -13,8 +13,8 @@ class Group(SafeDeleteModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    contact_info = models.TextField(blank=True, null=True)
-    total_people = models.PositiveIntegerField(default=1)
+    contact_info = models.TextField(blank=False, null=True)
+    total_people = models.PositiveIntegerField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

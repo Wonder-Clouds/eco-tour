@@ -1567,6 +1567,54 @@ Este endpoint nos permite obtener un resumen de todos los _package_ con los sigu
 Estos endpoints nos permite listar los _Person_ ya sea todos o solo uno pasando él id
 - Get Person: http://127.0.0.1:8000/api/person/
 - Get Person by Id: http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567
+  - Respuesta:
+  ```json 
+   {
+    "count": 8,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": "3fcc4079-4b95-4ec1-a729-ff2eed4d7b07",
+        "first_name": "Pasajero",
+        "last_name": "Temp temp1",
+        "email": "temp.e0bcf7fc@sys.local",
+        "phone_number": null,
+        "media": [],
+        "passport_number": null,
+        "group": [
+          "68e747ec-fabc-4b35-b04e-f0ffee469a79"
+        ],
+        "birth_date": null,
+        "nationality": null,
+        "is_generic": true,
+        "created_at": "2026-02-26T05:46:23.471669Z",
+        "updated_at": "2026-02-26T05:46:23.471678Z"
+      },
+      {
+        "id": "a4c8b815-354f-4939-a6ab-1753ae59923b",
+        "first_name": "Carolina",
+        "last_name": "Vega",
+        "email": "c.vega@empresa.com",
+        "phone_number": "999888555",
+        "media": [],
+        "passport_number": "CO998855",
+        "group": [
+          "c13c99b9-df45-4a25-a821-9025719b795e",
+          "5bf242bf-0a0c-4f5a-89cd-a6dfa515a8a0",
+          "68e747ec-fabc-4b35-b04e-f0ffee469a79"
+        ],
+        "birth_date": null,
+        "nationality": "CO",
+        "is_generic": false,
+        "created_at": "2026-02-26T05:44:44.902435Z",
+        "updated_at": "2026-02-26T05:44:44.902444Z"
+      },
+      ...
+   
+      ]
+    }
+    ```
 
 ### Filters
   - Filtros para _person_ `http://localhost:8000/api/person/summary/?q=Cris` es un filtro con busqueda `or` para los siguientes campos:
@@ -1575,37 +1623,75 @@ Estos endpoints nos permite listar los _Person_ ya sea todos o solo uno pasando 
   - email: Filtrar por email
   - phone_number: Filtrar por número de teléfono q
 - Y un filtro por nacionalidad `http://localhost:8000/api/person/summary/?nationality=US` este es de tipo `and`
+- Ejemplo: http://127.0.0.1:8000/api/person/?q=martin&nationality=PE
 
 ### Post Client
 Este endpoint nos permite crear un _person_ pasando en el cuerpo los datos requeridos
 - Post Client: http://127.0.0.1:8000/api/person/
 - Body:
-```json
- {
-    "first_name": "Valentina",
-    "last_name": "Rios Martinez",
+  ```json
+   {
+      "first_name": "Valentina",
+      "last_name": "Rios Martinez",
+      "email": "valentina.rios@example.com",
+      "phone_number": "+5491122334455",
+      "passport_number": "A7788990",
+      "birth_date": "2000-01-30",
+      "nationality": "AR"
+    }
+  ```
+- Respuesta: 
+  ```json
+  {
+    "id": "22c72505-860c-4e5d-88a0-2913473ca879",
+    "first_name": "valentina",
+    "last_name": "rios martinez",
     "email": "valentina.rios@example.com",
     "phone_number": "+5491122334455",
+    "media": [],
     "passport_number": "A7788990",
+    "group": [],
     "birth_date": "2000-01-30",
-    "nationality": "AR"
+    "nationality": "AR",
+    "is_generic": false,
+    "created_at": "2026-02-26T05:56:27.506437Z",
+    "updated_at": "2026-02-26T05:56:27.506447Z"
   }
-```
+  ```
 
 ### Patch Person
 Este endpoint nos permite actualizar un _person_ pasando solo lo que se desea actualizar o todo el cuerpo.
 - Patch: http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567/
 - Body:
-```json
-{
-    "first_name": "Martin",
-    "nationality": "Americana"
-}
-```
+  ```json
+  {
+      "first_name": "Martin",
+      "nationality": "Americana"
+  }
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "22c72505-860c-4e5d-88a0-2913473ca879",
+    "first_name": "martin",
+    "last_name": "rios martinez",
+    "email": "valentina.rios@example.com",
+    "phone_number": "+5491122334455",
+    "media": [],
+    "passport_number": "A7788990",
+    "group": [],
+    "birth_date": "2000-01-30",
+    "nationality": "US",
+    "is_generic": false,
+    "created_at": "2026-02-26T05:56:27.506437Z",
+    "updated_at": "2026-02-26T05:58:05.885592Z"
+  }
+  ```
 
 ### Delete Person
 Este endpoint nos permite eliminar un _person_ pasando el id
 - Delete: http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567/
+- Respuesta: Status 204 No Content
 
 ### Actions
 #### Upload Document
@@ -1615,7 +1701,20 @@ Este endpoint nos permite subir un documento y relacionarlo al _person_ pasado p
     - title: Documento del cliente
     - description: Este es un documento del cliente
     - file: (Seleccionar archivo de documento)
-
+- Respuesta:
+  ```json
+  {
+    "id": "48d5b95f-ee15-47af-b172-38a02b2deba7",
+    "type_media": "document",
+    "file": "/media_files/media/2026/02/26/CONTRATO_DE_PRESTACI%C3%93N_DE_SERVICIOS_DE_DESARROLLO_WEB.pdf",
+    "url": null,
+    "is_cover": false,
+    "created_at": "2026-02-26T06:00:01.566255Z",
+    "updated_at": "2026-02-26T06:00:01.566267Z",
+    "title": "",
+    "description": ""
+  }
+  ```
 #### Upload Image
 Este endpoint nos permite subir una imagen y relacionarla al _person_ pasado por la url, todo lo que se sube aqui esta en categoria _image.
 - upload-image: `POST` http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567/upload-media/
@@ -1623,10 +1722,24 @@ Este endpoint nos permite subir una imagen y relacionarla al _person_ pasado por
     - title: Imagen del cliente
     - description: Esta es una imagen del cliente
     - file: (Seleccionar archivo de imagen)
+- Respuesta:
+  ```json 
+  {
+    "id": "a232696d-eacb-4a9f-af6c-bdfdc1839f3f",
+    "type_media": "image",
+    "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08_73suEdz.png",
+    "url": null,
+    "is_cover": false,
+    "created_at": "2026-02-26T06:03:33.468582Z",
+    "updated_at": "2026-02-26T06:03:33.468592Z",
+    "title": "Passport",
+    "description": "Es el pasaporte"
+  }
+  ```
 
 #### Get Summary Person
 Este endpoint nos permite obtener un resumen de todos los _person_ con los siguientes campos:
-- Get Summary Person: http://127.0.0.1:8000/api/person/summary
+- Get Summary Person: http://127.0.0.1:8000/api/person/summary/?q=martin&nationality=US
 - Campos:
   - id
   - first_name
@@ -1635,29 +1748,703 @@ Este endpoint nos permite obtener un resumen de todos los _person_ con los sigui
   - phone_number
   - nationality
   - created_at
-  - updated_at
+- Respuesta:
+  ```json
+  {
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": "22c72505-860c-4e5d-88a0-2913473ca879",
+        "first_name": "Martin",
+        "last_name": "Rios Martinez",
+        "email": "valentina.rios@example.com",
+        "phone_number": "+5491122334455",
+        "nationality": "US"
+      }
+    ]
+  }
+  ```
 
 ### Countries
 Este endpoint nos permite obtener la lista de países disponibles para asignar a la nacionalidad de un cliente.
 - Get Countries: http://localhost:8000/api/countries/
-- Response:
-```json
-[
+- Respuesta:
+  ```json
+  [
+    {
+      "value": "US",
+      "label": "United States"
+    },
+    {
+      "value": "CA",
+      "label": "Canada"
+    },
+    {
+      "value": "GB",
+      "label": "United Kingdom"
+    },
+    ...
+  ]
+  ```
+_Nota: Crear para subir varios documentos o varias imagenes para person_
+
+##  Group
+Este modulo nos permite gestionar los grupos de personas, esto es útil para agrupar clientes que viajan juntos o que tienen alguna relación entre ellos.
+### Get Group
+Estos endpoints nos permite listar los _group_ ya sea todos o solo uno pasando él id
+- Get Group: http://localhost:8000/api/group/
+- Get Group by Id: http://localhost:8000/api/group/68e747ec-fabc-4b35-b04e-f0ffee469a79
+- Respuesta:
+  ```json
   {
-    "value": "US",
-    "label": "United States"
-  },
+    "count": 4,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": "e53d1203-6984-4427-a0c3-510296092169",
+        "name": "GRP-FY7Z3W",
+        "person": [
+          {
+            "id": "c6f55248-9676-4926-9bd3-7ad6553eb596",
+            "first_name": "Pedro",
+            "last_name": "Suárez",
+            "email": "pedro.suarez@email.com",
+            "phone_number": "911223344",
+            "media": [],
+            "passport_number": "PE456789",
+            "group": [
+              "e53d1203-6984-4427-a0c3-510296092169"
+            ],
+            "birth_date": null,
+            "nationality": "PE",
+            "is_generic": false,
+            "created_at": "2026-02-26T05:40:26.449565Z",
+            "updated_at": "2026-02-26T05:40:26.449576Z"
+          },
+          {
+            "id": "44cd1112-15ed-4906-8ce4-e153abef1cea",
+            "first_name": "Pasajero",
+            "last_name": "Temp temp1",
+            "email": "temp.1bb2785f@sys.local",
+            "phone_number": null,
+            "media": [],
+            "passport_number": null,
+            "group": [
+              "e53d1203-6984-4427-a0c3-510296092169"
+            ],
+            "birth_date": null,
+            "nationality": null,
+            "is_generic": true,
+            "created_at": "2026-02-26T05:40:26.476813Z",
+            "updated_at": "2026-02-26T05:40:26.476822Z"
+          }
+        ],
+        "description": null,
+        "contact_info": "Pedro Suárez",
+        "total_people": 2,
+        "expense": [],
+        "created_at": "2026-02-26T05:40:26.444242Z",
+        "updated_at": "2026-02-26T05:40:26.444254Z"
+      },
+      ...
+      }
+    ]
+  }
+  ```
+### Post Group
+Este endpoint nos permite crear un _group_.
+- Post Group: http://localhost:8000/api/group/
+- Body:
+  ```json
   {
-    "value": "CA",
-    "label": "Canada"
-  },
+      "description": "Es el grupo 5",
+      "contact_info": "Perez Martinez"
+  } 
+  ```
+- Respuesta:
+  ```json
   {
-    "value": "GB",
-    "label": "United Kingdom"
-  },
-  ...
-]
-```
+    "id": "e8df3d2b-02d3-4bb1-99c3-88bfe3a52469",
+    "name": "GRP-VB3MIP",
+    "person": [],
+    "description": "Es el grupo 5",
+    "contact_info": "Perez Martinez",
+    "total_people": 0,
+    "expense": [],
+    "created_at": "2026-02-26T06:22:43.067087Z",
+    "updated_at": "2026-02-26T06:22:43.067104Z"
+  }
+  ```
+
+### Patch Group
+Este endpoint nos permite actualizar un _group_ pasando solo lo que se desea actualizar o todo el cuerpo.
+- Patch: http://localhost:8000/api/group/e8df3d2b-02d3-4bb1-99c3-88bfe3a52469/
+- Body:
+  ```json 
+  {
+      "description": "Es el grupo 6",
+      "contact_info": "Juana Martinez"
+  } 
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "e8df3d2b-02d3-4bb1-99c3-88bfe3a52469",
+    "name": "GRP-EHODW3",
+    "person": [],
+    "description": "Es el grupo 6",
+    "contact_info": "Juana Martinez",
+    "total_people": 0,
+    "expense": [],
+    "created_at": "2026-02-26T06:22:43.067087Z",
+    "updated_at": "2026-02-26T06:28:30.858985Z"
+  }
+  ```
+  
+### Delete Group
+Este endpoint nos permite eliminar un _group_ pasando el id
+- Delete: http://localhost:8000/api/group/e8df3d2b-02d3-4bb1-99c3-88bfe3a52469/
+- Respuesta: Status 204 No Content
+
+### Actions
+### Add Person to Group
+Este endpoint nos permite agregar una persona a un grupo pasando ambos ids por la url
+- add-person: `POST` http://localhost:8000/api/group/e8df3d2b-02d3-4bb1-99c3-88bfe3a52469/add-person/
+- Body:
+  ```json
+  {
+      "person_id": "22c72505-860c-4e5d-88a0-2913473ca879"
+  }
+  ```
+- Respuesta: 
+  ```json
+  {
+    "message": "Person 'Martin Rios martinez' added to group 'GRP-3OGPE9' successfully.",
+    "group": {
+      "id": "fd718429-cedd-4616-86f1-f687427958b1",
+      "name": "GRP-DJ2L2L",
+      "person": [
+        {
+          "id": "22c72505-860c-4e5d-88a0-2913473ca879",
+          "first_name": "Martin",
+          "last_name": "Rios Martinez",
+          "email": "valentina.rios@example.com",
+          "phone_number": "+5491122334455",
+          "media": [
+            {
+              "id": "a232696d-eacb-4a9f-af6c-bdfdc1839f3f",
+              "type_media": "image",
+              "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08_73suEdz.png",
+              "url": null,
+              "is_cover": false,
+              "created_at": "2026-02-26T06:03:33.468582Z",
+              "updated_at": "2026-02-26T06:03:33.468592Z",
+              "title": "Passport",
+              "description": "Es el pasaporte"
+            },
+            {
+              "id": "c00f406b-52c7-4829-a93a-762cb4f011ce",
+              "type_media": "image",
+              "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08.png",
+              "url": null,
+              "is_cover": false,
+              "created_at": "2026-02-26T06:03:00.553034Z",
+              "updated_at": "2026-02-26T06:03:00.553047Z",
+              "title": "",
+              "description": ""
+            },
+            {
+              "id": "48d5b95f-ee15-47af-b172-38a02b2deba7",
+              "type_media": "document",
+              "file": "/media_files/media/2026/02/26/CONTRATO_DE_PRESTACI%C3%93N_DE_SERVICIOS_DE_DESARROLLO_WEB.pdf",
+              "url": null,
+              "is_cover": false,
+              "created_at": "2026-02-26T06:00:01.566255Z",
+              "updated_at": "2026-02-26T06:00:01.566267Z",
+              "title": "",
+              "description": ""
+            }
+          ],
+          "passport_number": "A7788990",
+          "group": [
+            "fd718429-cedd-4616-86f1-f687427958b1"
+          ],
+          "birth_date": "2000-01-30",
+          "nationality": "US",
+          "is_generic": false,
+          "created_at": "2026-02-26T05:56:27.506437Z",
+          "updated_at": "2026-02-26T05:58:05.885592Z"
+        }
+      ],
+      "description": "Es el grupo 5",
+      "contact_info": "Perez Martinez",
+      "total_people": 1,
+      "expense": [],
+      "created_at": "2026-02-26T06:21:56.877753Z",
+      "updated_at": "2026-02-26T06:21:56.877772Z"
+    }
+  }
+  ```
+  
+#### Remove Person
+Este endpoint nos permite eliminar una persona de un grupo pasando el id del grupo por la url y el id a traves del cuerpo
+- remove-person: `POST` http://localhost:8000/api/group/fd718429-cedd-4616-86f1-f687427958b1/remove-person/
+- Body:
+  ```json 
+  {
+      "person_id": "c6f55248-9676-4926-9bd3-7ad6553eb596"
+  }
+  ```
+- Respuesta: 
+  ```json
+  {
+    "message": "Person 'Pedro Suárez' removed from group 'GRP-3OGPE9' successfully.",
+    "group": {
+      "id": "fd718429-cedd-4616-86f1-f687427958b1",
+      "name": "GRP-ML0HAS",
+      "person": [
+        {
+          "id": "44cd1112-15ed-4906-8ce4-e153abef1cea",
+          "first_name": "Pasajero",
+          "last_name": "Temp temp1",
+          "email": "temp.1bb2785f@sys.local",
+          "phone_number": null,
+          "media": [],
+          "passport_number": null,
+          "group": [
+            "e53d1203-6984-4427-a0c3-510296092169",
+            "fd718429-cedd-4616-86f1-f687427958b1"
+          ],
+          "birth_date": null,
+          "nationality": null,
+          "is_generic": true,
+          "created_at": "2026-02-26T05:40:26.476813Z",
+          "updated_at": "2026-02-26T05:40:26.476822Z"
+        },
+        {
+          "id": "f0826ebc-548d-4abd-ab65-82a5740732fa",
+          "first_name": "Felipe",
+          "last_name": "Castillo",
+          "email": "f.castillo@empresa.com",
+          "phone_number": "999888666",
+          "media": [],
+          "passport_number": "CO998866",
+          "group": [
+            "c13c99b9-df45-4a25-a821-9025719b795e",
+            "5bf242bf-0a0c-4f5a-89cd-a6dfa515a8a0",
+            "68e747ec-fabc-4b35-b04e-f0ffee469a79",
+            "fd718429-cedd-4616-86f1-f687427958b1"
+          ],
+          "birth_date": null,
+          "nationality": "CO",
+          "is_generic": false,
+          "created_at": "2026-02-26T05:44:44.877861Z",
+          "updated_at": "2026-02-26T05:44:44.877873Z"
+        },
+        {
+          "id": "3fcc4079-4b95-4ec1-a729-ff2eed4d7b07",
+          "first_name": "Pasajero",
+          "last_name": "Temp temp1",
+          "email": "temp.e0bcf7fc@sys.local",
+          "phone_number": null,
+          "media": [],
+          "passport_number": null,
+          "group": [
+            "68e747ec-fabc-4b35-b04e-f0ffee469a79",
+            "fd718429-cedd-4616-86f1-f687427958b1"
+          ],
+          "birth_date": null,
+          "nationality": null,
+          "is_generic": true,
+          "created_at": "2026-02-26T05:46:23.471669Z",
+          "updated_at": "2026-02-26T05:46:23.471678Z"
+        },
+        {
+          "id": "22c72505-860c-4e5d-88a0-2913473ca879",
+          "first_name": "Martin",
+          "last_name": "Rios Martinez",
+          "email": "valentina.rios@example.com",
+          "phone_number": "+5491122334455",
+          "media": [
+            {
+              "id": "a232696d-eacb-4a9f-af6c-bdfdc1839f3f",
+              "type_media": "image",
+              "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08_73suEdz.png",
+              "url": null,
+              "is_cover": false,
+              "created_at": "2026-02-26T06:03:33.468582Z",
+              "updated_at": "2026-02-26T06:03:33.468592Z",
+              "title": "Passport",
+              "description": "Es el pasaporte"
+            },
+            {
+              "id": "c00f406b-52c7-4829-a93a-762cb4f011ce",
+              "type_media": "image",
+              "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08.png",
+              "url": null,
+              "is_cover": false,
+              "created_at": "2026-02-26T06:03:00.553034Z",
+              "updated_at": "2026-02-26T06:03:00.553047Z",
+              "title": "",
+              "description": ""
+            },
+            {
+              "id": "48d5b95f-ee15-47af-b172-38a02b2deba7",
+              "type_media": "document",
+              "file": "/media_files/media/2026/02/26/CONTRATO_DE_PRESTACI%C3%93N_DE_SERVICIOS_DE_DESARROLLO_WEB.pdf",
+              "url": null,
+              "is_cover": false,
+              "created_at": "2026-02-26T06:00:01.566255Z",
+              "updated_at": "2026-02-26T06:00:01.566267Z",
+              "title": "",
+              "description": ""
+            }
+          ],
+          "passport_number": "A7788990",
+          "group": [
+            "fd718429-cedd-4616-86f1-f687427958b1"
+          ],
+          "birth_date": "2000-01-30",
+          "nationality": "US",
+          "is_generic": false,
+          "created_at": "2026-02-26T05:56:27.506437Z",
+          "updated_at": "2026-02-26T05:58:05.885592Z"
+        }
+      ],
+      "description": "Es el grupo 5",
+      "contact_info": "Perez Martinez",
+      "total_people": 4,
+      "expense": [],
+      "created_at": "2026-02-26T06:21:56.877753Z",
+      "updated_at": "2026-02-26T06:21:56.877772Z"
+    }
+  }
+  ```
+  
+## Service Quote Person
+Este módulo nos permite gestionar la relación entre las cotizaciones de servicios y las personas, aquí se asignan los servicios a cada persona, se pueden agregar o eliminar servicios de cada persona y también se pueden agregar los datos de viaje como fecha de salida, fecha de llegada, hora de salida y hora de llegada.
+### Get Service Quote Person
+Estos endpoints nos permite listar los _ServiceQuotePerson_ ya sea todos o solo uno pasando él id por la url.
+- Get Service Quote Person: http://localhost:8000/api/service-quote-person/
+- Get Service Quote Person by Id: http://localhost:8000/api/service-quote-person/1c9b8a2e-5c3b-4d9f-a9c8-8b9f6c9e8b9f
+- Respuesta:
+  ```json
+  {
+    "count": 18,
+    "next": "http://localhost:8000/api/service-quote-person/?limit=10&offset=10",
+    "previous": null,
+    "results": [  
+      {
+          "id": "6cb85a5f-b982-412b-ada1-4c3536e4cca1",
+          "calculated_cost": 240.0,
+          "notes": "Comida china",
+          "person": "c6f55248-9676-4926-9bd3-7ad6553eb596",
+          "service": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "quote": "f27e8ec3-85f6-4b3e-a58a-77fb7c62dbf3",
+          "departure_date": "2026-05-10",
+          "arrive_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_time": "12:00:00",
+          "person_name": "Pedro Suárez",
+          "service_name": "Valle Sagrado de los Incas (Vip)",
+          "created_at": "2026-02-26T05:40:26.467470Z"
+      },
+      ...
+    ]
+  }
+  ```
+
+### Post Service Quote Person
+Este endpoint nos permite crear un _ServiceQuotePerson_ pasando en el cuerpo los datos requeridos
+- Post Service Quote Person: http://localhost:8000/api/service-quote-person/
+- Body:
+  ```json
+  {
+    "person_id": "f8f30244-81de-4eb9-b929-480b189a70a3",
+    "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+    "departure_date": "2026-05-10",
+    "departure_time": "08:00:00",
+    "arrive_date": "2026-05-10",
+    "arrive_time": "12:00:00",
+    "notes": "Coordinadora del equipo",
+    "quote_id": "26e8039a-2c7f-4e19-a8ff-6c6dea529836"
+  } 
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "bff7ace3-0e11-45ce-b381-c86b93741a65",
+    "calculated_cost": 154.28571428571428,
+    "notes": "Coordinadora del equipo",
+    "person": "f8f30244-81de-4eb9-b929-480b189a70a3",
+    "service": "9fa1eb00-803f-42b3-9014-7427369ba624",
+    "quote": "26e8039a-2c7f-4e19-a8ff-6c6dea529836",
+    "departure_date": "2026-05-10",
+    "arrive_date": "2026-05-10",
+    "departure_time": "08:00:00",
+    "arrive_time": "12:00:00",
+    "person_name": "Pasajero Temp temp1",
+    "service_name": "Machu Picchu \"Conexión Amanecer\"",
+    "created_at": "2026-02-27T04:56:33.399451Z"
+  } 
+  ```
+
+### Patch Service Quote Person
+Este endpoint nos permite actualizar un _ServiceQuotePerson_ pasando solo lo que se desea actualizar o todo el cuerpo.
+- Patch: http://localhost:8000/api/service-quote-person/bff7ace3-0e11-45ce-b381-c86b93741a65/
+- Body:
+  ```json
+  {
+    "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+    "notes": "Comida china",
+    "person_id": "c6f55248-9676-4926-9bd3-7ad6553eb596",
+    "quote_id": "f27e8ec3-85f6-4b3e-a58a-77fb7c62dbf3"
+  }
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "6cb85a5f-b982-412b-ada1-4c3536e4cca1",
+    "calculated_cost": 240.0,
+    "notes": "Comida china",
+    "person": "c6f55248-9676-4926-9bd3-7ad6553eb596",
+    "service": "d427b527-1019-4de7-979f-e2f9780af28c",
+    "quote": "f27e8ec3-85f6-4b3e-a58a-77fb7c62dbf3",
+    "departure_date": "2026-05-10",
+    "arrive_date": "2026-05-10",
+    "departure_time": "08:00:00",
+    "arrive_time": "12:00:00",
+    "person_name": "Pedro Suárez",
+    "service_name": "Valle Sagrado de los Incas (Vip)",
+    "created_at": "2026-02-26T05:40:26.467470Z"
+  }
+  ```
+
+### Delete Service Quote Person
+Este endpoint nos permite eliminar un _ServiceQuotePerson_ pasando el id por la url
+- Delete: http://localhost:8000/api/service-quote-person/6cb85a5f-b982-412b-ada1-4c3536e4cca1/
+- Respuesta: Status 204 No Content
+
+
+## Quote
+Este módulo nos permite gestionar las cotizaciones, aquí se pueden crear cotizaciones, agregar servicios a las cotizaciones, eliminar servicios de las cotizaciones, obtener el resumen de una cotización y también se pueden generar las versiones de las cotizaciones.
+### Get Quote
+- Get Quote: http://localhost:8000/api/quote/
+- Get Quote by Id: http://localhost:8000/api/quote/f27e8ec3-85f6-4b3e-a58a-77fb7c62
+- Respuesta:
+  ```json
+  {
+    "count": 4,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": "26e8039a-2c7f-4e19-a8ff-6c6dea529836",
+        "status": "draft",
+        "version": 1,
+        "version_display": "1",
+        "contact_info": "Natalia Ríos",
+        "valid_until": "2026-03-28",
+        "total_price": "1080.00",
+        "notes": null,
+        "created_at": "2026-02-26T05:46:23.460767Z",
+        "updated_at": "2026-02-26T05:46:23.460772Z",
+        "group": "68e747ec-fabc-4b35-b04e-f0ffee469a79",
+        "parent_quote": null,
+        "all_versions": [
+          {
+            "id": "26e8039a-2c7f-4e19-a8ff-6c6dea529836",
+            "version": "1",
+            "total_price": "1080.00",
+            "created_at": "2026-02-26T05:46:23.460767Z"
+          }
+        ],
+        "detail_quote_by_person": [
+          {
+            "person_id": "8a360e25-d85d-4901-be3d-88f12108d617",
+            "person_name": "Natalia Ríos",
+            "total": 154.28571428571428,
+            "services": [
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              }
+            ]
+          },
+          {
+            "person_id": "3fcc4079-4b95-4ec1-a729-ff2eed4d7b07",
+            "person_name": "Pasajero Temp temp1",
+            "total": 154.28571428571428,
+            "services": [
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              }
+            ]
+          },
+          {
+            "person_id": "f0826ebc-548d-4abd-ab65-82a5740732fa",
+            "person_name": "Felipe Castillo",
+            "total": 154.28571428571428,
+            "services": [
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              }
+            ]
+          },
+          {
+            "person_id": "a4c8b815-354f-4939-a6ab-1753ae59923b",
+            "person_name": "Carolina Vega",
+            "total": 154.28571428571428,
+            "services": [
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              }
+            ]
+          },
+          {
+            "person_id": "22c72505-860c-4e5d-88a0-2913473ca879",
+            "person_name": "Martin Rios Martinez",
+            "total": 154.28571428571428,
+            "services": [
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              }
+            ]
+          },
+          {
+            "person_id": "f8f30244-81de-4eb9-b929-480b189a70a3",
+            "person_name": "Pasajero Temp temp1",
+            "total": 308.57142857142856,
+            "services": [
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              },
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              }
+            ]
+          }
+        ]
+      },
+      ...
+    ]
+  }
+  ```
+
+### Post Quote
+Este endpoint nos permite crear una cotización pasando en el cuerpo los datos requeridos
+- Post Quote: http://localhost:8000/api/quote/
+- Body:
+  ```json
+  {
+    "status": "draft",
+    "version": 1,
+    "valid_until": "2025-11-11",
+    "notes": "string",
+    "group": "c13c99b9-df45-4a25-a821-9025719b795e"
+  }  
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "4e440f00-37cb-4f2f-84e0-460670d60750",
+    "status": "draft",
+    "version": 1,
+    "version_display": "1",
+    "contact_info": null,
+    "valid_until": "2025-11-11",
+    "total_price": "0.00",
+    "notes": "string",
+    "created_at": "2026-02-27T15:18:46.690471Z",
+    "updated_at": "2026-02-27T15:18:46.690480Z",
+    "group": "c13c99b9-df45-4a25-a821-9025719b795e",
+    "parent_quote": null,
+    "all_versions": [
+      {
+        "id": "4e440f00-37cb-4f2f-84e0-460670d60750",
+        "version": "1",
+        "total_price": "0.00",
+        "created_at": "2026-02-27T15:18:46.690471Z"
+      }
+    ],
+    "detail_quote_by_person": []
+  }
+  ```
+  
+### Patch Quote
+Este endpoint nos permite actualizar una cotización pasando solo lo que se desea actualizar o todo el cuerpo
+- Patch: http://localhost:8000/api/quote/4e440f00-37cb-4f2f-84e0-460670d60750/
+- Body
+  ```json
+  {
+    "notes": "No hay carne",
+    "valid_until": "2025-11-12"
+  }
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "4e440f00-37cb-4f2f-84e0-460670d60750",
+    "status": "draft",
+    "version": 1,
+    "version_display": "1",
+    "contact_info": null,
+    "valid_until": "2025-11-12",
+    "total_price": "0.00",
+    "notes": "No hay carne",
+    "created_at": "2026-02-27T15:18:46.690471Z",
+    "updated_at": "2026-02-27T15:26:13.583424Z",
+    "group": "c13c99b9-df45-4a25-a821-9025719b795e",
+    "parent_quote": null,
+    "all_versions": [
+      {
+        "id": "4e440f00-37cb-4f2f-84e0-460670d60750",
+        "version": "1",
+        "total_price": "0.00",
+        "created_at": "2026-02-27T15:18:46.690471Z"
+      }
+    ],
+    "detail_quote_by_person": []
+  }
+  ```
+### Delete Quote
+Este endpoint nos permite eliminar una cotización pasando el id por la url
+- Delete: http://localhost:8000/api/quote/4e440f00-37cb-4f2f-84e0-460670d60750/
+- Respuesta: Status 204 No Content
+
+### Actions
+#### Bulk Create Quote
+Este 
 
 ## ToDo
 Este módulo nos permite gestionar las pendientes de cada usuario

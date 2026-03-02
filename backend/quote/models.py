@@ -84,8 +84,6 @@ class ServiceQuotePerson(SafeDeleteModel):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # 3. Eliminado unit_price
-
     def get_individual_cost(self):
         """
         7. Lógica de cálculo:

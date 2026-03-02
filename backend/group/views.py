@@ -78,11 +78,3 @@ class GroupViewSet(viewsets.ModelViewSet):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-
-    @action(detail=True, methods=['get'], url_path='members')
-    def list_members(self, request, pk=None):
-        group = self.get_object()
-        return Response(
-            GroupSerializer(group).data,
-            status=status.HTTP_200_OK
-        )

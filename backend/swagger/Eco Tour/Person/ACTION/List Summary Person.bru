@@ -5,11 +5,17 @@ meta {
 }
 
 get {
-  url: 
+  url: http://127.0.0.1:8000/api/person/summary/?q=martin&nationality=US
   body: none
   auth: inherit
 }
 
+params:query {
+  q: martin
+  nationality: US
+}
+
 settings {
   encodeUrl: true
+  timeout: 0
 }

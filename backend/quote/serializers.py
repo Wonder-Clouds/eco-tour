@@ -50,6 +50,7 @@ class QuoteSerializer(serializers.ModelSerializer):
             
             if person_id not in person_totals:
                 person_totals[person_id] = {
+                    'person_id': person_id,
                     'person_name': f"{service_person.person.first_name} {service_person.person.last_name}",
                     'total': 0,
                     'services': []
@@ -57,6 +58,8 @@ class QuoteSerializer(serializers.ModelSerializer):
             
             person_totals[person_id]['total'] += float(cost)
             person_totals[person_id]['services'].append({
+                'service_id': service_person.service.id,
+                'service_type': service_person.service.type,
                 'service_name': service_person.service.title,
                 'cost': cost,
                 'departure': f"{service_person.departure_date} {service_person.departure_time}"
