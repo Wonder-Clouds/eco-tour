@@ -137,11 +137,12 @@ class BulkCreatePricingTierSerializer(serializers.Serializer):
 class ServiceSummarySerializer(serializers.ModelSerializer):
     """Serializer para listar servicios con campos resumidos"""
     cover = serializers.SerializerMethodField()
+    tags = ListTagSerializer(many=True, read_only=True)
     duration = serializers.SerializerMethodField()
 
     class Meta:
         model = Service
-        fields = ['id', 'title', 'type', 'reference_price', 'cover', 'duration', 'departure_time']
+        fields = ['id', 'title', 'type', 'reference_price', 'cover', 'duration', 'departure_time', 'tags']
 
     def get_cover(self, obj):
         """Retorna la URL del media que tiene is_cover=True"""

@@ -7,7 +7,7 @@ export interface PackageServiceItem {
   duration_in_hours: number
   duration_value: number
   duration_unit: string
-  price: number
+  reference_price: number
 }
 
 export interface PackageService {
@@ -20,9 +20,10 @@ export interface Package {
   id: string
   title: string
   description: string
-  price: number
+  reference_price: string
   total_duration: string
   total_duration_hours: number
+  services_count?: number
   package_services: PackageService[]
   media?: Media[]
   created_at?: string
@@ -33,7 +34,7 @@ export interface PackageSummary {
   id: string
   title: string
   description: string
-  price: number
+  reference_price: string
   total_duration: string
   services_count: number
 }
@@ -46,12 +47,14 @@ export interface CreatePackageServiceInput {
 export interface CreatePackageInput {
   title: string
   description: string
+  reference_price?: number
   services: CreatePackageServiceInput[]
 }
 
 export interface UpdatePackageInput {
   title?: string
   description?: string
+  reference_price?: number
   services?: CreatePackageServiceInput[]
 }
 

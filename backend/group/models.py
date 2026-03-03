@@ -2,6 +2,8 @@ from django.db import models
 from safedelete.models import SafeDeleteModel, SOFT_DELETE
 from auditlog.registry import auditlog
 import uuid
+import random
+import string
 
 
 # Create your models here.
@@ -11,22 +13,32 @@ class Group(SafeDeleteModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    contact_info = models.TextField(blank=True, null=True)
-    total_people = models.PositiveIntegerField(default=1)
+    contact_info = models.TextField(blank=False, null=True)
+    total_people = models.PositiveIntegerField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def update_total_people(self):
-        """Update total_people count based on non-generic persons in the group"""
-        total = self.person.filter(is_generic=False).count()
-        if self.total_people != total:
-            self.total_people = total
-            self.save(update_fields=['total_people'])
-        return total
+    def save(self, *args, **kwargs):
+        if not self.name:
+            self.name = self.generate_unique_code()
+        super().save(*args, **kwargs)
+
+    def generate_unique_code(self):
+        while True:
+            chars = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            code = f'GRP-{chars}'
+
+            if not Group.objects.filter(name=code).exists():
+                return code
+
+    def update_people_count(self):
+        count = self.person.count()
+        Group.objects.filter(id=self.id).update(total_people=count)
+        self.total_people = count
 
     def __str__(self):
-        return self.name
+        return f'{self.name} ({self.total_people} people)'
 
 auditlog.register(Group)
 

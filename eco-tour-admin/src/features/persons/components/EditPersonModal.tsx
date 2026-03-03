@@ -23,6 +23,7 @@ export const EditPersonModal = ({ isOpen, onClose, person }: Props) => {
     passport_number: '',
     birth_date: '',
     nationality: '',
+    is_generic: false,
   })
 
   const [errors, setErrors] = useState<Partial<Record<keyof UpdatePersonData, string>>>({})
@@ -37,6 +38,7 @@ export const EditPersonModal = ({ isOpen, onClose, person }: Props) => {
         passport_number: person.passport_number || '',
         birth_date: person.birth_date || '',
         nationality: person.nationality || '',
+        is_generic: person.is_generic || false,
       })
     }
   }, [person])
@@ -63,11 +65,27 @@ export const EditPersonModal = ({ isOpen, onClose, person }: Props) => {
 
   const handleSubmit = () => {
     if (!validate()) return
+
+    // Only send fields that have values (PATCH only needs changed fields)
+    const dataToSend: UpdatePersonData = {}
+    if (formData.first_name?.trim()) dataToSend.first_name = formData.first_name.trim()
+    if (formData.last_name?.trim()) dataToSend.last_name = formData.last_name.trim()
+    if (formData.email?.trim()) dataToSend.email = formData.email.trim()
+    if (formData.phone_number?.trim()) dataToSend.phone_number = formData.phone_number.trim()
+    if (formData.passport_number?.trim()) dataToSend.passport_number = formData.passport_number.trim()
+    if (formData.birth_date?.trim()) dataToSend.birth_date = formData.birth_date.trim()
+    if (formData.nationality?.trim()) dataToSend.nationality = formData.nationality.trim()
+    // Always include is_generic since it's a boolean
+    dataToSend.is_generic = formData.is_generic
+
     updatePerson(
-      { id: person.id, data: formData },
+      { id: person.id, data: dataToSend },
       {
         onSuccess: () => onClose(),
-        onError: () => alert('Error al actualizar el cliente'),
+        onError: (error) => {
+          console.error('Error updating person:', error)
+          alert('Error al actualizar el cliente')
+        },
       }
     )
   }
@@ -117,6 +135,20 @@ export const EditPersonModal = ({ isOpen, onClose, person }: Props) => {
                 <option value="">Seleccionar país</option>
                 {countries?.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
               </select>
+            </div>
+            <div className="md:col-span-2">
+              <label className="flex items-center gap-3 cursor-pointer p-3 border rounded-lg hover:bg-gray-50">
+                <input
+                  type="checkbox"
+                  checked={formData.is_generic}
+                  onChange={(e) => setFormData(prev => ({ ...prev, is_generic: e.target.checked }))}
+                  className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                />
+                <div>
+                  <p className="font-medium text-gray-900">Cliente Temporal</p>
+                  <p className="text-sm text-gray-500">Marcar si es un pasajero temporal o placeholder</p>
+                </div>
+              </label>
             </div>
           </div>
         </div>

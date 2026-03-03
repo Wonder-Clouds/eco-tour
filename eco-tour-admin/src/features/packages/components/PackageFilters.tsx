@@ -27,8 +27,8 @@ export const PackageFiltersComponent = ({ filters, onFiltersChange }: Props) => 
   }
 
   const hasActiveFilters = !!(
-    filters.price_min !== undefined ||
-    filters.price_max !== undefined ||
+    filters.reference_price_min !== undefined ||
+    filters.reference_price_max !== undefined ||
     filters.total_duration_hours_min !== undefined ||
     filters.total_duration_hours_max !== undefined
   )
@@ -72,17 +72,17 @@ export const PackageFiltersComponent = ({ filters, onFiltersChange }: Props) => 
       {isExpanded && (
         <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Precio mínimo */}
+            {/* Precio de Referencia mínimo */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Precio Mínimo
+                Precio Ref. Mínimo
               </label>
               <input
                 type="number"
-                value={localFilters.price_min ?? ''}
+                value={localFilters.reference_price_min ?? ''}
                 onChange={(e) => setLocalFilters({
                   ...localFilters,
-                  price_min: e.target.value ? Number(e.target.value) : undefined
+                  reference_price_min: e.target.value ? Number(e.target.value) : undefined
                 })}
                 placeholder="0"
                 min={0}
@@ -90,17 +90,17 @@ export const PackageFiltersComponent = ({ filters, onFiltersChange }: Props) => 
               />
             </div>
 
-            {/* Precio máximo */}
+            {/* Precio de Referencia máximo */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Precio Máximo
+                Precio Ref. Máximo
               </label>
               <input
                 type="number"
-                value={localFilters.price_max ?? ''}
+                value={localFilters.reference_price_max ?? ''}
                 onChange={(e) => setLocalFilters({
                   ...localFilters,
-                  price_max: e.target.value ? Number(e.target.value) : undefined
+                  reference_price_max: e.target.value ? Number(e.target.value) : undefined
                 })}
                 placeholder="Sin límite"
                 min={0}

@@ -27,7 +27,7 @@ def update_group_total_people(sender, instance, action, pk_set, **kwargs):
         # Update total_people for each affected group
         for group in set(groups):
             # Count non-generic persons in this group
-            total = group.person.filter(is_generic=False).count()
+            total = group.person.filter().count()
             if group.total_people != total:
                 group.total_people = total
                 group.save(update_fields=['total_people'])

@@ -1567,6 +1567,54 @@ Este endpoint nos permite obtener un resumen de todos los _package_ con los sigu
 Estos endpoints nos permite listar los _Person_ ya sea todos o solo uno pasando él id
 - Get Person: http://127.0.0.1:8000/api/person/
 - Get Person by Id: http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567
+  - Respuesta:
+  ```json 
+   {
+    "count": 8,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": "3fcc4079-4b95-4ec1-a729-ff2eed4d7b07",
+        "first_name": "Pasajero",
+        "last_name": "Temp temp1",
+        "email": "temp.e0bcf7fc@sys.local",
+        "phone_number": null,
+        "media": [],
+        "passport_number": null,
+        "group": [
+          "68e747ec-fabc-4b35-b04e-f0ffee469a79"
+        ],
+        "birth_date": null,
+        "nationality": null,
+        "is_generic": true,
+        "created_at": "2026-02-26T05:46:23.471669Z",
+        "updated_at": "2026-02-26T05:46:23.471678Z"
+      },
+      {
+        "id": "a4c8b815-354f-4939-a6ab-1753ae59923b",
+        "first_name": "Carolina",
+        "last_name": "Vega",
+        "email": "c.vega@empresa.com",
+        "phone_number": "999888555",
+        "media": [],
+        "passport_number": "CO998855",
+        "group": [
+          "c13c99b9-df45-4a25-a821-9025719b795e",
+          "5bf242bf-0a0c-4f5a-89cd-a6dfa515a8a0",
+          "68e747ec-fabc-4b35-b04e-f0ffee469a79"
+        ],
+        "birth_date": null,
+        "nationality": "CO",
+        "is_generic": false,
+        "created_at": "2026-02-26T05:44:44.902435Z",
+        "updated_at": "2026-02-26T05:44:44.902444Z"
+      },
+      ...
+   
+      ]
+    }
+    ```
 
 ### Filters
   - Filtros para _person_ `http://localhost:8000/api/person/summary/?q=Cris` es un filtro con busqueda `or` para los siguientes campos:
@@ -1575,37 +1623,75 @@ Estos endpoints nos permite listar los _Person_ ya sea todos o solo uno pasando 
   - email: Filtrar por email
   - phone_number: Filtrar por número de teléfono q
 - Y un filtro por nacionalidad `http://localhost:8000/api/person/summary/?nationality=US` este es de tipo `and`
+- Ejemplo: http://127.0.0.1:8000/api/person/?q=martin&nationality=PE
 
 ### Post Client
 Este endpoint nos permite crear un _person_ pasando en el cuerpo los datos requeridos
 - Post Client: http://127.0.0.1:8000/api/person/
 - Body:
-```json
- {
-    "first_name": "Valentina",
-    "last_name": "Rios Martinez",
+  ```json
+   {
+      "first_name": "Valentina",
+      "last_name": "Rios Martinez",
+      "email": "valentina.rios@example.com",
+      "phone_number": "+5491122334455",
+      "passport_number": "A7788990",
+      "birth_date": "2000-01-30",
+      "nationality": "AR"
+    }
+  ```
+- Respuesta: 
+  ```json
+  {
+    "id": "22c72505-860c-4e5d-88a0-2913473ca879",
+    "first_name": "valentina",
+    "last_name": "rios martinez",
     "email": "valentina.rios@example.com",
     "phone_number": "+5491122334455",
+    "media": [],
     "passport_number": "A7788990",
+    "group": [],
     "birth_date": "2000-01-30",
-    "nationality": "AR"
+    "nationality": "AR",
+    "is_generic": false,
+    "created_at": "2026-02-26T05:56:27.506437Z",
+    "updated_at": "2026-02-26T05:56:27.506447Z"
   }
-```
+  ```
 
 ### Patch Person
 Este endpoint nos permite actualizar un _person_ pasando solo lo que se desea actualizar o todo el cuerpo.
 - Patch: http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567/
 - Body:
-```json
-{
-    "first_name": "Martin",
-    "nationality": "Americana"
-}
-```
+  ```json
+  {
+      "first_name": "Martin",
+      "nationality": "Americana"
+  }
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "22c72505-860c-4e5d-88a0-2913473ca879",
+    "first_name": "martin",
+    "last_name": "rios martinez",
+    "email": "valentina.rios@example.com",
+    "phone_number": "+5491122334455",
+    "media": [],
+    "passport_number": "A7788990",
+    "group": [],
+    "birth_date": "2000-01-30",
+    "nationality": "US",
+    "is_generic": false,
+    "created_at": "2026-02-26T05:56:27.506437Z",
+    "updated_at": "2026-02-26T05:58:05.885592Z"
+  }
+  ```
 
 ### Delete Person
 Este endpoint nos permite eliminar un _person_ pasando el id
 - Delete: http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567/
+- Respuesta: Status 204 No Content
 
 ### Actions
 #### Upload Document
@@ -1615,7 +1701,20 @@ Este endpoint nos permite subir un documento y relacionarlo al _person_ pasado p
     - title: Documento del cliente
     - description: Este es un documento del cliente
     - file: (Seleccionar archivo de documento)
-
+- Respuesta:
+  ```json
+  {
+    "id": "48d5b95f-ee15-47af-b172-38a02b2deba7",
+    "type_media": "document",
+    "file": "/media_files/media/2026/02/26/CONTRATO_DE_PRESTACI%C3%93N_DE_SERVICIOS_DE_DESARROLLO_WEB.pdf",
+    "url": null,
+    "is_cover": false,
+    "created_at": "2026-02-26T06:00:01.566255Z",
+    "updated_at": "2026-02-26T06:00:01.566267Z",
+    "title": "",
+    "description": ""
+  }
+  ```
 #### Upload Image
 Este endpoint nos permite subir una imagen y relacionarla al _person_ pasado por la url, todo lo que se sube aqui esta en categoria _image.
 - upload-image: `POST` http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567/upload-media/
@@ -1623,10 +1722,24 @@ Este endpoint nos permite subir una imagen y relacionarla al _person_ pasado por
     - title: Imagen del cliente
     - description: Esta es una imagen del cliente
     - file: (Seleccionar archivo de imagen)
+- Respuesta:
+  ```json 
+  {
+    "id": "a232696d-eacb-4a9f-af6c-bdfdc1839f3f",
+    "type_media": "image",
+    "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08_73suEdz.png",
+    "url": null,
+    "is_cover": false,
+    "created_at": "2026-02-26T06:03:33.468582Z",
+    "updated_at": "2026-02-26T06:03:33.468592Z",
+    "title": "Passport",
+    "description": "Es el pasaporte"
+  }
+  ```
 
 #### Get Summary Person
 Este endpoint nos permite obtener un resumen de todos los _person_ con los siguientes campos:
-- Get Summary Person: http://127.0.0.1:8000/api/person/summary
+- Get Summary Person: http://127.0.0.1:8000/api/person/summary/?q=martin&nationality=US
 - Campos:
   - id
   - first_name
@@ -1635,29 +1748,4991 @@ Este endpoint nos permite obtener un resumen de todos los _person_ con los sigui
   - phone_number
   - nationality
   - created_at
-  - updated_at
+- Respuesta:
+  ```json
+  {
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": "22c72505-860c-4e5d-88a0-2913473ca879",
+        "first_name": "Martin",
+        "last_name": "Rios Martinez",
+        "email": "valentina.rios@example.com",
+        "phone_number": "+5491122334455",
+        "nationality": "US"
+      }
+    ]
+  }
+  ```
 
 ### Countries
 Este endpoint nos permite obtener la lista de países disponibles para asignar a la nacionalidad de un cliente.
 - Get Countries: http://localhost:8000/api/countries/
-- Response:
+- Respuesta:
+  ```json
+  [
+    {
+      "value": "US",
+      "label": "United States"
+    },
+    {
+      "value": "CA",
+      "label": "Canada"
+    },
+    {
+      "value": "GB",
+      "label": "United Kingdom"
+    },
+    ...
+  ]
+  ```
+_Nota: Crear para subir varios documentos o varias imagenes para person_
+
+##  Group
+Este modulo nos permite gestionar los grupos de personas, esto es útil para agrupar clientes que viajan juntos o que tienen alguna relación entre ellos.
+### Get Group
+Estos endpoints nos permite listar los _group_ ya sea todos o solo uno pasando él id
+- Get Group: http://localhost:8000/api/group/
+- Get Group by Id: http://localhost:8000/api/group/68e747ec-fabc-4b35-b04e-f0ffee469a79
+- Respuesta:
+  ```json
+  {
+    "count": 4,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": "e53d1203-6984-4427-a0c3-510296092169",
+        "name": "GRP-FY7Z3W",
+        "person": [
+          {
+            "id": "c6f55248-9676-4926-9bd3-7ad6553eb596",
+            "first_name": "Pedro",
+            "last_name": "Suárez",
+            "email": "pedro.suarez@email.com",
+            "phone_number": "911223344",
+            "media": [],
+            "passport_number": "PE456789",
+            "group": [
+              "e53d1203-6984-4427-a0c3-510296092169"
+            ],
+            "birth_date": null,
+            "nationality": "PE",
+            "is_generic": false,
+            "created_at": "2026-02-26T05:40:26.449565Z",
+            "updated_at": "2026-02-26T05:40:26.449576Z"
+          },
+          {
+            "id": "44cd1112-15ed-4906-8ce4-e153abef1cea",
+            "first_name": "Pasajero",
+            "last_name": "Temp temp1",
+            "email": "temp.1bb2785f@sys.local",
+            "phone_number": null,
+            "media": [],
+            "passport_number": null,
+            "group": [
+              "e53d1203-6984-4427-a0c3-510296092169"
+            ],
+            "birth_date": null,
+            "nationality": null,
+            "is_generic": true,
+            "created_at": "2026-02-26T05:40:26.476813Z",
+            "updated_at": "2026-02-26T05:40:26.476822Z"
+          }
+        ],
+        "description": null,
+        "contact_info": "Pedro Suárez",
+        "total_people": 2,
+        "expense": [],
+        "created_at": "2026-02-26T05:40:26.444242Z",
+        "updated_at": "2026-02-26T05:40:26.444254Z"
+      },
+      ...
+      }
+    ]
+  }
+  ```
+### Post Group
+Este endpoint nos permite crear un _group_.
+- Post Group: http://localhost:8000/api/group/
+- Body:
+  ```json
+  {
+      "description": "Es el grupo 5",
+      "contact_info": "Perez Martinez"
+  } 
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "e8df3d2b-02d3-4bb1-99c3-88bfe3a52469",
+    "name": "GRP-VB3MIP",
+    "person": [],
+    "description": "Es el grupo 5",
+    "contact_info": "Perez Martinez",
+    "total_people": 0,
+    "expense": [],
+    "created_at": "2026-02-26T06:22:43.067087Z",
+    "updated_at": "2026-02-26T06:22:43.067104Z"
+  }
+  ```
+
+### Patch Group
+Este endpoint nos permite actualizar un _group_ pasando solo lo que se desea actualizar o todo el cuerpo.
+- Patch: http://localhost:8000/api/group/e8df3d2b-02d3-4bb1-99c3-88bfe3a52469/
+- Body:
+  ```json 
+  {
+      "description": "Es el grupo 6",
+      "contact_info": "Juana Martinez"
+  } 
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "e8df3d2b-02d3-4bb1-99c3-88bfe3a52469",
+    "name": "GRP-EHODW3",
+    "person": [],
+    "description": "Es el grupo 6",
+    "contact_info": "Juana Martinez",
+    "total_people": 0,
+    "expense": [],
+    "created_at": "2026-02-26T06:22:43.067087Z",
+    "updated_at": "2026-02-26T06:28:30.858985Z"
+  }
+  ```
+  
+### Delete Group
+Este endpoint nos permite eliminar un _group_ pasando el id
+- Delete: http://localhost:8000/api/group/e8df3d2b-02d3-4bb1-99c3-88bfe3a52469/
+- Respuesta: Status 204 No Content
+
+### Actions
+### Add Person to Group
+Este endpoint nos permite agregar una persona a un grupo pasando ambos ids por la url
+- add-person: `POST` http://localhost:8000/api/group/e8df3d2b-02d3-4bb1-99c3-88bfe3a52469/add-person/
+- Body:
+  ```json
+  {
+      "person_id": "22c72505-860c-4e5d-88a0-2913473ca879"
+  }
+  ```
+- Respuesta: 
+  ```json
+  {
+    "message": "Person 'Martin Rios martinez' added to group 'GRP-3OGPE9' successfully.",
+    "group": {
+      "id": "fd718429-cedd-4616-86f1-f687427958b1",
+      "name": "GRP-DJ2L2L",
+      "person": [
+        {
+          "id": "22c72505-860c-4e5d-88a0-2913473ca879",
+          "first_name": "Martin",
+          "last_name": "Rios Martinez",
+          "email": "valentina.rios@example.com",
+          "phone_number": "+5491122334455",
+          "media": [
+            {
+              "id": "a232696d-eacb-4a9f-af6c-bdfdc1839f3f",
+              "type_media": "image",
+              "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08_73suEdz.png",
+              "url": null,
+              "is_cover": false,
+              "created_at": "2026-02-26T06:03:33.468582Z",
+              "updated_at": "2026-02-26T06:03:33.468592Z",
+              "title": "Passport",
+              "description": "Es el pasaporte"
+            },
+            {
+              "id": "c00f406b-52c7-4829-a93a-762cb4f011ce",
+              "type_media": "image",
+              "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08.png",
+              "url": null,
+              "is_cover": false,
+              "created_at": "2026-02-26T06:03:00.553034Z",
+              "updated_at": "2026-02-26T06:03:00.553047Z",
+              "title": "",
+              "description": ""
+            },
+            {
+              "id": "48d5b95f-ee15-47af-b172-38a02b2deba7",
+              "type_media": "document",
+              "file": "/media_files/media/2026/02/26/CONTRATO_DE_PRESTACI%C3%93N_DE_SERVICIOS_DE_DESARROLLO_WEB.pdf",
+              "url": null,
+              "is_cover": false,
+              "created_at": "2026-02-26T06:00:01.566255Z",
+              "updated_at": "2026-02-26T06:00:01.566267Z",
+              "title": "",
+              "description": ""
+            }
+          ],
+          "passport_number": "A7788990",
+          "group": [
+            "fd718429-cedd-4616-86f1-f687427958b1"
+          ],
+          "birth_date": "2000-01-30",
+          "nationality": "US",
+          "is_generic": false,
+          "created_at": "2026-02-26T05:56:27.506437Z",
+          "updated_at": "2026-02-26T05:58:05.885592Z"
+        }
+      ],
+      "description": "Es el grupo 5",
+      "contact_info": "Perez Martinez",
+      "total_people": 1,
+      "expense": [],
+      "created_at": "2026-02-26T06:21:56.877753Z",
+      "updated_at": "2026-02-26T06:21:56.877772Z"
+    }
+  }
+  ```
+  
+#### Remove Person
+Este endpoint nos permite eliminar una persona de un grupo pasando el id del grupo por la url y el id a traves del cuerpo
+- remove-person: `POST` http://localhost:8000/api/group/fd718429-cedd-4616-86f1-f687427958b1/remove-person/
+- Body:
+  ```json 
+  {
+      "person_id": "c6f55248-9676-4926-9bd3-7ad6553eb596"
+  }
+  ```
+- Respuesta: 
+  ```json
+  {
+    "message": "Person 'Pedro Suárez' removed from group 'GRP-3OGPE9' successfully.",
+    "group": {
+      "id": "fd718429-cedd-4616-86f1-f687427958b1",
+      "name": "GRP-ML0HAS",
+      "person": [
+        {
+          "id": "44cd1112-15ed-4906-8ce4-e153abef1cea",
+          "first_name": "Pasajero",
+          "last_name": "Temp temp1",
+          "email": "temp.1bb2785f@sys.local",
+          "phone_number": null,
+          "media": [],
+          "passport_number": null,
+          "group": [
+            "e53d1203-6984-4427-a0c3-510296092169",
+            "fd718429-cedd-4616-86f1-f687427958b1"
+          ],
+          "birth_date": null,
+          "nationality": null,
+          "is_generic": true,
+          "created_at": "2026-02-26T05:40:26.476813Z",
+          "updated_at": "2026-02-26T05:40:26.476822Z"
+        },
+        {
+          "id": "f0826ebc-548d-4abd-ab65-82a5740732fa",
+          "first_name": "Felipe",
+          "last_name": "Castillo",
+          "email": "f.castillo@empresa.com",
+          "phone_number": "999888666",
+          "media": [],
+          "passport_number": "CO998866",
+          "group": [
+            "c13c99b9-df45-4a25-a821-9025719b795e",
+            "5bf242bf-0a0c-4f5a-89cd-a6dfa515a8a0",
+            "68e747ec-fabc-4b35-b04e-f0ffee469a79",
+            "fd718429-cedd-4616-86f1-f687427958b1"
+          ],
+          "birth_date": null,
+          "nationality": "CO",
+          "is_generic": false,
+          "created_at": "2026-02-26T05:44:44.877861Z",
+          "updated_at": "2026-02-26T05:44:44.877873Z"
+        },
+        {
+          "id": "3fcc4079-4b95-4ec1-a729-ff2eed4d7b07",
+          "first_name": "Pasajero",
+          "last_name": "Temp temp1",
+          "email": "temp.e0bcf7fc@sys.local",
+          "phone_number": null,
+          "media": [],
+          "passport_number": null,
+          "group": [
+            "68e747ec-fabc-4b35-b04e-f0ffee469a79",
+            "fd718429-cedd-4616-86f1-f687427958b1"
+          ],
+          "birth_date": null,
+          "nationality": null,
+          "is_generic": true,
+          "created_at": "2026-02-26T05:46:23.471669Z",
+          "updated_at": "2026-02-26T05:46:23.471678Z"
+        },
+        {
+          "id": "22c72505-860c-4e5d-88a0-2913473ca879",
+          "first_name": "Martin",
+          "last_name": "Rios Martinez",
+          "email": "valentina.rios@example.com",
+          "phone_number": "+5491122334455",
+          "media": [
+            {
+              "id": "a232696d-eacb-4a9f-af6c-bdfdc1839f3f",
+              "type_media": "image",
+              "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08_73suEdz.png",
+              "url": null,
+              "is_cover": false,
+              "created_at": "2026-02-26T06:03:33.468582Z",
+              "updated_at": "2026-02-26T06:03:33.468592Z",
+              "title": "Passport",
+              "description": "Es el pasaporte"
+            },
+            {
+              "id": "c00f406b-52c7-4829-a93a-762cb4f011ce",
+              "type_media": "image",
+              "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08.png",
+              "url": null,
+              "is_cover": false,
+              "created_at": "2026-02-26T06:03:00.553034Z",
+              "updated_at": "2026-02-26T06:03:00.553047Z",
+              "title": "",
+              "description": ""
+            },
+            {
+              "id": "48d5b95f-ee15-47af-b172-38a02b2deba7",
+              "type_media": "document",
+              "file": "/media_files/media/2026/02/26/CONTRATO_DE_PRESTACI%C3%93N_DE_SERVICIOS_DE_DESARROLLO_WEB.pdf",
+              "url": null,
+              "is_cover": false,
+              "created_at": "2026-02-26T06:00:01.566255Z",
+              "updated_at": "2026-02-26T06:00:01.566267Z",
+              "title": "",
+              "description": ""
+            }
+          ],
+          "passport_number": "A7788990",
+          "group": [
+            "fd718429-cedd-4616-86f1-f687427958b1"
+          ],
+          "birth_date": "2000-01-30",
+          "nationality": "US",
+          "is_generic": false,
+          "created_at": "2026-02-26T05:56:27.506437Z",
+          "updated_at": "2026-02-26T05:58:05.885592Z"
+        }
+      ],
+      "description": "Es el grupo 5",
+      "contact_info": "Perez Martinez",
+      "total_people": 4,
+      "expense": [],
+      "created_at": "2026-02-26T06:21:56.877753Z",
+      "updated_at": "2026-02-26T06:21:56.877772Z"
+    }
+  }
+  ```
+  
+## Service Quote Person
+Este módulo nos permite gestionar la relación entre las cotizaciones de servicios y las personas, aquí se asignan los servicios a cada persona, se pueden agregar o eliminar servicios de cada persona y también se pueden agregar los datos de viaje como fecha de salida, fecha de llegada, hora de salida y hora de llegada.
+### Get Service Quote Person
+Estos endpoints nos permite listar los _ServiceQuotePerson_ ya sea todos o solo uno pasando él id por la url.
+- Get Service Quote Person: http://localhost:8000/api/service-quote-person/
+- Get Service Quote Person by Id: http://localhost:8000/api/service-quote-person/1c9b8a2e-5c3b-4d9f-a9c8-8b9f6c9e8b9f
+- Respuesta:
+  ```json
+  {
+    "count": 18,
+    "next": "http://localhost:8000/api/service-quote-person/?limit=10&offset=10",
+    "previous": null,
+    "results": [  
+      {
+          "id": "6cb85a5f-b982-412b-ada1-4c3536e4cca1",
+          "calculated_cost": 240.0,
+          "notes": "Comida china",
+          "person": "c6f55248-9676-4926-9bd3-7ad6553eb596",
+          "service": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "quote": "f27e8ec3-85f6-4b3e-a58a-77fb7c62dbf3",
+          "departure_date": "2026-05-10",
+          "arrive_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_time": "12:00:00",
+          "person_name": "Pedro Suárez",
+          "service_name": "Valle Sagrado de los Incas (Vip)",
+          "created_at": "2026-02-26T05:40:26.467470Z"
+      },
+      ...
+    ]
+  }
+  ```
+
+### Post Service Quote Person
+Este endpoint nos permite crear un _ServiceQuotePerson_ pasando en el cuerpo los datos requeridos
+- Post Service Quote Person: http://localhost:8000/api/service-quote-person/
+- Body:
+  ```json
+  {
+    "person_id": "f8f30244-81de-4eb9-b929-480b189a70a3",
+    "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+    "departure_date": "2026-05-10",
+    "departure_time": "08:00:00",
+    "arrive_date": "2026-05-10",
+    "arrive_time": "12:00:00",
+    "notes": "Coordinadora del equipo",
+    "quote_id": "26e8039a-2c7f-4e19-a8ff-6c6dea529836"
+  } 
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "bff7ace3-0e11-45ce-b381-c86b93741a65",
+    "calculated_cost": 154.28571428571428,
+    "notes": "Coordinadora del equipo",
+    "person": "f8f30244-81de-4eb9-b929-480b189a70a3",
+    "service": "9fa1eb00-803f-42b3-9014-7427369ba624",
+    "quote": "26e8039a-2c7f-4e19-a8ff-6c6dea529836",
+    "departure_date": "2026-05-10",
+    "arrive_date": "2026-05-10",
+    "departure_time": "08:00:00",
+    "arrive_time": "12:00:00",
+    "person_name": "Pasajero Temp temp1",
+    "service_name": "Machu Picchu \"Conexión Amanecer\"",
+    "created_at": "2026-02-27T04:56:33.399451Z"
+  } 
+  ```
+
+### Patch Service Quote Person
+Este endpoint nos permite actualizar un _ServiceQuotePerson_ pasando solo lo que se desea actualizar o todo el cuerpo.
+- Patch: http://localhost:8000/api/service-quote-person/bff7ace3-0e11-45ce-b381-c86b93741a65/
+- Body:
+  ```json
+  {
+    "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+    "notes": "Comida china",
+    "person_id": "c6f55248-9676-4926-9bd3-7ad6553eb596",
+    "quote_id": "f27e8ec3-85f6-4b3e-a58a-77fb7c62dbf3"
+  }
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "6cb85a5f-b982-412b-ada1-4c3536e4cca1",
+    "calculated_cost": 240.0,
+    "notes": "Comida china",
+    "person": "c6f55248-9676-4926-9bd3-7ad6553eb596",
+    "service": "d427b527-1019-4de7-979f-e2f9780af28c",
+    "quote": "f27e8ec3-85f6-4b3e-a58a-77fb7c62dbf3",
+    "departure_date": "2026-05-10",
+    "arrive_date": "2026-05-10",
+    "departure_time": "08:00:00",
+    "arrive_time": "12:00:00",
+    "person_name": "Pedro Suárez",
+    "service_name": "Valle Sagrado de los Incas (Vip)",
+    "created_at": "2026-02-26T05:40:26.467470Z"
+  }
+  ```
+
+### Delete Service Quote Person
+Este endpoint nos permite eliminar un _ServiceQuotePerson_ pasando el id por la url
+- Delete: http://localhost:8000/api/service-quote-person/6cb85a5f-b982-412b-ada1-4c3536e4cca1/
+- Respuesta: Status 204 No Content
+
+
+## Quote
+Este módulo nos permite gestionar las cotizaciones, aquí se pueden crear cotizaciones, agregar servicios a las cotizaciones, eliminar servicios de las cotizaciones, obtener el resumen de una cotización y también se pueden generar las versiones de las cotizaciones.
+### Get Quote
+- Get Quote: http://localhost:8000/api/quote/
+- Get Quote by Id: http://localhost:8000/api/quote/f27e8ec3-85f6-4b3e-a58a-77fb7c62
+- Respuesta:
+  ```json
+  {
+    "count": 4,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": "26e8039a-2c7f-4e19-a8ff-6c6dea529836",
+        "status": "draft",
+        "version": 1,
+        "version_display": "1",
+        "contact_info": "Natalia Ríos",
+        "valid_until": "2026-03-28",
+        "total_price": "1080.00",
+        "is_public": false,
+        "notes": null,
+        "created_at": "2026-02-26T05:46:23.460767Z",
+        "updated_at": "2026-02-26T05:46:23.460772Z",
+        "group": "68e747ec-fabc-4b35-b04e-f0ffee469a79",
+        "parent_quote": null,
+        "all_versions": [
+          {
+            "id": "26e8039a-2c7f-4e19-a8ff-6c6dea529836",
+            "version": "1",
+            "total_price": "1080.00",
+            "created_at": "2026-02-26T05:46:23.460767Z"
+          }
+        ],
+        "detail_quote_by_person": [
+          {
+            "person_id": "8a360e25-d85d-4901-be3d-88f12108d617",
+            "person_name": "Natalia Ríos",
+            "total": 154.28571428571428,
+            "services": [
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              }
+            ]
+          },
+          {
+            "person_id": "3fcc4079-4b95-4ec1-a729-ff2eed4d7b07",
+            "person_name": "Pasajero Temp temp1",
+            "total": 154.28571428571428,
+            "services": [
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              }
+            ]
+          },
+          {
+            "person_id": "f0826ebc-548d-4abd-ab65-82a5740732fa",
+            "person_name": "Felipe Castillo",
+            "total": 154.28571428571428,
+            "services": [
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              }
+            ]
+          },
+          {
+            "person_id": "a4c8b815-354f-4939-a6ab-1753ae59923b",
+            "person_name": "Carolina Vega",
+            "total": 154.28571428571428,
+            "services": [
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              }
+            ]
+          },
+          {
+            "person_id": "22c72505-860c-4e5d-88a0-2913473ca879",
+            "person_name": "Martin Rios Martinez",
+            "total": 154.28571428571428,
+            "services": [
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              }
+            ]
+          },
+          {
+            "person_id": "f8f30244-81de-4eb9-b929-480b189a70a3",
+            "person_name": "Pasajero Temp temp1",
+            "total": 308.57142857142856,
+            "services": [
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              },
+              {
+                "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+                "service_type": "private",
+                "service_name": "Machu Picchu \"Conexión Amanecer\"",
+                "cost": 154.28571428571428,
+                "departure": "2026-05-10 08:00:00"
+              }
+            ]
+          }
+        ]
+      },
+      ...
+    ]
+  }
+  ```
+
+### Post Quote
+Este endpoint nos permite crear una cotización pasando en el cuerpo los datos requeridos
+- Post Quote: http://localhost:8000/api/quote/
+- Body:
+  ```json
+  {
+    "status": "draft",
+    "version": 1,
+    "valid_until": "2025-11-11",
+    "notes": "string",
+    "group": "c13c99b9-df45-4a25-a821-9025719b795e"
+  }  
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "4e440f00-37cb-4f2f-84e0-460670d60750",
+    "status": "draft",
+    "version": 1,
+    "version_display": "1",
+    "contact_info": null,
+    "valid_until": "2025-11-11",
+    "total_price": "0.00",
+    "notes": "string",
+    "created_at": "2026-02-27T15:18:46.690471Z",
+    "updated_at": "2026-02-27T15:18:46.690480Z",
+    "group": "c13c99b9-df45-4a25-a821-9025719b795e",
+    "parent_quote": null,
+    "all_versions": [
+      {
+        "id": "4e440f00-37cb-4f2f-84e0-460670d60750",
+        "version": "1",
+        "total_price": "0.00",
+        "created_at": "2026-02-27T15:18:46.690471Z"
+      }
+    ],
+    "detail_quote_by_person": []
+  }
+  ```
+  
+### Patch Quote
+Este endpoint nos permite actualizar una cotización pasando solo lo que se desea actualizar o todo el cuerpo
+- Patch: http://localhost:8000/api/quote/4e440f00-37cb-4f2f-84e0-460670d60750/
+- Body
+  ```json
+  {
+    "notes": "No hay carne",
+    "valid_until": "2025-11-12"
+  }
+  ```
+- Respuesta:
+  ```json
+  {
+    "id": "4e440f00-37cb-4f2f-84e0-460670d60750",
+    "status": "draft",
+    "version": 1,
+    "version_display": "1",
+    "contact_info": null,
+    "valid_until": "2025-11-12",
+    "total_price": "0.00",
+    "notes": "No hay carne",
+    "created_at": "2026-02-27T15:18:46.690471Z",
+    "updated_at": "2026-02-27T15:26:13.583424Z",
+    "group": "c13c99b9-df45-4a25-a821-9025719b795e",
+    "parent_quote": null,
+    "all_versions": [
+      {
+        "id": "4e440f00-37cb-4f2f-84e0-460670d60750",
+        "version": "1",
+        "total_price": "0.00",
+        "created_at": "2026-02-27T15:18:46.690471Z"
+      }
+    ],
+    "detail_quote_by_person": []
+  }
+  ```
+### Delete Quote
+Este endpoint nos permite eliminar una cotización pasando el id por la url
+- Delete: http://localhost:8000/api/quote/4e440f00-37cb-4f2f-84e0-460670d60750/
+- Respuesta: Status 204 No Content
+
+### Actions
+#### Bulk Create Quote
+Este Modulo te permite crear cotizaciones de manera masiva, pasando una lista de cotizaciones en el cuerpo, esto es útil para crear cotizaciones de cada grupo de manera masiva.
+- Bulk Create Quote: `POST` http://localhost:8000/api/quote/all-in-one-quote/
+- Body:
+  ```json
+  {
+    "contact_info": {
+      "first_name": "Natalia",
+      "last_name": "Ríos",
+      "email": "n.rios@empresa.com",
+      "phone_number": "999888777",
+      "passport_number": "CO998877",
+      "nationality": "CO"
+    },
+    "notes": "Son Personas que ya vinieron antes al Peru",
+    "services": [
+      {
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "person_temp_id": "contact",
+        "departure_date": "2026-05-10",
+        "departure_time": "08:00:00",
+        "arrive_date": "2026-05-10",
+        "arrive_time": "12:00:00",
+        "notes": "Coordinadora del equipo"
+      },
+      {
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "person_temp_id": "temp1",
+        "departure_date": "2026-05-10",
+        "departure_time": "08:00:00",
+        "arrive_date": "2026-05-10",
+        "arrive_time": "12:00:00",
+        "notes": "Asistente invitado"
+      },
+      {
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "person_temp_id": {
+          "first_name": "Felipe",
+          "last_name": "Castillo",
+          "email": "f.castillo@empresa.com",
+          "phone_number": "999888666",
+          "passport_number": "CO998866",
+          "nationality": "CO"
+        },
+        "departure_date": "2026-05-10",
+        "departure_time": "08:00:00",
+        "arrive_date": "2026-05-10",
+        "arrive_time": "12:00:00",
+        "notes": "Gerente de ventas"
+      },
+      {
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "person_temp_id": {
+          "first_name": "Carolina",
+          "last_name": "Vega",
+          "email": "c.vega@empresa.com",
+          "phone_number": "999888555",
+          "passport_number": "CO998855",
+          "nationality": "CO"
+        },
+        "departure_date": "2026-05-10",
+        "departure_time": "08:00:00",
+        "arrive_date": "2026-05-10",
+        "arrive_time": "12:00:00",
+        "notes": "Directora de marketing"
+      },
+  
+      {
+        "service_id": "7da1b512-b886-4471-bf14-f7b295990532",
+        "person_temp_id": "contact",
+        "departure_date": "2026-05-11",
+        "departure_time": "09:00:00",
+        "arrive_date": "2026-05-11",
+        "arrive_time": "13:30:00",
+        "notes": "Servicio adicional - traslado aeropuerto"
+      },
+      {
+        "service_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+        "person_temp_id": "temp2",
+        "departure_date": "2026-05-12",
+        "departure_time": "07:30:00",
+        "arrive_date": "2026-05-12",
+        "arrive_time": "11:45:00",
+        "notes": "Participante extra"
+      },
+      {
+        "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+        "person_temp_id": {
+          "first_name": "Luis",
+          "last_name": "Morales",
+          "email": "l.morales@empresa.com",
+          "phone_number": "999777444",
+          "passport_number": "CO112233",
+          "nationality": "CO"
+        },
+        "departure_date": "2026-05-13",
+        "departure_time": "10:15:00",
+        "arrive_date": "2026-05-13",
+        "arrive_time": "14:20:00",
+        "notes": "Supervisor regional"
+      },
+      {
+        "service_id": "553847c6-44b9-4f18-9870-b462943ab202",
+        "person_temp_id": {
+          "first_name": "Andrea",
+          "last_name": "Pardo",
+          "email": "a.pardo@empresa.com",
+          "phone_number": "999666333",
+          "passport_number": "CO445566",
+          "nationality": "CO"
+        },
+        "departure_date": "2026-05-14",
+        "departure_time": "06:45:00",
+        "arrive_date": "2026-05-14",
+        "arrive_time": "11:10:00",
+        "notes": "Invitada especial"
+      }
+    ]
+  } 
+  ```
+- Respuesta:
+  ```json
+  {
+    "quote_id": "53811972-9021-4e46-82a4-487e15394755",
+    "group_id": "6c138d82-acea-444f-9c58-6c649d0a118a",
+    "group_name": "GRP-LCFFUG",
+    "total_price": 1655.0,
+    "total_people": 7,
+    "created_group": true
+  } 
+  ```
+
+#### Create Version
+Este endpoint nos permite crear una nueva versión de una cotización existente, pasando el id de la cotización por la url
+- Create Version: `POST` http://localhost:8000/api/quote/f27e8ec3-85f6-4b3e-a58a-77fb7c62dbf3/create-version/
+- Respuesta:
+  ```json
+  {
+    "message": "New version created successfully",
+    "cloned_items_count": 8,
+    "quote": {
+      "id": "908f3ec4-6852-4f82-8745-08615fdc352c",
+      "status": "draft",
+      "version": 3,
+      "version_display": "1.3",
+      "contact_info": "Natalia Ríos",
+      "valid_until": "2026-03-29",
+      "total_price": "1655.00",
+      "notes": "Son Personas que ya vinieron antes al Peru",
+      "created_at": "2026-03-02T19:59:14.455046Z",
+      "updated_at": "2026-03-02T19:59:14.455067Z",
+      "group": "55b027d7-3def-4332-9a04-1e502b548d8b",
+      "parent_quote": "6363fe6f-fa03-4736-9d40-89b3fea9ea8a",
+      "all_versions": [
+        {
+          "id": "6363fe6f-fa03-4736-9d40-89b3fea9ea8a",
+          "version": "1",
+          "total_price": "1655.00",
+          "created_at": "2026-02-27T15:43:28.708838Z"
+        },
+        {
+          "id": "353beca5-7662-4f1d-a851-d06906edfc51",
+          "version": "1.2",
+          "total_price": "1655.00",
+          "created_at": "2026-02-27T16:00:35.091755Z"
+        },
+        {
+          "id": "3bf62604-e671-47db-9e85-af96b83188b6",
+          "version": "1.2",
+          "total_price": "1655.00",
+          "created_at": "2026-02-27T15:45:20.493426Z"
+        },
+        {
+          "id": "908f3ec4-6852-4f82-8745-08615fdc352c",
+          "version": "1.3",
+          "total_price": "1655.00",
+          "created_at": "2026-03-02T19:59:14.455046Z"
+        },
+        {
+          "id": "8482b00e-20c2-4e47-95b0-611bdc5ad7f4",
+          "version": "1.3",
+          "total_price": "1655.00",
+          "created_at": "2026-02-27T16:12:42.846144Z"
+        }
+      ],
+      "detail_quote_by_person": [
+        {
+          "person_id": "8a360e25-d85d-4901-be3d-88f12108d617",
+          "person_name": "Natalia Ríos",
+          "total": 430.0,
+          "services": [
+            {
+              "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+              "service_type": "private",
+              "service_name": "Machu Picchu \"Conexión Amanecer\"",
+              "cost": 180.0,
+              "departure": "2026-05-10 08:00:00"
+            },
+            {
+              "service_id": "7da1b512-b886-4471-bf14-f7b295990532",
+              "service_type": "group",
+              "service_name": "El Camino del Apu Ausangate",
+              "cost": 250.0,
+              "departure": "2026-05-11 09:00:00"
+            }
+          ]
+        },
+        {
+          "person_id": "bbce136c-e1bc-4e42-b2ca-923d48907a6c",
+          "person_name": "Pasajero Temp temp1",
+          "total": 180.0,
+          "services": [
+            {
+              "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+              "service_type": "private",
+              "service_name": "Machu Picchu \"Conexión Amanecer\"",
+              "cost": 180.0,
+              "departure": "2026-05-10 08:00:00"
+            }
+          ]
+        },
+        {
+          "person_id": "f0826ebc-548d-4abd-ab65-82a5740732fa",
+          "person_name": "Felipe Castillo",
+          "total": 180.0,
+          "services": [
+            {
+              "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+              "service_type": "private",
+              "service_name": "Machu Picchu \"Conexión Amanecer\"",
+              "cost": 180.0,
+              "departure": "2026-05-10 08:00:00"
+            }
+          ]
+        },
+        {
+          "person_id": "a4c8b815-354f-4939-a6ab-1753ae59923b",
+          "person_name": "Carolina Vega",
+          "total": 180.0,
+          "services": [
+            {
+              "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+              "service_type": "private",
+              "service_name": "Machu Picchu \"Conexión Amanecer\"",
+              "cost": 180.0,
+              "departure": "2026-05-10 08:00:00"
+            }
+          ]
+        },
+        {
+          "person_id": "d1301730-b3eb-4160-b72f-7e09b54218b1",
+          "person_name": "Pasajero Temp temp2",
+          "total": 420.0,
+          "services": [
+            {
+              "service_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+              "service_type": "arbitrary",
+              "service_name": "Salkantay Trek a Machu Picchu",
+              "cost": 420.0,
+              "departure": "2026-05-12 07:30:00"
+            }
+          ]
+        },
+        {
+          "person_id": "79a96ad1-6a63-40da-b1ab-3561c03dd8fe",
+          "person_name": "Luis Morales",
+          "total": 240.0,
+          "services": [
+            {
+              "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+              "service_type": "private",
+              "service_name": "Valle Sagrado de los Incas (Vip)",
+              "cost": 240.0,
+              "departure": "2026-05-13 10:15:00"
+            }
+          ]
+        },
+        {
+          "person_id": "1bffa2a7-8eb8-482a-85a7-1005aae1fee4",
+          "person_name": "Andrea Pardo",
+          "total": 25.0,
+          "services": [
+            {
+              "service_id": "553847c6-44b9-4f18-9870-b462943ab202",
+              "service_type": "group",
+              "service_name": "City Tour Cusco",
+              "cost": 25.0,
+              "departure": "2026-05-14 06:45:00"
+            }
+          ]
+        }
+      ]
+    }
+  }
+  ```
+
+#### Full Detail
+Este endpoint nos permite obtener el detalle completo de una cotización, pasando el id de la cotización por la url, esto incluye el detalle de cada persona y los servicios asociados a cada persona.
+- Full Detail: `GET` http://localhost:8000/api/quote/f27e8ec3-85f6-4b3e-a58a-77fb7c62dbf3/full-detail/
+- Respuesta:
 ```json
-[
-  {
-    "value": "US",
-    "label": "United States"
+{
+  "id": "26e8039a-2c7f-4e19-a8ff-6c6dea529836",
+  "status": "draft",
+  "version": 1,
+  "version_display": "1",
+  "contact_info": "Natalia Ríos",
+  "valid_until": "2026-03-28",
+  "total_price": "1080.00",
+  "notes": null,
+  "created_at": "2026-02-26T05:46:23.460767Z",
+  "updated_at": "2026-02-26T05:46:23.460772Z",
+  "parent_quote": null,
+  "all_versions": [
+    {
+      "id": "26e8039a-2c7f-4e19-a8ff-6c6dea529836",
+      "version": "1",
+      "total_price": "1080.00",
+      "status": "draft",
+      "created_at": "2026-02-26T05:46:23.460767Z"
+    }
+  ],
+  "group_info": {
+    "id": "68e747ec-fabc-4b35-b04e-f0ffee469a79",
+    "name": "GRP-LV0FSD",
+    "description": null,
+    "contact_info": "Natalia Ríos",
+    "total_people": 4,
+    "created_at": "2026-02-26T05:46:23.443540Z"
   },
-  {
-    "value": "CA",
-    "label": "Canada"
+  "persons_detail": [
+    {
+      "id": "8a360e25-d85d-4901-be3d-88f12108d617",
+      "full_name": "Natalia Ríos",
+      "first_name": "Natalia",
+      "last_name": "Ríos",
+      "email": "n.rios@empresa.com",
+      "phone_number": "999888777",
+      "passport_number": "CO998877",
+      "birth_date": null,
+      "nationality": "CO",
+      "is_generic": false,
+      "total_cost": 154.28571428571428,
+      "services_count": 1,
+      "services": [
+        {
+          "service_quote_person_id": "1838de16-7763-4bfa-9e24-4d65d0414fc8",
+          "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "service_name": "Machu Picchu \"Conexión Amanecer\"",
+          "service_type": "private",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Coordinadora del equipo"
+        }
+      ],
+      "media": []
+    },
+    {
+      "id": "f0826ebc-548d-4abd-ab65-82a5740732fa",
+      "full_name": "Felipe Castillo",
+      "first_name": "Felipe",
+      "last_name": "Castillo",
+      "email": "f.castillo@empresa.com",
+      "phone_number": "999888666",
+      "passport_number": "CO998866",
+      "birth_date": null,
+      "nationality": "CO",
+      "is_generic": false,
+      "total_cost": 154.28571428571428,
+      "services_count": 1,
+      "services": [
+        {
+          "service_quote_person_id": "444bca72-5609-403e-8f98-8fc0fc8915cf",
+          "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "service_name": "Machu Picchu \"Conexión Amanecer\"",
+          "service_type": "private",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Gerente de ventas"
+        }
+      ],
+      "media": []
+    },
+    {
+      "id": "a4c8b815-354f-4939-a6ab-1753ae59923b",
+      "full_name": "Carolina Vega",
+      "first_name": "Carolina",
+      "last_name": "Vega",
+      "email": "c.vega@empresa.com",
+      "phone_number": "999888555",
+      "passport_number": "CO998855",
+      "birth_date": null,
+      "nationality": "CO",
+      "is_generic": false,
+      "total_cost": 154.28571428571428,
+      "services_count": 1,
+      "services": [
+        {
+          "service_quote_person_id": "ff59dc1a-d618-4a53-86e4-704b0dfd6f16",
+          "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "service_name": "Machu Picchu \"Conexión Amanecer\"",
+          "service_type": "private",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Directora de marketing"
+        }
+      ],
+      "media": []
+    },
+    {
+      "id": "f8f30244-81de-4eb9-b929-480b189a70a3",
+      "full_name": "Pasajero Temp temp1",
+      "first_name": "Pasajero",
+      "last_name": "Temp temp1",
+      "email": "temp.a919d9ad@sys.local",
+      "phone_number": null,
+      "passport_number": null,
+      "birth_date": null,
+      "nationality": null,
+      "is_generic": true,
+      "total_cost": 308.57142857142856,
+      "services_count": 2,
+      "services": [
+        {
+          "service_quote_person_id": "bff7ace3-0e11-45ce-b381-c86b93741a65",
+          "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "service_name": "Machu Picchu \"Conexión Amanecer\"",
+          "service_type": "private",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Coordinadora del equipo"
+        },
+        {
+          "service_quote_person_id": "b7355582-5dd6-4d79-b342-4e7bd36a8a75",
+          "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "service_name": "Machu Picchu \"Conexión Amanecer\"",
+          "service_type": "private",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Coordinadora del equipo"
+        }
+      ],
+      "media": []
+    },
+    {
+      "id": "3fcc4079-4b95-4ec1-a729-ff2eed4d7b07",
+      "full_name": "Pasajero Temp temp1",
+      "first_name": "Pasajero",
+      "last_name": "Temp temp1",
+      "email": "temp.e0bcf7fc@sys.local",
+      "phone_number": null,
+      "passport_number": null,
+      "birth_date": null,
+      "nationality": null,
+      "is_generic": true,
+      "total_cost": 154.28571428571428,
+      "services_count": 1,
+      "services": [
+        {
+          "service_quote_person_id": "911b6a6e-53b8-4b67-bf9a-d98a0ca188b6",
+          "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "service_name": "Machu Picchu \"Conexión Amanecer\"",
+          "service_type": "private",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Asistente invitado"
+        }
+      ],
+      "media": []
+    },
+    {
+      "id": "22c72505-860c-4e5d-88a0-2913473ca879",
+      "full_name": "Martin Rios Martinez",
+      "first_name": "Martin",
+      "last_name": "Rios Martinez",
+      "email": "valentina.rios@example.com",
+      "phone_number": "+5491122334455",
+      "passport_number": "A7788990",
+      "birth_date": "2000-01-30",
+      "nationality": "US",
+      "is_generic": false,
+      "total_cost": 154.28571428571428,
+      "services_count": 1,
+      "services": [
+        {
+          "service_quote_person_id": "f2f11317-8455-4206-82bf-76badd24a300",
+          "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "service_name": "Machu Picchu \"Conexión Amanecer\"",
+          "service_type": "private",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Coordinadora del equipo"
+        }
+      ],
+      "media": [
+        {
+          "id": "a232696d-eacb-4a9f-af6c-bdfdc1839f3f",
+          "type": "image",
+          "title": "Passport",
+          "url": null,
+          "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08_73suEdz.png",
+          "is_cover": false
+        },
+        {
+          "id": "c00f406b-52c7-4829-a93a-762cb4f011ce",
+          "type": "image",
+          "title": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08.png",
+          "is_cover": false
+        },
+        {
+          "id": "48d5b95f-ee15-47af-b172-38a02b2deba7",
+          "type": "document",
+          "title": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/26/CONTRATO_DE_PRESTACI%C3%93N_DE_SERVICIOS_DE_DESARROLLO_WEB.pdf",
+          "is_cover": false
+        }
+      ]
+    }
+  ],
+  "services_detail": [
+    {
+      "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+      "title": "Machu Picchu \"Conexión Amanecer\"",
+      "type": "private",
+      "duration_value": 2,
+      "duration_unit": "days",
+      "summary": "<p>La&nbsp;experiencia&nbsp;completa&nbsp;para&nbsp;visitar&nbsp;la&nbsp;maravilla&nbsp;del&nbsp;mundo&nbsp;sin&nbsp;el&nbsp;agotamiento&nbsp;de&nbsp;ir&nbsp;y&nbsp;volver&nbsp;el&nbsp;mismo&nbsp;día.</p>",
+      "includes": "<ul><li>Tickets&nbsp;de&nbsp;tren&nbsp;(Ida&nbsp;y&nbsp;Vuelta).</li><li>1&nbsp;noche&nbsp;de&nbsp;alojamiento&nbsp;en&nbsp;Aguas&nbsp;Calientes.</li><li>Entrada&nbsp;a&nbsp;Machu&nbsp;Picchu&nbsp;y&nbsp;bus&nbsp;Consettur.</li><li>Guía&nbsp;profesional&nbsp;bilingüe.</li></ul>",
+      "excludes": "<ul><li>Entrada&nbsp;a&nbsp;Huayna&nbsp;Picchu&nbsp;(opcional).</li><li>Almuerzos&nbsp;y&nbsp;cenas&nbsp;no&nbsp;especificados.</li></ul>",
+      "departure_time": "08:00:00",
+      "reference_price": 360.0,
+      "pricing_info": {
+        "type": "private",
+        "rules": [
+          {
+            "id": "52ee8be8-c502-4b43-bc44-dae3bd584ba5",
+            "concept": "Guia",
+            "amount": 240.0,
+            "calculation_type": "divide"
+          },
+          {
+            "id": "d9f77dd7-f008-44f7-83fe-fd3a63f39468",
+            "concept": "Transporte",
+            "amount": 60.0,
+            "calculation_type": "multiply"
+          },
+          {
+            "id": "b1b9f1e7-a23a-48c3-b42a-2b6ee62fd581",
+            "concept": "Tickets",
+            "amount": 30.0,
+            "calculation_type": "multiply"
+          },
+          {
+            "id": "49ce95d2-172f-47f4-88d6-5a72f6d49861",
+            "concept": "Comida",
+            "amount": 30.0,
+            "calculation_type": "multiply"
+          }
+        ]
+      },
+      "persons_in_service": [
+        {
+          "service_quote_person_id": "1838de16-7763-4bfa-9e24-4d65d0414fc8",
+          "person_id": "8a360e25-d85d-4901-be3d-88f12108d617",
+          "person_name": "Natalia Ríos",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Coordinadora del equipo"
+        },
+        {
+          "service_quote_person_id": "911b6a6e-53b8-4b67-bf9a-d98a0ca188b6",
+          "person_id": "3fcc4079-4b95-4ec1-a729-ff2eed4d7b07",
+          "person_name": "Pasajero Temp temp1",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Asistente invitado"
+        },
+        {
+          "service_quote_person_id": "444bca72-5609-403e-8f98-8fc0fc8915cf",
+          "person_id": "f0826ebc-548d-4abd-ab65-82a5740732fa",
+          "person_name": "Felipe Castillo",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Gerente de ventas"
+        },
+        {
+          "service_quote_person_id": "ff59dc1a-d618-4a53-86e4-704b0dfd6f16",
+          "person_id": "a4c8b815-354f-4939-a6ab-1753ae59923b",
+          "person_name": "Carolina Vega",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Directora de marketing"
+        },
+        {
+          "service_quote_person_id": "f2f11317-8455-4206-82bf-76badd24a300",
+          "person_id": "22c72505-860c-4e5d-88a0-2913473ca879",
+          "person_name": "Martin Rios Martinez",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Coordinadora del equipo"
+        },
+        {
+          "service_quote_person_id": "b7355582-5dd6-4d79-b342-4e7bd36a8a75",
+          "person_id": "f8f30244-81de-4eb9-b929-480b189a70a3",
+          "person_name": "Pasajero Temp temp1",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Coordinadora del equipo"
+        },
+        {
+          "service_quote_person_id": "bff7ace3-0e11-45ce-b381-c86b93741a65",
+          "person_id": "f8f30244-81de-4eb9-b929-480b189a70a3",
+          "person_name": "Pasajero Temp temp1",
+          "individual_cost": 154.28571428571428,
+          "departure_date": "2026-05-10",
+          "departure_time": "08:00:00",
+          "arrive_date": "2026-05-10",
+          "arrive_time": "12:00:00",
+          "notes": "Coordinadora del equipo"
+        }
+      ],
+      "total_cost_for_service": 1079.9999999999998,
+      "itineraries": [
+        {
+          "id": "c7533408-f619-46ec-8deb-efde988df291",
+          "title": "Dia 1",
+          "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+        },
+        {
+          "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+          "title": "Dia 2",
+          "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+        }
+      ],
+      "media": [
+        {
+          "id": "b74c2553-d7e9-46b2-ae73-1dc99dd3af5d",
+          "type": "image",
+          "title": "Cover",
+          "description": "Service cover image",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_5_pLtRPAY.webp",
+          "is_cover": true
+        },
+        {
+          "id": "b5f9320f-d854-4ddb-8f7a-1dff084acd2a",
+          "type": "image",
+          "title": "Media 4",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_4_w0i5QEQ.webp",
+          "is_cover": false
+        },
+        {
+          "id": "ddb33e03-78b2-4502-adc5-51ab6f3f2e88",
+          "type": "image",
+          "title": "Media 3",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_3_GVie4xX.webp",
+          "is_cover": false
+        },
+        {
+          "id": "0b2258ea-ea06-4567-869d-80010b257a8d",
+          "type": "image",
+          "title": "Media 2",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_2_CFlfgPt.webp",
+          "is_cover": false
+        },
+        {
+          "id": "30e235a7-655b-4c11-b347-a2802abcf269",
+          "type": "image",
+          "title": "Media 1",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_1_Vlf0mx7.webp",
+          "is_cover": false
+        }
+      ],
+      "tags": [
+        {
+          "id": "71f5ab05-0b07-4849-bc88-fc3935897a08",
+          "name": "Aventura"
+        },
+        {
+          "id": "9f49912a-9809-45e1-ab9c-b67f4ddf132c",
+          "name": "Historico"
+        },
+        {
+          "id": "04a995be-55a8-428c-b2b7-2f1b8fa2784a",
+          "name": "Trekking"
+        }
+      ]
+    }
+  ],
+  "itinerary_schedule": [
+    {
+      "service_quote_person_id": "1838de16-7763-4bfa-9e24-4d65d0414fc8",
+      "departure_date": "2026-05-10",
+      "departure_time": "08:00:00",
+      "arrive_date": "2026-05-10",
+      "arrive_time": "12:00:00",
+      "service": {
+        "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "private",
+        "duration_value": 2,
+        "duration_unit": "days"
+      },
+      "person": {
+        "id": "8a360e25-d85d-4901-be3d-88f12108d617",
+        "full_name": "Natalia Ríos"
+      },
+      "cost": 154.28571428571428,
+      "notes": "Coordinadora del equipo",
+      "itinerary_details": [
+        {
+          "id": "c7533408-f619-46ec-8deb-efde988df291",
+          "title": "Dia 1",
+          "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+        },
+        {
+          "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+          "title": "Dia 2",
+          "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+        }
+      ]
+    },
+    {
+      "service_quote_person_id": "444bca72-5609-403e-8f98-8fc0fc8915cf",
+      "departure_date": "2026-05-10",
+      "departure_time": "08:00:00",
+      "arrive_date": "2026-05-10",
+      "arrive_time": "12:00:00",
+      "service": {
+        "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "private",
+        "duration_value": 2,
+        "duration_unit": "days"
+      },
+      "person": {
+        "id": "f0826ebc-548d-4abd-ab65-82a5740732fa",
+        "full_name": "Felipe Castillo"
+      },
+      "cost": 154.28571428571428,
+      "notes": "Gerente de ventas",
+      "itinerary_details": [
+        {
+          "id": "c7533408-f619-46ec-8deb-efde988df291",
+          "title": "Dia 1",
+          "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+        },
+        {
+          "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+          "title": "Dia 2",
+          "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+        }
+      ]
+    },
+    {
+      "service_quote_person_id": "ff59dc1a-d618-4a53-86e4-704b0dfd6f16",
+      "departure_date": "2026-05-10",
+      "departure_time": "08:00:00",
+      "arrive_date": "2026-05-10",
+      "arrive_time": "12:00:00",
+      "service": {
+        "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "private",
+        "duration_value": 2,
+        "duration_unit": "days"
+      },
+      "person": {
+        "id": "a4c8b815-354f-4939-a6ab-1753ae59923b",
+        "full_name": "Carolina Vega"
+      },
+      "cost": 154.28571428571428,
+      "notes": "Directora de marketing",
+      "itinerary_details": [
+        {
+          "id": "c7533408-f619-46ec-8deb-efde988df291",
+          "title": "Dia 1",
+          "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+        },
+        {
+          "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+          "title": "Dia 2",
+          "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+        }
+      ]
+    },
+    {
+      "service_quote_person_id": "bff7ace3-0e11-45ce-b381-c86b93741a65",
+      "departure_date": "2026-05-10",
+      "departure_time": "08:00:00",
+      "arrive_date": "2026-05-10",
+      "arrive_time": "12:00:00",
+      "service": {
+        "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "private",
+        "duration_value": 2,
+        "duration_unit": "days"
+      },
+      "person": {
+        "id": "f8f30244-81de-4eb9-b929-480b189a70a3",
+        "full_name": "Pasajero Temp temp1"
+      },
+      "cost": 154.28571428571428,
+      "notes": "Coordinadora del equipo",
+      "itinerary_details": [
+        {
+          "id": "c7533408-f619-46ec-8deb-efde988df291",
+          "title": "Dia 1",
+          "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+        },
+        {
+          "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+          "title": "Dia 2",
+          "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+        }
+      ]
+    },
+    {
+      "service_quote_person_id": "b7355582-5dd6-4d79-b342-4e7bd36a8a75",
+      "departure_date": "2026-05-10",
+      "departure_time": "08:00:00",
+      "arrive_date": "2026-05-10",
+      "arrive_time": "12:00:00",
+      "service": {
+        "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "private",
+        "duration_value": 2,
+        "duration_unit": "days"
+      },
+      "person": {
+        "id": "f8f30244-81de-4eb9-b929-480b189a70a3",
+        "full_name": "Pasajero Temp temp1"
+      },
+      "cost": 154.28571428571428,
+      "notes": "Coordinadora del equipo",
+      "itinerary_details": [
+        {
+          "id": "c7533408-f619-46ec-8deb-efde988df291",
+          "title": "Dia 1",
+          "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+        },
+        {
+          "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+          "title": "Dia 2",
+          "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+        }
+      ]
+    },
+    {
+      "service_quote_person_id": "911b6a6e-53b8-4b67-bf9a-d98a0ca188b6",
+      "departure_date": "2026-05-10",
+      "departure_time": "08:00:00",
+      "arrive_date": "2026-05-10",
+      "arrive_time": "12:00:00",
+      "service": {
+        "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "private",
+        "duration_value": 2,
+        "duration_unit": "days"
+      },
+      "person": {
+        "id": "3fcc4079-4b95-4ec1-a729-ff2eed4d7b07",
+        "full_name": "Pasajero Temp temp1"
+      },
+      "cost": 154.28571428571428,
+      "notes": "Asistente invitado",
+      "itinerary_details": [
+        {
+          "id": "c7533408-f619-46ec-8deb-efde988df291",
+          "title": "Dia 1",
+          "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+        },
+        {
+          "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+          "title": "Dia 2",
+          "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+        }
+      ]
+    },
+    {
+      "service_quote_person_id": "f2f11317-8455-4206-82bf-76badd24a300",
+      "departure_date": "2026-05-10",
+      "departure_time": "08:00:00",
+      "arrive_date": "2026-05-10",
+      "arrive_time": "12:00:00",
+      "service": {
+        "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "private",
+        "duration_value": 2,
+        "duration_unit": "days"
+      },
+      "person": {
+        "id": "22c72505-860c-4e5d-88a0-2913473ca879",
+        "full_name": "Martin Rios Martinez"
+      },
+      "cost": 154.28571428571428,
+      "notes": "Coordinadora del equipo",
+      "itinerary_details": [
+        {
+          "id": "c7533408-f619-46ec-8deb-efde988df291",
+          "title": "Dia 1",
+          "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+        },
+        {
+          "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+          "title": "Dia 2",
+          "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+        }
+      ]
+    }
+  ],
+  "media_files": {
+    "services_media": [
+      {
+        "id": "b74c2553-d7e9-46b2-ae73-1dc99dd3af5d",
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "service_title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "image",
+        "title": "Cover",
+        "description": "Service cover image",
+        "url": null,
+        "file": "/media_files/media/2026/02/24/image_5_pLtRPAY.webp",
+        "is_cover": true
+      },
+      {
+        "id": "b5f9320f-d854-4ddb-8f7a-1dff084acd2a",
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "service_title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "image",
+        "title": "Media 4",
+        "description": "",
+        "url": null,
+        "file": "/media_files/media/2026/02/24/image_4_w0i5QEQ.webp",
+        "is_cover": false
+      },
+      {
+        "id": "ddb33e03-78b2-4502-adc5-51ab6f3f2e88",
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "service_title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "image",
+        "title": "Media 3",
+        "description": "",
+        "url": null,
+        "file": "/media_files/media/2026/02/24/image_3_GVie4xX.webp",
+        "is_cover": false
+      },
+      {
+        "id": "0b2258ea-ea06-4567-869d-80010b257a8d",
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "service_title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "image",
+        "title": "Media 2",
+        "description": "",
+        "url": null,
+        "file": "/media_files/media/2026/02/24/image_2_CFlfgPt.webp",
+        "is_cover": false
+      },
+      {
+        "id": "30e235a7-655b-4c11-b347-a2802abcf269",
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "service_title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "image",
+        "title": "Media 1",
+        "description": "",
+        "url": null,
+        "file": "/media_files/media/2026/02/24/image_1_Vlf0mx7.webp",
+        "is_cover": false
+      }
+    ],
+    "persons_media": [
+      {
+        "id": "a232696d-eacb-4a9f-af6c-bdfdc1839f3f",
+        "person_id": "22c72505-860c-4e5d-88a0-2913473ca879",
+        "person_name": "Martin Rios Martinez",
+        "type": "image",
+        "title": "Passport",
+        "description": "Es el pasaporte",
+        "url": null,
+        "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08_73suEdz.png",
+        "is_cover": false
+      },
+      {
+        "id": "c00f406b-52c7-4829-a93a-762cb4f011ce",
+        "person_id": "22c72505-860c-4e5d-88a0-2913473ca879",
+        "person_name": "Martin Rios Martinez",
+        "type": "image",
+        "title": "",
+        "description": "",
+        "url": null,
+        "file": "/media_files/media/2026/02/26/Screenshot_From_2026-02-19_15-50-08.png",
+        "is_cover": false
+      },
+      {
+        "id": "48d5b95f-ee15-47af-b172-38a02b2deba7",
+        "person_id": "22c72505-860c-4e5d-88a0-2913473ca879",
+        "person_name": "Martin Rios Martinez",
+        "type": "document",
+        "title": "",
+        "description": "",
+        "url": null,
+        "file": "/media_files/media/2026/02/26/CONTRATO_DE_PRESTACI%C3%93N_DE_SERVICIOS_DE_DESARROLLO_WEB.pdf",
+        "is_cover": false
+      }
+    ]
   },
-  {
-    "value": "GB",
-    "label": "United Kingdom"
-  },
-  ...
-]
+  "cost_summary": {
+    "total_price": 1080.0,
+    "total_services": 1,
+    "total_persons": 6,
+    "by_service_type": {
+      "group": {
+        "count": 0,
+        "total": 0.0
+      },
+      "private": {
+        "count": 7,
+        "total": 1079.9999999999998
+      },
+      "arbitrary": {
+        "count": 0,
+        "total": 0.0
+      }
+    },
+    "by_person": [
+      {
+        "person_id": "8a360e25-d85d-4901-be3d-88f12108d617",
+        "person_name": "Natalia Ríos",
+        "total": 154.28571428571428,
+        "services_count": 1
+      },
+      {
+        "person_id": "f0826ebc-548d-4abd-ab65-82a5740732fa",
+        "person_name": "Felipe Castillo",
+        "total": 154.28571428571428,
+        "services_count": 1
+      },
+      {
+        "person_id": "a4c8b815-354f-4939-a6ab-1753ae59923b",
+        "person_name": "Carolina Vega",
+        "total": 154.28571428571428,
+        "services_count": 1
+      },
+      {
+        "person_id": "f8f30244-81de-4eb9-b929-480b189a70a3",
+        "person_name": "Pasajero Temp temp1",
+        "total": 308.57142857142856,
+        "services_count": 2
+      },
+      {
+        "person_id": "3fcc4079-4b95-4ec1-a729-ff2eed4d7b07",
+        "person_name": "Pasajero Temp temp1",
+        "total": 154.28571428571428,
+        "services_count": 1
+      },
+      {
+        "person_id": "22c72505-860c-4e5d-88a0-2913473ca879",
+        "person_name": "Martin Rios Martinez",
+        "total": 154.28571428571428,
+        "services_count": 1
+      }
+    ],
+    "by_service": [
+      {
+        "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "service_name": "Machu Picchu \"Conexión Amanecer\"",
+        "service_type": "private",
+        "total": 1079.9999999999998,
+        "persons_count": 7
+      }
+    ]
+  }
+}
 ```
+
+#### Summary Quote
+Este endpoint nos devuelve un resumen de la cotización con el detalle de cada servicio, cada persona y un resumen general de costos.
+- Summary Quote: - Summary Quote: http://localhost:8000/api/quote/26e8039a-2c7f-4e19-a8ff-6c6dea529836/summary/
+- Respuesta:
+```json
+{
+  "quote_id": "26e8039a-2c7f-4e19-a8ff-6c6dea529836",
+  "version": "1",
+  "customer": "Natalia Ríos",
+  "total_general": 1080.0,
+  "breakdown_by_service_type": {
+    "group": 0,
+    "private": 1079.9999999999998,
+    "arbitrary": 0
+  },
+  "itinerary": [
+    {
+      "date": "2026-05-10",
+      "time": "08:00:00",
+      "service": "Machu Picchu \"Conexión Amanecer\"",
+      "type": "private",
+      "passenger": "Natalia Ríos",
+      "individual_cost": 154.28571428571428
+    },
+    {
+      "date": "2026-05-10",
+      "time": "08:00:00",
+      "service": "Machu Picchu \"Conexión Amanecer\"",
+      "type": "private",
+      "passenger": "Felipe Castillo",
+      "individual_cost": 154.28571428571428
+    },
+    {
+      "date": "2026-05-10",
+      "time": "08:00:00",
+      "service": "Machu Picchu \"Conexión Amanecer\"",
+      "type": "private",
+      "passenger": "Carolina Vega",
+      "individual_cost": 154.28571428571428
+    },
+    {
+      "date": "2026-05-10",
+      "time": "08:00:00",
+      "service": "Machu Picchu \"Conexión Amanecer\"",
+      "type": "private",
+      "passenger": "Pasajero Temp temp1",
+      "individual_cost": 154.28571428571428
+    },
+    {
+      "date": "2026-05-10",
+      "time": "08:00:00",
+      "service": "Machu Picchu \"Conexión Amanecer\"",
+      "type": "private",
+      "passenger": "Pasajero Temp temp1",
+      "individual_cost": 154.28571428571428
+    },
+    {
+      "date": "2026-05-10",
+      "time": "08:00:00",
+      "service": "Machu Picchu \"Conexión Amanecer\"",
+      "type": "private",
+      "passenger": "Pasajero Temp temp1",
+      "individual_cost": 154.28571428571428
+    },
+    {
+      "date": "2026-05-10",
+      "time": "08:00:00",
+      "service": "Machu Picchu \"Conexión Amanecer\"",
+      "type": "private",
+      "passenger": "Martin Rios Martinez",
+      "individual_cost": 154.28571428571428
+    }
+  ]
+}
+```
+
+
+#### Set Public
+Este endpoint nos permite cambiar el estado de la cotización a publico o privado, para poder compartir con los clientes
+- Set Public: `POST` http://localhost:8000/api/quote/26e8039a-2c7f-4e19-a8ff-6c6dea529836/toggle-public/
+- Respuesta: 
+  ```json
+  {
+    "quote_id": "40edc3d0-363e-46ca-9605-0e9b8fe270d3",
+    "is_public": true,
+    "message": "Cotización ahora es pública",
+    "public_url": "http://localhost:8000/api/quote/public/40edc3d0-363e-46ca-9605-0e9b8fe270d3/"
+  }
+  ``` 
+
+#### Get Quote Public
+Este endpoint nos permite obtener la información de la cotización en caso que esta haya sido marcada como pública, no es necesario estar autenticado para acceder a esta información
+- Get Quote Public: http://localhost:8000/api/quote/public/40edc3d0-363e-46ca-9605-0e9b8fe270d3/
+- Respuesta:
+  ```json
+  {
+    "id": "40edc3d0-363e-46ca-9605-0e9b8fe270d3",
+    "status": "draft",
+    "version": 2,
+    "version_display": "1.2",
+    "contact_info": "Cristian Monzon Guzman",
+    "valid_until": "2026-04-02",
+    "is_expired": false,
+    "total_price": "3740.00",
+    "notes": "",
+    "created_at": "2026-03-03T01:19:40.928405Z",
+    "updated_at": "2026-03-03T01:19:40.928416Z",
+    "group_info": {
+      "id": "345c18f9-7f88-4c7c-b27b-3580fcfb6508",
+      "name": "GRP-PFGDA7",
+      "description": null,
+      "contact_info": "Cristian Monzon Guzman",
+      "total_people": 8,
+      "created_at": "2026-03-03T01:16:05.523887Z"
+    },
+    "persons_detail": [
+      {
+        "id": "cb5788e3-827d-42bb-ac31-394aabc4a7a4",
+        "full_name": "Pepe Pepe",
+        "first_name": "Pepe",
+        "last_name": "Pepe",
+        "email": "pepe@example.com",
+        "phone_number": null,
+        "passport_number": null,
+        "birth_date": null,
+        "nationality": "PE",
+        "is_generic": false,
+        "total_cost": 300.0,
+        "services_count": 3,
+        "services": [
+          {
+            "service_quote_person_id": "ffd0727c-ce8a-4def-a5c4-bbb7c313b062",
+            "service_id": "553847c6-44b9-4f18-9870-b462943ab202",
+            "service_name": "City Tour Cusco",
+            "service_type": "group",
+            "individual_cost": 25.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "08:00:00",
+            "arrive_date": "2026-03-06",
+            "arrive_time": "20:11:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "ed7bb2e8-c24b-4daf-8a04-3d560747d662",
+            "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+            "service_name": "Machu Picchu \"Conexión Amanecer\"",
+            "service_type": "private",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "dad141c9-a17a-4dc4-957a-79c4233c2428",
+            "service_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+            "service_name": "Salkantay Trek a Machu Picchu",
+            "service_type": "arbitrary",
+            "individual_cost": 125.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "20:13:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "21:13:00",
+            "notes": null
+          }
+        ],
+        "photos": []
+      },
+      {
+        "id": "e2b9f682-8c8b-42fc-90b5-e638263de8e7",
+        "full_name": "Mario Maria",
+        "first_name": "Mario",
+        "last_name": "Maria",
+        "email": "maria@example.com",
+        "phone_number": null,
+        "passport_number": null,
+        "birth_date": null,
+        "nationality": null,
+        "is_generic": false,
+        "total_cost": 540.0,
+        "services_count": 4,
+        "services": [
+          {
+            "service_quote_person_id": "7915b9aa-3c71-40a2-8dc6-5daf5de11f9a",
+            "service_id": "553847c6-44b9-4f18-9870-b462943ab202",
+            "service_name": "City Tour Cusco",
+            "service_type": "group",
+            "individual_cost": 25.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "08:00:00",
+            "arrive_date": "2026-03-06",
+            "arrive_time": "20:11:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "248e4aea-7bb1-4dcd-b6e6-3b2fcd0de130",
+            "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+            "service_name": "Valle Sagrado de los Incas (Vip)",
+            "service_type": "private",
+            "individual_cost": 115.0,
+            "departure_date": "2026-03-03",
+            "departure_time": "20:16:00",
+            "arrive_date": "2026-03-19",
+            "arrive_time": "20:17:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "73ac7f8a-ddad-4097-9b2c-8cb59e93773e",
+            "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+            "service_name": "Machu Picchu \"Conexión Amanecer\"",
+            "service_type": "private",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "23e6cc61-623e-4b48-94b9-503a10acb3ab",
+            "service_id": "7da1b512-b886-4471-bf14-f7b295990532",
+            "service_name": "El Camino del Apu Ausangate",
+            "service_type": "group",
+            "individual_cost": 250.0,
+            "departure_date": "2026-03-24",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "20:16:00",
+            "notes": null
+          }
+        ],
+        "photos": []
+      },
+      {
+        "id": "2e9a70d4-e9c4-4c59-9f11-4f89acc2d14d",
+        "full_name": "Pasajero Temp temp-2",
+        "first_name": "Pasajero",
+        "last_name": "Temp temp-2",
+        "email": "temp.0310d22f@sys.local",
+        "phone_number": null,
+        "passport_number": null,
+        "birth_date": null,
+        "nationality": null,
+        "is_generic": true,
+        "total_cost": 540.0,
+        "services_count": 4,
+        "services": [
+          {
+            "service_quote_person_id": "f8939de2-eab6-49f6-b861-114d4c4e6926",
+            "service_id": "553847c6-44b9-4f18-9870-b462943ab202",
+            "service_name": "City Tour Cusco",
+            "service_type": "group",
+            "individual_cost": 25.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "08:00:00",
+            "arrive_date": "2026-03-06",
+            "arrive_time": "20:11:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "678ceab6-b874-4013-958a-8597c45aec2f",
+            "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+            "service_name": "Valle Sagrado de los Incas (Vip)",
+            "service_type": "private",
+            "individual_cost": 115.0,
+            "departure_date": "2026-03-03",
+            "departure_time": "20:16:00",
+            "arrive_date": "2026-03-19",
+            "arrive_time": "20:17:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "7665f609-be2c-4ce8-b3c1-085028b7e61e",
+            "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+            "service_name": "Machu Picchu \"Conexión Amanecer\"",
+            "service_type": "private",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "afa1343c-9df9-4df6-b143-ae9ed295514a",
+            "service_id": "7da1b512-b886-4471-bf14-f7b295990532",
+            "service_name": "El Camino del Apu Ausangate",
+            "service_type": "group",
+            "individual_cost": 250.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "09:00:00",
+            "arrive_date": "2026-04-02",
+            "arrive_time": "20:36:00",
+            "notes": null
+          }
+        ],
+        "photos": []
+      },
+      {
+        "id": "28497a1f-d82c-4291-8790-7e5a1d9e929d",
+        "full_name": "Cristian Monzon Guzman",
+        "first_name": "Cristian",
+        "last_name": "Monzon Guzman",
+        "email": "cristian-02-@live.com",
+        "phone_number": "940576340",
+        "passport_number": "AEF8799238",
+        "birth_date": null,
+        "nationality": "PE",
+        "is_generic": false,
+        "total_cost": 415.0,
+        "services_count": 4,
+        "services": [
+          {
+            "service_quote_person_id": "6ebdb674-c240-429a-9d8d-e8d450d81d2c",
+            "service_id": "553847c6-44b9-4f18-9870-b462943ab202",
+            "service_name": "City Tour Cusco",
+            "service_type": "group",
+            "individual_cost": 25.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "08:00:00",
+            "arrive_date": "2026-03-06",
+            "arrive_time": "20:11:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "ac2d76e7-6d3f-4b36-a3fe-c156660f2816",
+            "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+            "service_name": "Valle Sagrado de los Incas (Vip)",
+            "service_type": "private",
+            "individual_cost": 115.0,
+            "departure_date": "2026-03-03",
+            "departure_time": "20:16:00",
+            "arrive_date": "2026-03-19",
+            "arrive_time": "20:17:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "b03a00a7-1701-4aed-bd73-469e20bc181d",
+            "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+            "service_name": "Machu Picchu \"Conexión Amanecer\"",
+            "service_type": "private",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "938ce35e-c847-41cb-8ab6-ec1d89da764c",
+            "service_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+            "service_name": "Salkantay Trek a Machu Picchu",
+            "service_type": "arbitrary",
+            "individual_cost": 125.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "20:13:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "21:13:00",
+            "notes": null
+          }
+        ],
+        "photos": []
+      },
+      {
+        "id": "83aea660-c830-460d-bef9-e0e87f347bd0",
+        "full_name": "Pasajero Temp temp-5",
+        "first_name": "Pasajero",
+        "last_name": "Temp temp-5",
+        "email": "temp.c9c58cc3@sys.local",
+        "phone_number": null,
+        "passport_number": null,
+        "birth_date": null,
+        "nationality": null,
+        "is_generic": true,
+        "total_cost": 515.0,
+        "services_count": 3,
+        "services": [
+          {
+            "service_quote_person_id": "77094529-782f-4ae3-8408-edbcd3afa378",
+            "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+            "service_name": "Valle Sagrado de los Incas (Vip)",
+            "service_type": "private",
+            "individual_cost": 115.0,
+            "departure_date": "2026-03-03",
+            "departure_time": "20:16:00",
+            "arrive_date": "2026-03-19",
+            "arrive_time": "20:17:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "c1e94e46-59de-4f20-9f34-c02dd3a62b68",
+            "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+            "service_name": "Machu Picchu \"Conexión Amanecer\"",
+            "service_type": "private",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "17f3612b-0d09-4260-86ed-02d4ed9de4eb",
+            "service_id": "7da1b512-b886-4471-bf14-f7b295990532",
+            "service_name": "El Camino del Apu Ausangate",
+            "service_type": "group",
+            "individual_cost": 250.0,
+            "departure_date": "2026-03-24",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "20:16:00",
+            "notes": null
+          }
+        ],
+        "photos": []
+      },
+      {
+        "id": "bd8f423d-3422-45ee-bbb7-6f775f9c11c4",
+        "full_name": "Jose Maria",
+        "first_name": "Jose",
+        "last_name": "Maria",
+        "email": "Jose@example.com",
+        "phone_number": "",
+        "passport_number": "",
+        "birth_date": null,
+        "nationality": "CL",
+        "is_generic": false,
+        "total_cost": 515.0,
+        "services_count": 3,
+        "services": [
+          {
+            "service_quote_person_id": "f06d0787-1856-426f-9d16-8a52f7b96848",
+            "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+            "service_name": "Valle Sagrado de los Incas (Vip)",
+            "service_type": "private",
+            "individual_cost": 115.0,
+            "departure_date": "2026-03-03",
+            "departure_time": "20:16:00",
+            "arrive_date": "2026-03-19",
+            "arrive_time": "20:17:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "d2089327-2d0f-43dc-95d1-26d945af18d7",
+            "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+            "service_name": "Machu Picchu \"Conexión Amanecer\"",
+            "service_type": "private",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "bef465fa-8767-4fbc-ba4a-5e34f16f890a",
+            "service_id": "7da1b512-b886-4471-bf14-f7b295990532",
+            "service_name": "El Camino del Apu Ausangate",
+            "service_type": "group",
+            "individual_cost": 250.0,
+            "departure_date": "2026-03-24",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "20:16:00",
+            "notes": null
+          }
+        ],
+        "photos": []
+      },
+      {
+        "id": "46bbf972-5677-4e46-8f71-0450e729d25a",
+        "full_name": "Pasajero Temp temp-1",
+        "first_name": "Pasajero",
+        "last_name": "Temp temp-1",
+        "email": "temp.6dca7786@sys.local",
+        "phone_number": null,
+        "passport_number": null,
+        "birth_date": null,
+        "nationality": null,
+        "is_generic": true,
+        "total_cost": 390.0,
+        "services_count": 3,
+        "services": [
+          {
+            "service_quote_person_id": "2af17790-a042-4951-98fa-bdea56881f2d",
+            "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+            "service_name": "Valle Sagrado de los Incas (Vip)",
+            "service_type": "private",
+            "individual_cost": 115.0,
+            "departure_date": "2026-03-03",
+            "departure_time": "20:16:00",
+            "arrive_date": "2026-03-19",
+            "arrive_time": "20:17:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "c2452895-bab3-40e6-b5db-1f1830ea8d02",
+            "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+            "service_name": "Machu Picchu \"Conexión Amanecer\"",
+            "service_type": "private",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "868838d2-9444-4a25-bdba-c43bba9ca653",
+            "service_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+            "service_name": "Salkantay Trek a Machu Picchu",
+            "service_type": "arbitrary",
+            "individual_cost": 125.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "20:13:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "21:13:00",
+            "notes": null
+          }
+        ],
+        "photos": []
+      },
+      {
+        "id": "fb4740fc-a415-42aa-a535-497956a3198f",
+        "full_name": "Luis Bustamante",
+        "first_name": "Luis",
+        "last_name": "Bustamante",
+        "email": "luis@example.com",
+        "phone_number": "940786777",
+        "passport_number": "",
+        "birth_date": null,
+        "nationality": "EE",
+        "is_generic": false,
+        "total_cost": 525.0,
+        "services_count": 3,
+        "services": [
+          {
+            "service_quote_person_id": "141fc31b-b6c0-4c51-ac28-180009c28fa1",
+            "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+            "service_name": "Machu Picchu \"Conexión Amanecer\"",
+            "service_type": "private",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "84d9ed7c-930a-4c83-99a0-331feeef13be",
+            "service_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+            "service_name": "Salkantay Trek a Machu Picchu",
+            "service_type": "arbitrary",
+            "individual_cost": 125.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "20:13:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "21:13:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "f9fb495e-7c65-47b4-bac2-86e932f3a75b",
+            "service_id": "7da1b512-b886-4471-bf14-f7b295990532",
+            "service_name": "El Camino del Apu Ausangate",
+            "service_type": "group",
+            "individual_cost": 250.0,
+            "departure_date": "2026-03-24",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "20:16:00",
+            "notes": null
+          }
+        ],
+        "photos": []
+      }
+    ],
+    "services_detail": [
+      {
+        "id": "553847c6-44b9-4f18-9870-b462943ab202",
+        "title": "City Tour Cusco",
+        "type": "group",
+        "duration_value": 5,
+        "duration_unit": "hours",
+        "summary": "<p>La&nbsp;introducción&nbsp;perfecta&nbsp;a&nbsp;la&nbsp;capital&nbsp;imperial.&nbsp;Este&nbsp;recorrido&nbsp;combina&nbsp;la&nbsp;riqueza&nbsp;colonial&nbsp;del&nbsp;centro&nbsp;de&nbsp;la&nbsp;ciudad&nbsp;con&nbsp;la&nbsp;monumentalidad&nbsp;de&nbsp;los&nbsp;centros&nbsp;arqueológicos&nbsp;periféricos,&nbsp;permitiéndole&nbsp;entender&nbsp;la&nbsp;superposición&nbsp;de&nbsp;culturas&nbsp;en&nbsp;el&nbsp;ombligo&nbsp;del&nbsp;mundo.</p>",
+        "includes": "<ul><li>Guía&nbsp;profesional&nbsp;bilingüe&nbsp;(Español/Inglés).</li><li>Transporte&nbsp;turístico&nbsp;moderno&nbsp;con&nbsp;conductor&nbsp;profesional.</li><li>Recojo&nbsp;del&nbsp;punto&nbsp;de&nbsp;encuentro&nbsp;céntrico.</li></ul>",
+        "excludes": "<ul><li>Boleto&nbsp;Turístico&nbsp;del&nbsp;Cusco&nbsp;(BTG).</li><li>Entrada&nbsp;al&nbsp;Templo&nbsp;del&nbsp;Qoricancha&nbsp;(20&nbsp;soles).</li><li>Alimentación&nbsp;y&nbsp;gastos&nbsp;personales.</li></ul>",
+        "departure_time": "09:00:00",
+        "reference_price": 25.0,
+        "pricing_info": {
+          "type": "group",
+          "reference_price": 25.0,
+          "description": "Precio por persona (grupo)"
+        },
+        "persons_in_service": [
+          {
+            "service_quote_person_id": "ffd0727c-ce8a-4def-a5c4-bbb7c313b062",
+            "person_id": "cb5788e3-827d-42bb-ac31-394aabc4a7a4",
+            "person_name": "Pepe Pepe",
+            "individual_cost": 25.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "08:00:00",
+            "arrive_date": "2026-03-06",
+            "arrive_time": "20:11:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "7915b9aa-3c71-40a2-8dc6-5daf5de11f9a",
+            "person_id": "e2b9f682-8c8b-42fc-90b5-e638263de8e7",
+            "person_name": "Mario Maria",
+            "individual_cost": 25.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "08:00:00",
+            "arrive_date": "2026-03-06",
+            "arrive_time": "20:11:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "f8939de2-eab6-49f6-b861-114d4c4e6926",
+            "person_id": "2e9a70d4-e9c4-4c59-9f11-4f89acc2d14d",
+            "person_name": "Pasajero Temp temp-2",
+            "individual_cost": 25.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "08:00:00",
+            "arrive_date": "2026-03-06",
+            "arrive_time": "20:11:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "6ebdb674-c240-429a-9d8d-e8d450d81d2c",
+            "person_id": "28497a1f-d82c-4291-8790-7e5a1d9e929d",
+            "person_name": "Cristian Monzon Guzman",
+            "individual_cost": 25.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "08:00:00",
+            "arrive_date": "2026-03-06",
+            "arrive_time": "20:11:00",
+            "notes": null
+          }
+        ],
+        "total_cost_for_service": 100.0,
+        "people_count": 4,
+        "itineraries": [
+          {
+            "id": "d4b0b3b7-8785-4bba-8b5d-06c56b5483c2",
+            "title": "09:00 AM",
+            "description": "<p>Visita&nbsp;guiada&nbsp;al&nbsp;Templo&nbsp;del&nbsp;Sol&nbsp;(Qoricancha).</p>",
+            "created_at": "2026-02-24T20:51:47.763531Z"
+          },
+          {
+            "id": "a5eb79ff-37eb-44e3-aeb4-84a20dfa283e",
+            "title": "10:30 AM",
+            "description": "<p>Traslado&nbsp;y&nbsp;recorrido&nbsp;por&nbsp;la&nbsp;fortaleza&nbsp;de&nbsp;Sacsayhuaman.</p>",
+            "created_at": "2026-02-24T20:51:47.765616Z"
+          },
+          {
+            "id": "519f8dda-3280-4c2d-ad1d-4b69eea6b510",
+            "title": "11:30 AM",
+            "description": "<p>Visita&nbsp;al&nbsp;centro&nbsp;ritual&nbsp;de&nbsp;Qenqo.</p>",
+            "created_at": "2026-02-24T20:51:47.766317Z"
+          },
+          {
+            "id": "2bad7dfd-6e61-49c0-abc0-4b26ea2d7c1d",
+            "title": "12:15 PM",
+            "description": "<p>Parada&nbsp;en&nbsp;Puca&nbsp;Pucara&nbsp;(Fortaleza&nbsp;Roja).</p>",
+            "created_at": "2026-02-24T20:51:47.767019Z"
+          },
+          {
+            "id": "47f2ac2a-91f6-4ecf-895d-75a393ca6341",
+            "title": "12:45 PM",
+            "description": "<p>Visita&nbsp;a&nbsp;las&nbsp;fuentes&nbsp;ceremoniales&nbsp;de&nbsp;Tambomachay.</p>",
+            "created_at": "2026-02-24T20:51:47.767698Z"
+          },
+          {
+            "id": "a5d12cdb-efe8-47ed-b195-ef618ed0847a",
+            "title": "02:00 PM",
+            "description": "<p>Retorno&nbsp;al&nbsp;centro&nbsp;de&nbsp;Cusco.</p>",
+            "created_at": "2026-02-24T20:51:47.768347Z"
+          }
+        ],
+        "photos": [
+          {
+            "id": "7bc4356e-d0ff-4b97-bcbe-d9a156726b5d",
+            "type": "image",
+            "title": "Cover",
+            "description": "Service cover image",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/imagen_1.webp",
+            "is_cover": true
+          },
+          {
+            "id": "2fcf28b2-db23-4a75-a854-214623198977",
+            "type": "image",
+            "title": "Media 4",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/imagen_5.webp",
+            "is_cover": false
+          },
+          {
+            "id": "5ef3666c-bf60-48d4-83fc-0a9f51395f55",
+            "type": "image",
+            "title": "Media 3",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/imagen_4.webp",
+            "is_cover": false
+          },
+          {
+            "id": "ffb249c8-8934-4591-8635-d7e00c089f92",
+            "type": "image",
+            "title": "Media 2",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/imagen_3.webp",
+            "is_cover": false
+          },
+          {
+            "id": "a71c6f47-622c-45fa-9bab-f0f8f708b48f",
+            "type": "image",
+            "title": "Media 1",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/imagen_2.webp",
+            "is_cover": false
+          }
+        ],
+        "tags": [
+          {
+            "id": "9f49912a-9809-45e1-ab9c-b67f4ddf132c",
+            "name": "Historico"
+          },
+          {
+            "id": "04a995be-55a8-428c-b2b7-2f1b8fa2784a",
+            "name": "Trekking"
+          }
+        ]
+      },
+      {
+        "id": "d427b527-1019-4de7-979f-e2f9780af28c",
+        "title": "Valle Sagrado de los Incas (Vip)",
+        "type": "private",
+        "duration_value": 2,
+        "duration_unit": "days",
+        "summary": "<p>Un&nbsp;recorrido&nbsp;profundo&nbsp;por&nbsp;el&nbsp;valle&nbsp;más&nbsp;fértil&nbsp;de&nbsp;los&nbsp;Andes,&nbsp;visitando&nbsp;laboratorios&nbsp;agrícolas&nbsp;y&nbsp;pueblos&nbsp;que&nbsp;mantienen&nbsp;viva&nbsp;la&nbsp;cultura&nbsp;inca.</p>",
+        "includes": "<ul><li>Transporte&nbsp;turístico&nbsp;para&nbsp;todos&nbsp;los&nbsp;traslados.</li><li>Almuerzo&nbsp;buffet&nbsp;en&nbsp;Urubamba.</li><li>Guía&nbsp;certificado.</li></ul><p></p>",
+        "excludes": "<ul><li>Boleto&nbsp;Turístico&nbsp;Integral&nbsp;(130&nbsp;soles).</li><li>Gastos&nbsp;en&nbsp;mercados&nbsp;artesanales.</li></ul>",
+        "departure_time": "09:00:00",
+        "reference_price": 240.0,
+        "pricing_info": {
+          "type": "private",
+          "rules": [
+            {
+              "id": "2dfebbe8-993a-4bac-b105-8faba16aae70",
+              "concept": "Guia",
+              "amount": 150.0,
+              "calculation_type": "divide",
+              "description": "Dividido entre personas"
+            },
+            {
+              "id": "c2a18db1-daee-4784-837f-50ab0f380cb4",
+              "concept": "Transporte",
+              "amount": 40.0,
+              "calculation_type": "multiply",
+              "description": "Por persona"
+            },
+            {
+              "id": "3704d36f-080e-4dc2-b585-991825007403",
+              "concept": "Comida",
+              "amount": 30.0,
+              "calculation_type": "multiply",
+              "description": "Por persona"
+            },
+            {
+              "id": "ebff5d72-abab-48de-ba4b-942ab07ba3fb",
+              "concept": "Tickets",
+              "amount": 20.0,
+              "calculation_type": "multiply",
+              "description": "Por persona"
+            }
+          ],
+          "description": "Precio calculado según reglas"
+        },
+        "persons_in_service": [
+          {
+            "service_quote_person_id": "77094529-782f-4ae3-8408-edbcd3afa378",
+            "person_id": "83aea660-c830-460d-bef9-e0e87f347bd0",
+            "person_name": "Pasajero Temp temp-5",
+            "individual_cost": 115.0,
+            "departure_date": "2026-03-03",
+            "departure_time": "20:16:00",
+            "arrive_date": "2026-03-19",
+            "arrive_time": "20:17:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "248e4aea-7bb1-4dcd-b6e6-3b2fcd0de130",
+            "person_id": "e2b9f682-8c8b-42fc-90b5-e638263de8e7",
+            "person_name": "Mario Maria",
+            "individual_cost": 115.0,
+            "departure_date": "2026-03-03",
+            "departure_time": "20:16:00",
+            "arrive_date": "2026-03-19",
+            "arrive_time": "20:17:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "f06d0787-1856-426f-9d16-8a52f7b96848",
+            "person_id": "bd8f423d-3422-45ee-bbb7-6f775f9c11c4",
+            "person_name": "Jose Maria",
+            "individual_cost": 115.0,
+            "departure_date": "2026-03-03",
+            "departure_time": "20:16:00",
+            "arrive_date": "2026-03-19",
+            "arrive_time": "20:17:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "678ceab6-b874-4013-958a-8597c45aec2f",
+            "person_id": "2e9a70d4-e9c4-4c59-9f11-4f89acc2d14d",
+            "person_name": "Pasajero Temp temp-2",
+            "individual_cost": 115.0,
+            "departure_date": "2026-03-03",
+            "departure_time": "20:16:00",
+            "arrive_date": "2026-03-19",
+            "arrive_time": "20:17:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "2af17790-a042-4951-98fa-bdea56881f2d",
+            "person_id": "46bbf972-5677-4e46-8f71-0450e729d25a",
+            "person_name": "Pasajero Temp temp-1",
+            "individual_cost": 115.0,
+            "departure_date": "2026-03-03",
+            "departure_time": "20:16:00",
+            "arrive_date": "2026-03-19",
+            "arrive_time": "20:17:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "ac2d76e7-6d3f-4b36-a3fe-c156660f2816",
+            "person_id": "28497a1f-d82c-4291-8790-7e5a1d9e929d",
+            "person_name": "Cristian Monzon Guzman",
+            "individual_cost": 115.0,
+            "departure_date": "2026-03-03",
+            "departure_time": "20:16:00",
+            "arrive_date": "2026-03-19",
+            "arrive_time": "20:17:00",
+            "notes": null
+          }
+        ],
+        "total_cost_for_service": 690.0,
+        "people_count": 6,
+        "itineraries": [
+          {
+            "id": "5f073e6e-6076-4943-afcb-0a35fd4fb99c",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;hacia&nbsp;Chinchero&nbsp;para&nbsp;ver&nbsp;demostraciones&nbsp;textiles.&nbsp;Visita&nbsp;a&nbsp;los&nbsp;laboratorios&nbsp;agrícolas&nbsp;de&nbsp;Moray&nbsp;y&nbsp;las&nbsp;Salineras&nbsp;de&nbsp;Maras.&nbsp;Pernocte&nbsp;en&nbsp;Ollantaytambo&nbsp;o&nbsp;Cusco.</p>",
+            "created_at": "2026-02-24T20:57:33.207470Z"
+          },
+          {
+            "id": "72ea1660-fc41-47bc-ae5a-187409b99c73",
+            "title": "Dia 2",
+            "description": "<p>Exploración&nbsp;de&nbsp;la&nbsp;fortaleza&nbsp;de&nbsp;Ollantaytambo&nbsp;y&nbsp;el&nbsp;mercado&nbsp;de&nbsp;Pisac.&nbsp;Almuerzo&nbsp;buffet&nbsp;incluido&nbsp;en&nbsp;el&nbsp;corazón&nbsp;del&nbsp;Valle.&nbsp;Retorno&nbsp;a&nbsp;Cusco&nbsp;por&nbsp;la&nbsp;tarde.</p>",
+            "created_at": "2026-02-24T20:57:33.208496Z"
+          }
+        ],
+        "photos": [
+          {
+            "id": "26e40d05-a40e-4e3f-96fc-30270574e3f8",
+            "type": "image",
+            "title": "Cover",
+            "description": "Service cover image",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_3.webp",
+            "is_cover": true
+          },
+          {
+            "id": "aebe7690-f676-469b-b985-7cf33daa9725",
+            "type": "image",
+            "title": "Media 4",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_5.webp",
+            "is_cover": false
+          },
+          {
+            "id": "65087896-57c4-44e7-ba10-5312c11d6345",
+            "type": "image",
+            "title": "Media 3",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_4.webp",
+            "is_cover": false
+          },
+          {
+            "id": "d9500639-f8aa-436b-84ff-368ce3d8ea85",
+            "type": "image",
+            "title": "Media 2",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_2.webp",
+            "is_cover": false
+          },
+          {
+            "id": "8109ba85-cea3-46de-939b-d56184db732f",
+            "type": "image",
+            "title": "Media 1",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_1.webp",
+            "is_cover": false
+          }
+        ],
+        "tags": [
+          {
+            "id": "71f5ab05-0b07-4849-bc88-fc3935897a08",
+            "name": "Aventura"
+          },
+          {
+            "id": "9f49912a-9809-45e1-ab9c-b67f4ddf132c",
+            "name": "Historico"
+          },
+          {
+            "id": "04a995be-55a8-428c-b2b7-2f1b8fa2784a",
+            "name": "Trekking"
+          }
+        ]
+      },
+      {
+        "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+        "title": "Machu Picchu \"Conexión Amanecer\"",
+        "type": "private",
+        "duration_value": 2,
+        "duration_unit": "days",
+        "summary": "<p>La&nbsp;experiencia&nbsp;completa&nbsp;para&nbsp;visitar&nbsp;la&nbsp;maravilla&nbsp;del&nbsp;mundo&nbsp;sin&nbsp;el&nbsp;agotamiento&nbsp;de&nbsp;ir&nbsp;y&nbsp;volver&nbsp;el&nbsp;mismo&nbsp;día.</p>",
+        "includes": "<ul><li>Tickets&nbsp;de&nbsp;tren&nbsp;(Ida&nbsp;y&nbsp;Vuelta).</li><li>1&nbsp;noche&nbsp;de&nbsp;alojamiento&nbsp;en&nbsp;Aguas&nbsp;Calientes.</li><li>Entrada&nbsp;a&nbsp;Machu&nbsp;Picchu&nbsp;y&nbsp;bus&nbsp;Consettur.</li><li>Guía&nbsp;profesional&nbsp;bilingüe.</li></ul>",
+        "excludes": "<ul><li>Entrada&nbsp;a&nbsp;Huayna&nbsp;Picchu&nbsp;(opcional).</li><li>Almuerzos&nbsp;y&nbsp;cenas&nbsp;no&nbsp;especificados.</li></ul>",
+        "departure_time": "08:00:00",
+        "reference_price": 360.0,
+        "pricing_info": {
+          "type": "private",
+          "rules": [
+            {
+              "id": "52ee8be8-c502-4b43-bc44-dae3bd584ba5",
+              "concept": "Guia",
+              "amount": 240.0,
+              "calculation_type": "divide",
+              "description": "Dividido entre personas"
+            },
+            {
+              "id": "d9f77dd7-f008-44f7-83fe-fd3a63f39468",
+              "concept": "Transporte",
+              "amount": 60.0,
+              "calculation_type": "multiply",
+              "description": "Por persona"
+            },
+            {
+              "id": "b1b9f1e7-a23a-48c3-b42a-2b6ee62fd581",
+              "concept": "Tickets",
+              "amount": 30.0,
+              "calculation_type": "multiply",
+              "description": "Por persona"
+            },
+            {
+              "id": "49ce95d2-172f-47f4-88d6-5a72f6d49861",
+              "concept": "Comida",
+              "amount": 30.0,
+              "calculation_type": "multiply",
+              "description": "Por persona"
+            }
+          ],
+          "description": "Precio calculado según reglas"
+        },
+        "persons_in_service": [
+          {
+            "service_quote_person_id": "ed7bb2e8-c24b-4daf-8a04-3d560747d662",
+            "person_id": "cb5788e3-827d-42bb-ac31-394aabc4a7a4",
+            "person_name": "Pepe Pepe",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "141fc31b-b6c0-4c51-ac28-180009c28fa1",
+            "person_id": "fb4740fc-a415-42aa-a535-497956a3198f",
+            "person_name": "Luis Bustamante",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "c1e94e46-59de-4f20-9f34-c02dd3a62b68",
+            "person_id": "83aea660-c830-460d-bef9-e0e87f347bd0",
+            "person_name": "Pasajero Temp temp-5",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "73ac7f8a-ddad-4097-9b2c-8cb59e93773e",
+            "person_id": "e2b9f682-8c8b-42fc-90b5-e638263de8e7",
+            "person_name": "Mario Maria",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "d2089327-2d0f-43dc-95d1-26d945af18d7",
+            "person_id": "bd8f423d-3422-45ee-bbb7-6f775f9c11c4",
+            "person_name": "Jose Maria",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "7665f609-be2c-4ce8-b3c1-085028b7e61e",
+            "person_id": "2e9a70d4-e9c4-4c59-9f11-4f89acc2d14d",
+            "person_name": "Pasajero Temp temp-2",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "c2452895-bab3-40e6-b5db-1f1830ea8d02",
+            "person_id": "46bbf972-5677-4e46-8f71-0450e729d25a",
+            "person_name": "Pasajero Temp temp-1",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "b03a00a7-1701-4aed-bd73-469e20bc181d",
+            "person_id": "28497a1f-d82c-4291-8790-7e5a1d9e929d",
+            "person_name": "Cristian Monzon Guzman",
+            "individual_cost": 150.0,
+            "departure_date": "2026-03-01",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-07",
+            "arrive_time": "20:16:00",
+            "notes": null
+          }
+        ],
+        "total_cost_for_service": 1200.0,
+        "people_count": 8,
+        "itineraries": [
+          {
+            "id": "c7533408-f619-46ec-8deb-efde988df291",
+            "title": "Dia 1",
+            "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>",
+            "created_at": "2026-02-24T21:10:34.959665Z"
+          },
+          {
+            "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+            "title": "Dia 2",
+            "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>",
+            "created_at": "2026-02-24T21:10:34.960650Z"
+          }
+        ],
+        "photos": [
+          {
+            "id": "b74c2553-d7e9-46b2-ae73-1dc99dd3af5d",
+            "type": "image",
+            "title": "Cover",
+            "description": "Service cover image",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_5_pLtRPAY.webp",
+            "is_cover": true
+          },
+          {
+            "id": "b5f9320f-d854-4ddb-8f7a-1dff084acd2a",
+            "type": "image",
+            "title": "Media 4",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_4_w0i5QEQ.webp",
+            "is_cover": false
+          },
+          {
+            "id": "ddb33e03-78b2-4502-adc5-51ab6f3f2e88",
+            "type": "image",
+            "title": "Media 3",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_3_GVie4xX.webp",
+            "is_cover": false
+          },
+          {
+            "id": "0b2258ea-ea06-4567-869d-80010b257a8d",
+            "type": "image",
+            "title": "Media 2",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_2_CFlfgPt.webp",
+            "is_cover": false
+          },
+          {
+            "id": "30e235a7-655b-4c11-b347-a2802abcf269",
+            "type": "image",
+            "title": "Media 1",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_1_Vlf0mx7.webp",
+            "is_cover": false
+          }
+        ],
+        "tags": [
+          {
+            "id": "71f5ab05-0b07-4849-bc88-fc3935897a08",
+            "name": "Aventura"
+          },
+          {
+            "id": "9f49912a-9809-45e1-ab9c-b67f4ddf132c",
+            "name": "Historico"
+          },
+          {
+            "id": "04a995be-55a8-428c-b2b7-2f1b8fa2784a",
+            "name": "Trekking"
+          }
+        ]
+      },
+      {
+        "id": "0e629236-9d16-449e-9b8c-d05e75918090",
+        "title": "Salkantay Trek a Machu Picchu",
+        "type": "arbitrary",
+        "duration_value": 4,
+        "duration_unit": "days",
+        "summary": "<p>Una&nbsp;caminata&nbsp;épica&nbsp;que&nbsp;atraviesa&nbsp;desde&nbsp;picos&nbsp;nevados&nbsp;hasta&nbsp;la&nbsp;densa&nbsp;selva&nbsp;alta,&nbsp;llegando&nbsp;a&nbsp;Machu&nbsp;Picchu&nbsp;por&nbsp;una&nbsp;ruta&nbsp;alternativa.</p>",
+        "includes": "<ul><li>Equipo&nbsp;de&nbsp;camping&nbsp;y&nbsp;cocinero&nbsp;de&nbsp;montaña.</li><li>Mulas&nbsp;para&nbsp;carga&nbsp;de&nbsp;equipaje.</li><li>Todas&nbsp;las&nbsp;comidas&nbsp;durante&nbsp;la&nbsp;ruta.</li><li>Entrada&nbsp;a&nbsp;Machu&nbsp;Picchu&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno.</li></ul>",
+        "excludes": "<ul><li>Bolsa&nbsp;de&nbsp;dormir&nbsp;(Sleeping&nbsp;bag).</li><li>Caballo&nbsp;de&nbsp;silla&nbsp;personal.</li></ul>",
+        "departure_time": "10:00:00",
+        "reference_price": 420.0,
+        "pricing_info": {
+          "type": "arbitrary",
+          "tiers": [
+            {
+              "id": "8cfed8a9-d057-4da0-972f-1381048cc205",
+              "min_people": 1,
+              "max_people": 2,
+              "total_price": 420.0,
+              "price_per_person": 420.0
+            },
+            {
+              "id": "810c102b-3b6b-42b7-8dcc-0b4d8681540a",
+              "min_people": 2,
+              "max_people": 4,
+              "total_price": 500.0,
+              "price_per_person": 250.0
+            },
+            {
+              "id": "3c3968b3-b078-4470-abb9-e5476e519e83",
+              "min_people": 5,
+              "max_people": 8,
+              "total_price": 1000.0,
+              "price_per_person": 200.0
+            }
+          ],
+          "description": "Precio según número de personas"
+        },
+        "persons_in_service": [
+          {
+            "service_quote_person_id": "84d9ed7c-930a-4c83-99a0-331feeef13be",
+            "person_id": "fb4740fc-a415-42aa-a535-497956a3198f",
+            "person_name": "Luis Bustamante",
+            "individual_cost": 125.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "20:13:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "21:13:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "dad141c9-a17a-4dc4-957a-79c4233c2428",
+            "person_id": "cb5788e3-827d-42bb-ac31-394aabc4a7a4",
+            "person_name": "Pepe Pepe",
+            "individual_cost": 125.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "20:13:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "21:13:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "868838d2-9444-4a25-bdba-c43bba9ca653",
+            "person_id": "46bbf972-5677-4e46-8f71-0450e729d25a",
+            "person_name": "Pasajero Temp temp-1",
+            "individual_cost": 125.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "20:13:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "21:13:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "938ce35e-c847-41cb-8ab6-ec1d89da764c",
+            "person_id": "28497a1f-d82c-4291-8790-7e5a1d9e929d",
+            "person_name": "Cristian Monzon Guzman",
+            "individual_cost": 125.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "20:13:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "21:13:00",
+            "notes": null
+          }
+        ],
+        "total_cost_for_service": 500.0,
+        "people_count": 4,
+        "itineraries": [
+          {
+            "id": "5baaaa3d-9c77-461b-a32f-00b47d575cdf",
+            "title": "Dia 1",
+            "description": "<p>Cusco&nbsp;a&nbsp;Soraypampa.&nbsp;Visita&nbsp;a&nbsp;la&nbsp;Laguna&nbsp;Humantay&nbsp;(4,200m).</p>",
+            "created_at": "2026-02-24T21:27:04.305552Z"
+          },
+          {
+            "id": "518182f7-f255-4aec-b558-d6c89a580164",
+            "title": "Dia 2",
+            "description": "<p>Cruce&nbsp;del&nbsp;Abra&nbsp;Salkantay,&nbsp;el&nbsp;punto&nbsp;más&nbsp;alto,&nbsp;y&nbsp;descenso&nbsp;hacia&nbsp;el&nbsp;bosque&nbsp;nuboso&nbsp;(Chaullay).</p>",
+            "created_at": "2026-02-24T21:27:04.306551Z"
+          },
+          {
+            "id": "6180062f-dd71-486d-bbad-d88f35918016",
+            "title": "Dia 3",
+            "description": "<p>Caminata&nbsp;por&nbsp;el&nbsp;valle&nbsp;de&nbsp;Santa&nbsp;Teresa&nbsp;hacia&nbsp;Hidroeléctrica&nbsp;y&nbsp;finalmente&nbsp;Aguas&nbsp;Calientes.</p>",
+            "created_at": "2026-02-24T21:27:04.307408Z"
+          }
+        ],
+        "photos": [
+          {
+            "id": "e5ffded8-58e3-432a-a9da-8e8d35df27d2",
+            "type": "image",
+            "title": "Cover",
+            "description": "Service cover image",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_5_0DxFd2F.webp",
+            "is_cover": true
+          },
+          {
+            "id": "05eb3e99-2e0a-4184-b128-9ccbfd2b154c",
+            "type": "image",
+            "title": "Media 4",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_4_COjljnw.webp",
+            "is_cover": false
+          },
+          {
+            "id": "9f3a01ac-0ea0-4141-860c-9cb325417c19",
+            "type": "image",
+            "title": "Media 3",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_3_DFJ1Bqh.webp",
+            "is_cover": false
+          },
+          {
+            "id": "28356626-0c72-4381-871b-9f00ad560c23",
+            "type": "image",
+            "title": "Media 2",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_2_1Tv6HrO.webp",
+            "is_cover": false
+          },
+          {
+            "id": "eafed371-7d49-436d-bf1c-74ede9a2e317",
+            "type": "image",
+            "title": "Media 1",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_1_ffhtWdw.webp",
+            "is_cover": false
+          }
+        ],
+        "tags": [
+          {
+            "id": "71f5ab05-0b07-4849-bc88-fc3935897a08",
+            "name": "Aventura"
+          },
+          {
+            "id": "04a995be-55a8-428c-b2b7-2f1b8fa2784a",
+            "name": "Trekking"
+          }
+        ]
+      },
+      {
+        "id": "7da1b512-b886-4471-bf14-f7b295990532",
+        "title": "El Camino del Apu Ausangate",
+        "type": "group",
+        "duration_value": 3,
+        "duration_unit": "days",
+        "summary": "<p>Un&nbsp;tour&nbsp;diseñado&nbsp;para&nbsp;fotógrafos&nbsp;y&nbsp;montañistas&nbsp;que&nbsp;buscan&nbsp;paisajes&nbsp;irreales&nbsp;y&nbsp;la&nbsp;famosa&nbsp;Montaña&nbsp;de&nbsp;Siete&nbsp;Colores.</p>",
+        "includes": "<ul><li>Transporte&nbsp;privado&nbsp;ida&nbsp;y&nbsp;vuelta.</li><li>Alimentación&nbsp;de&nbsp;alta&nbsp;montaña.</li><li>Equipo&nbsp;de&nbsp;primeros&nbsp;auxilios&nbsp;y&nbsp;oxígeno.</li><li>Guía&nbsp;experto&nbsp;en&nbsp;alta&nbsp;montaña.</li></ul>",
+        "excludes": "<ul><li>Entradas&nbsp;a&nbsp;las&nbsp;comunidades&nbsp;locales.</li><li>Alquiler&nbsp;de&nbsp;caballos&nbsp;opcionales.</li></ul>",
+        "departure_time": "09:00:00",
+        "reference_price": 250.0,
+        "pricing_info": {
+          "type": "group",
+          "reference_price": 250.0,
+          "description": "Precio por persona (grupo)"
+        },
+        "persons_in_service": [
+          {
+            "service_quote_person_id": "afa1343c-9df9-4df6-b143-ae9ed295514a",
+            "person_id": "2e9a70d4-e9c4-4c59-9f11-4f89acc2d14d",
+            "person_name": "Pasajero Temp temp-2",
+            "individual_cost": 250.0,
+            "departure_date": "2026-03-02",
+            "departure_time": "09:00:00",
+            "arrive_date": "2026-04-02",
+            "arrive_time": "20:36:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "bef465fa-8767-4fbc-ba4a-5e34f16f890a",
+            "person_id": "bd8f423d-3422-45ee-bbb7-6f775f9c11c4",
+            "person_name": "Jose Maria",
+            "individual_cost": 250.0,
+            "departure_date": "2026-03-24",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "23e6cc61-623e-4b48-94b9-503a10acb3ab",
+            "person_id": "e2b9f682-8c8b-42fc-90b5-e638263de8e7",
+            "person_name": "Mario Maria",
+            "individual_cost": 250.0,
+            "departure_date": "2026-03-24",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "f9fb495e-7c65-47b4-bac2-86e932f3a75b",
+            "person_id": "fb4740fc-a415-42aa-a535-497956a3198f",
+            "person_name": "Luis Bustamante",
+            "individual_cost": 250.0,
+            "departure_date": "2026-03-24",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "20:16:00",
+            "notes": null
+          },
+          {
+            "service_quote_person_id": "17f3612b-0d09-4260-86ed-02d4ed9de4eb",
+            "person_id": "83aea660-c830-460d-bef9-e0e87f347bd0",
+            "person_name": "Pasajero Temp temp-5",
+            "individual_cost": 250.0,
+            "departure_date": "2026-03-24",
+            "departure_time": "20:15:00",
+            "arrive_date": "2026-05-14",
+            "arrive_time": "20:16:00",
+            "notes": null
+          }
+        ],
+        "total_cost_for_service": 1250.0,
+        "people_count": 5,
+        "itineraries": [
+          {
+            "id": "88ebb82a-b947-4d82-b8d8-ad993bde6c90",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;de&nbsp;Cusco&nbsp;hacia&nbsp;Upis,&nbsp;camping&nbsp;al&nbsp;pie&nbsp;del&nbsp;nevado&nbsp;Ausangate&nbsp;con&nbsp;baños&nbsp;termales.</p>",
+            "created_at": "2026-02-24T21:31:28.441193Z"
+          },
+          {
+            "id": "bcebb020-0071-44a0-b12b-1d99d9012687",
+            "title": "Dia 2",
+            "description": "<p>Caminata&nbsp;por&nbsp;pasos&nbsp;de&nbsp;altura&nbsp;rodeando&nbsp;lagunas&nbsp;turquesas&nbsp;(Pucacocha).&nbsp;Campamento&nbsp;cerca&nbsp;de&nbsp;la&nbsp;montaña&nbsp;de&nbsp;colores.</p>",
+            "created_at": "2026-02-24T21:31:28.442258Z"
+          },
+          {
+            "id": "8dd7764f-5342-4e63-921f-7f22726ba4db",
+            "title": "Dia 3",
+            "description": "<p>Llegada&nbsp;a&nbsp;Vinicunca&nbsp;(Montaña&nbsp;Arcoíris)&nbsp;temprano&nbsp;en&nbsp;la&nbsp;mañana&nbsp;antes&nbsp;de&nbsp;la&nbsp;multitud.&nbsp;Descenso&nbsp;y&nbsp;retorno&nbsp;a&nbsp;la&nbsp;ciudad&nbsp;de&nbsp;Cusco.</p><p></p>",
+            "created_at": "2026-02-24T21:31:28.442974Z"
+          }
+        ],
+        "photos": [
+          {
+            "id": "74d46f2b-98ac-4702-8323-35bcafa7a486",
+            "type": "image",
+            "title": "Cover",
+            "description": "Service cover image",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_1_tU5XrRu.webp",
+            "is_cover": true
+          },
+          {
+            "id": "98dd6362-8364-4c72-92de-bb97885b8616",
+            "type": "image",
+            "title": "Media 4",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_5_SILSJH1.webp",
+            "is_cover": false
+          },
+          {
+            "id": "4996695c-ebc5-4603-a12c-2cf5b28a8a0e",
+            "type": "image",
+            "title": "Media 3",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_4_AtQxst5.webp",
+            "is_cover": false
+          },
+          {
+            "id": "ea65b2c6-87a7-426c-9063-1ae7247b168e",
+            "type": "image",
+            "title": "Media 2",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_3_4EP5VZq.webp",
+            "is_cover": false
+          },
+          {
+            "id": "ecec955c-5e54-4343-9b41-a85055eb7312",
+            "type": "image",
+            "title": "Media 1",
+            "description": "",
+            "url": null,
+            "file": "/media_files/media/2026/02/24/image_2_UYr4FjO.webp",
+            "is_cover": false
+          }
+        ],
+        "tags": [
+          {
+            "id": "71f5ab05-0b07-4849-bc88-fc3935897a08",
+            "name": "Aventura"
+          },
+          {
+            "id": "04a995be-55a8-428c-b2b7-2f1b8fa2784a",
+            "name": "Trekking"
+          }
+        ]
+      }
+    ],
+    "itinerary_schedule": [
+      {
+        "service_quote_person_id": "ed7bb2e8-c24b-4daf-8a04-3d560747d662",
+        "departure_date": "2026-03-01",
+        "departure_time": "20:15:00",
+        "arrive_date": "2026-05-07",
+        "arrive_time": "20:16:00",
+        "service": {
+          "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "title": "Machu Picchu \"Conexión Amanecer\"",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>La&nbsp;experiencia&nbsp;completa&nbsp;para&nbsp;visitar&nbsp;la&nbsp;maravilla&nbsp;del&nbsp;mundo&nbsp;sin&nbsp;el&nbsp;agotamiento&nbsp;de&nbsp;ir&nbsp;y&nbsp;volver&nbsp;el&nbsp;mismo&nbsp;día.</p>"
+        },
+        "person": {
+          "id": "cb5788e3-827d-42bb-ac31-394aabc4a7a4",
+          "full_name": "Pepe Pepe"
+        },
+        "cost": 150.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "c7533408-f619-46ec-8deb-efde988df291",
+            "title": "Dia 1",
+            "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+          },
+          {
+            "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+            "title": "Dia 2",
+            "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "141fc31b-b6c0-4c51-ac28-180009c28fa1",
+        "departure_date": "2026-03-01",
+        "departure_time": "20:15:00",
+        "arrive_date": "2026-05-07",
+        "arrive_time": "20:16:00",
+        "service": {
+          "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "title": "Machu Picchu \"Conexión Amanecer\"",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>La&nbsp;experiencia&nbsp;completa&nbsp;para&nbsp;visitar&nbsp;la&nbsp;maravilla&nbsp;del&nbsp;mundo&nbsp;sin&nbsp;el&nbsp;agotamiento&nbsp;de&nbsp;ir&nbsp;y&nbsp;volver&nbsp;el&nbsp;mismo&nbsp;día.</p>"
+        },
+        "person": {
+          "id": "fb4740fc-a415-42aa-a535-497956a3198f",
+          "full_name": "Luis Bustamante"
+        },
+        "cost": 150.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "c7533408-f619-46ec-8deb-efde988df291",
+            "title": "Dia 1",
+            "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+          },
+          {
+            "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+            "title": "Dia 2",
+            "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "c1e94e46-59de-4f20-9f34-c02dd3a62b68",
+        "departure_date": "2026-03-01",
+        "departure_time": "20:15:00",
+        "arrive_date": "2026-05-07",
+        "arrive_time": "20:16:00",
+        "service": {
+          "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "title": "Machu Picchu \"Conexión Amanecer\"",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>La&nbsp;experiencia&nbsp;completa&nbsp;para&nbsp;visitar&nbsp;la&nbsp;maravilla&nbsp;del&nbsp;mundo&nbsp;sin&nbsp;el&nbsp;agotamiento&nbsp;de&nbsp;ir&nbsp;y&nbsp;volver&nbsp;el&nbsp;mismo&nbsp;día.</p>"
+        },
+        "person": {
+          "id": "83aea660-c830-460d-bef9-e0e87f347bd0",
+          "full_name": "Pasajero Temp temp-5"
+        },
+        "cost": 150.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "c7533408-f619-46ec-8deb-efde988df291",
+            "title": "Dia 1",
+            "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+          },
+          {
+            "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+            "title": "Dia 2",
+            "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "73ac7f8a-ddad-4097-9b2c-8cb59e93773e",
+        "departure_date": "2026-03-01",
+        "departure_time": "20:15:00",
+        "arrive_date": "2026-05-07",
+        "arrive_time": "20:16:00",
+        "service": {
+          "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "title": "Machu Picchu \"Conexión Amanecer\"",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>La&nbsp;experiencia&nbsp;completa&nbsp;para&nbsp;visitar&nbsp;la&nbsp;maravilla&nbsp;del&nbsp;mundo&nbsp;sin&nbsp;el&nbsp;agotamiento&nbsp;de&nbsp;ir&nbsp;y&nbsp;volver&nbsp;el&nbsp;mismo&nbsp;día.</p>"
+        },
+        "person": {
+          "id": "e2b9f682-8c8b-42fc-90b5-e638263de8e7",
+          "full_name": "Mario Maria"
+        },
+        "cost": 150.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "c7533408-f619-46ec-8deb-efde988df291",
+            "title": "Dia 1",
+            "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+          },
+          {
+            "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+            "title": "Dia 2",
+            "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "d2089327-2d0f-43dc-95d1-26d945af18d7",
+        "departure_date": "2026-03-01",
+        "departure_time": "20:15:00",
+        "arrive_date": "2026-05-07",
+        "arrive_time": "20:16:00",
+        "service": {
+          "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "title": "Machu Picchu \"Conexión Amanecer\"",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>La&nbsp;experiencia&nbsp;completa&nbsp;para&nbsp;visitar&nbsp;la&nbsp;maravilla&nbsp;del&nbsp;mundo&nbsp;sin&nbsp;el&nbsp;agotamiento&nbsp;de&nbsp;ir&nbsp;y&nbsp;volver&nbsp;el&nbsp;mismo&nbsp;día.</p>"
+        },
+        "person": {
+          "id": "bd8f423d-3422-45ee-bbb7-6f775f9c11c4",
+          "full_name": "Jose Maria"
+        },
+        "cost": 150.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "c7533408-f619-46ec-8deb-efde988df291",
+            "title": "Dia 1",
+            "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+          },
+          {
+            "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+            "title": "Dia 2",
+            "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "7665f609-be2c-4ce8-b3c1-085028b7e61e",
+        "departure_date": "2026-03-01",
+        "departure_time": "20:15:00",
+        "arrive_date": "2026-05-07",
+        "arrive_time": "20:16:00",
+        "service": {
+          "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "title": "Machu Picchu \"Conexión Amanecer\"",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>La&nbsp;experiencia&nbsp;completa&nbsp;para&nbsp;visitar&nbsp;la&nbsp;maravilla&nbsp;del&nbsp;mundo&nbsp;sin&nbsp;el&nbsp;agotamiento&nbsp;de&nbsp;ir&nbsp;y&nbsp;volver&nbsp;el&nbsp;mismo&nbsp;día.</p>"
+        },
+        "person": {
+          "id": "2e9a70d4-e9c4-4c59-9f11-4f89acc2d14d",
+          "full_name": "Pasajero Temp temp-2"
+        },
+        "cost": 150.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "c7533408-f619-46ec-8deb-efde988df291",
+            "title": "Dia 1",
+            "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+          },
+          {
+            "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+            "title": "Dia 2",
+            "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "c2452895-bab3-40e6-b5db-1f1830ea8d02",
+        "departure_date": "2026-03-01",
+        "departure_time": "20:15:00",
+        "arrive_date": "2026-05-07",
+        "arrive_time": "20:16:00",
+        "service": {
+          "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "title": "Machu Picchu \"Conexión Amanecer\"",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>La&nbsp;experiencia&nbsp;completa&nbsp;para&nbsp;visitar&nbsp;la&nbsp;maravilla&nbsp;del&nbsp;mundo&nbsp;sin&nbsp;el&nbsp;agotamiento&nbsp;de&nbsp;ir&nbsp;y&nbsp;volver&nbsp;el&nbsp;mismo&nbsp;día.</p>"
+        },
+        "person": {
+          "id": "46bbf972-5677-4e46-8f71-0450e729d25a",
+          "full_name": "Pasajero Temp temp-1"
+        },
+        "cost": 150.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "c7533408-f619-46ec-8deb-efde988df291",
+            "title": "Dia 1",
+            "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+          },
+          {
+            "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+            "title": "Dia 2",
+            "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "b03a00a7-1701-4aed-bd73-469e20bc181d",
+        "departure_date": "2026-03-01",
+        "departure_time": "20:15:00",
+        "arrive_date": "2026-05-07",
+        "arrive_time": "20:16:00",
+        "service": {
+          "id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "title": "Machu Picchu \"Conexión Amanecer\"",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>La&nbsp;experiencia&nbsp;completa&nbsp;para&nbsp;visitar&nbsp;la&nbsp;maravilla&nbsp;del&nbsp;mundo&nbsp;sin&nbsp;el&nbsp;agotamiento&nbsp;de&nbsp;ir&nbsp;y&nbsp;volver&nbsp;el&nbsp;mismo&nbsp;día.</p>"
+        },
+        "person": {
+          "id": "28497a1f-d82c-4291-8790-7e5a1d9e929d",
+          "full_name": "Cristian Monzon Guzman"
+        },
+        "cost": 150.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "c7533408-f619-46ec-8deb-efde988df291",
+            "title": "Dia 1",
+            "description": "<p>Traslado&nbsp;de&nbsp;Cusco&nbsp;a&nbsp;Ollantaytambo&nbsp;para&nbsp;tomar&nbsp;el&nbsp;tren.&nbsp;Llegada&nbsp;a&nbsp;Aguas&nbsp;Calientes,&nbsp;tarde&nbsp;libre&nbsp;para&nbsp;visitar&nbsp;los&nbsp;baños&nbsp;termales&nbsp;del&nbsp;pueblo.</p>"
+          },
+          {
+            "id": "0f54c4a5-3e6f-4f42-8655-f38aab5180f6",
+            "title": "Dia 2",
+            "description": "<p>Bus&nbsp;muy&nbsp;temprano&nbsp;a&nbsp;la&nbsp;ciudadela.&nbsp;Tour&nbsp;guiado&nbsp;de&nbsp;2.5&nbsp;horas&nbsp;por&nbsp;los&nbsp;puntos&nbsp;clave.&nbsp;Tiempo&nbsp;libre&nbsp;para&nbsp;fotos.&nbsp;Descenso&nbsp;al&nbsp;pueblo&nbsp;y&nbsp;tren&nbsp;de&nbsp;retorno&nbsp;a&nbsp;Cusco.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "ffd0727c-ce8a-4def-a5c4-bbb7c313b062",
+        "departure_date": "2026-03-02",
+        "departure_time": "08:00:00",
+        "arrive_date": "2026-03-06",
+        "arrive_time": "20:11:00",
+        "service": {
+          "id": "553847c6-44b9-4f18-9870-b462943ab202",
+          "title": "City Tour Cusco",
+          "type": "group",
+          "duration_value": 5,
+          "duration_unit": "hours",
+          "summary": "<p>La&nbsp;introducción&nbsp;perfecta&nbsp;a&nbsp;la&nbsp;capital&nbsp;imperial.&nbsp;Este&nbsp;recorrido&nbsp;combina&nbsp;la&nbsp;riqueza&nbsp;colonial&nbsp;del&nbsp;centro&nbsp;de&nbsp;la&nbsp;ciudad&nbsp;con&nbsp;la&nbsp;monumentalidad&nbsp;de&nbsp;los&nbsp;centros&nbsp;arqueológicos&nbsp;periféricos,&nbsp;permitiéndole&nbsp;entender&nbsp;la&nbsp;superposición&nbsp;de&nbsp;culturas&nbsp;en&nbsp;el&nbsp;ombligo&nbsp;del&nbsp;mundo.</p>"
+        },
+        "person": {
+          "id": "cb5788e3-827d-42bb-ac31-394aabc4a7a4",
+          "full_name": "Pepe Pepe"
+        },
+        "cost": 25.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "d4b0b3b7-8785-4bba-8b5d-06c56b5483c2",
+            "title": "09:00 AM",
+            "description": "<p>Visita&nbsp;guiada&nbsp;al&nbsp;Templo&nbsp;del&nbsp;Sol&nbsp;(Qoricancha).</p>"
+          },
+          {
+            "id": "a5eb79ff-37eb-44e3-aeb4-84a20dfa283e",
+            "title": "10:30 AM",
+            "description": "<p>Traslado&nbsp;y&nbsp;recorrido&nbsp;por&nbsp;la&nbsp;fortaleza&nbsp;de&nbsp;Sacsayhuaman.</p>"
+          },
+          {
+            "id": "519f8dda-3280-4c2d-ad1d-4b69eea6b510",
+            "title": "11:30 AM",
+            "description": "<p>Visita&nbsp;al&nbsp;centro&nbsp;ritual&nbsp;de&nbsp;Qenqo.</p>"
+          },
+          {
+            "id": "2bad7dfd-6e61-49c0-abc0-4b26ea2d7c1d",
+            "title": "12:15 PM",
+            "description": "<p>Parada&nbsp;en&nbsp;Puca&nbsp;Pucara&nbsp;(Fortaleza&nbsp;Roja).</p>"
+          },
+          {
+            "id": "47f2ac2a-91f6-4ecf-895d-75a393ca6341",
+            "title": "12:45 PM",
+            "description": "<p>Visita&nbsp;a&nbsp;las&nbsp;fuentes&nbsp;ceremoniales&nbsp;de&nbsp;Tambomachay.</p>"
+          },
+          {
+            "id": "a5d12cdb-efe8-47ed-b195-ef618ed0847a",
+            "title": "02:00 PM",
+            "description": "<p>Retorno&nbsp;al&nbsp;centro&nbsp;de&nbsp;Cusco.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "7915b9aa-3c71-40a2-8dc6-5daf5de11f9a",
+        "departure_date": "2026-03-02",
+        "departure_time": "08:00:00",
+        "arrive_date": "2026-03-06",
+        "arrive_time": "20:11:00",
+        "service": {
+          "id": "553847c6-44b9-4f18-9870-b462943ab202",
+          "title": "City Tour Cusco",
+          "type": "group",
+          "duration_value": 5,
+          "duration_unit": "hours",
+          "summary": "<p>La&nbsp;introducción&nbsp;perfecta&nbsp;a&nbsp;la&nbsp;capital&nbsp;imperial.&nbsp;Este&nbsp;recorrido&nbsp;combina&nbsp;la&nbsp;riqueza&nbsp;colonial&nbsp;del&nbsp;centro&nbsp;de&nbsp;la&nbsp;ciudad&nbsp;con&nbsp;la&nbsp;monumentalidad&nbsp;de&nbsp;los&nbsp;centros&nbsp;arqueológicos&nbsp;periféricos,&nbsp;permitiéndole&nbsp;entender&nbsp;la&nbsp;superposición&nbsp;de&nbsp;culturas&nbsp;en&nbsp;el&nbsp;ombligo&nbsp;del&nbsp;mundo.</p>"
+        },
+        "person": {
+          "id": "e2b9f682-8c8b-42fc-90b5-e638263de8e7",
+          "full_name": "Mario Maria"
+        },
+        "cost": 25.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "d4b0b3b7-8785-4bba-8b5d-06c56b5483c2",
+            "title": "09:00 AM",
+            "description": "<p>Visita&nbsp;guiada&nbsp;al&nbsp;Templo&nbsp;del&nbsp;Sol&nbsp;(Qoricancha).</p>"
+          },
+          {
+            "id": "a5eb79ff-37eb-44e3-aeb4-84a20dfa283e",
+            "title": "10:30 AM",
+            "description": "<p>Traslado&nbsp;y&nbsp;recorrido&nbsp;por&nbsp;la&nbsp;fortaleza&nbsp;de&nbsp;Sacsayhuaman.</p>"
+          },
+          {
+            "id": "519f8dda-3280-4c2d-ad1d-4b69eea6b510",
+            "title": "11:30 AM",
+            "description": "<p>Visita&nbsp;al&nbsp;centro&nbsp;ritual&nbsp;de&nbsp;Qenqo.</p>"
+          },
+          {
+            "id": "2bad7dfd-6e61-49c0-abc0-4b26ea2d7c1d",
+            "title": "12:15 PM",
+            "description": "<p>Parada&nbsp;en&nbsp;Puca&nbsp;Pucara&nbsp;(Fortaleza&nbsp;Roja).</p>"
+          },
+          {
+            "id": "47f2ac2a-91f6-4ecf-895d-75a393ca6341",
+            "title": "12:45 PM",
+            "description": "<p>Visita&nbsp;a&nbsp;las&nbsp;fuentes&nbsp;ceremoniales&nbsp;de&nbsp;Tambomachay.</p>"
+          },
+          {
+            "id": "a5d12cdb-efe8-47ed-b195-ef618ed0847a",
+            "title": "02:00 PM",
+            "description": "<p>Retorno&nbsp;al&nbsp;centro&nbsp;de&nbsp;Cusco.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "f8939de2-eab6-49f6-b861-114d4c4e6926",
+        "departure_date": "2026-03-02",
+        "departure_time": "08:00:00",
+        "arrive_date": "2026-03-06",
+        "arrive_time": "20:11:00",
+        "service": {
+          "id": "553847c6-44b9-4f18-9870-b462943ab202",
+          "title": "City Tour Cusco",
+          "type": "group",
+          "duration_value": 5,
+          "duration_unit": "hours",
+          "summary": "<p>La&nbsp;introducción&nbsp;perfecta&nbsp;a&nbsp;la&nbsp;capital&nbsp;imperial.&nbsp;Este&nbsp;recorrido&nbsp;combina&nbsp;la&nbsp;riqueza&nbsp;colonial&nbsp;del&nbsp;centro&nbsp;de&nbsp;la&nbsp;ciudad&nbsp;con&nbsp;la&nbsp;monumentalidad&nbsp;de&nbsp;los&nbsp;centros&nbsp;arqueológicos&nbsp;periféricos,&nbsp;permitiéndole&nbsp;entender&nbsp;la&nbsp;superposición&nbsp;de&nbsp;culturas&nbsp;en&nbsp;el&nbsp;ombligo&nbsp;del&nbsp;mundo.</p>"
+        },
+        "person": {
+          "id": "2e9a70d4-e9c4-4c59-9f11-4f89acc2d14d",
+          "full_name": "Pasajero Temp temp-2"
+        },
+        "cost": 25.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "d4b0b3b7-8785-4bba-8b5d-06c56b5483c2",
+            "title": "09:00 AM",
+            "description": "<p>Visita&nbsp;guiada&nbsp;al&nbsp;Templo&nbsp;del&nbsp;Sol&nbsp;(Qoricancha).</p>"
+          },
+          {
+            "id": "a5eb79ff-37eb-44e3-aeb4-84a20dfa283e",
+            "title": "10:30 AM",
+            "description": "<p>Traslado&nbsp;y&nbsp;recorrido&nbsp;por&nbsp;la&nbsp;fortaleza&nbsp;de&nbsp;Sacsayhuaman.</p>"
+          },
+          {
+            "id": "519f8dda-3280-4c2d-ad1d-4b69eea6b510",
+            "title": "11:30 AM",
+            "description": "<p>Visita&nbsp;al&nbsp;centro&nbsp;ritual&nbsp;de&nbsp;Qenqo.</p>"
+          },
+          {
+            "id": "2bad7dfd-6e61-49c0-abc0-4b26ea2d7c1d",
+            "title": "12:15 PM",
+            "description": "<p>Parada&nbsp;en&nbsp;Puca&nbsp;Pucara&nbsp;(Fortaleza&nbsp;Roja).</p>"
+          },
+          {
+            "id": "47f2ac2a-91f6-4ecf-895d-75a393ca6341",
+            "title": "12:45 PM",
+            "description": "<p>Visita&nbsp;a&nbsp;las&nbsp;fuentes&nbsp;ceremoniales&nbsp;de&nbsp;Tambomachay.</p>"
+          },
+          {
+            "id": "a5d12cdb-efe8-47ed-b195-ef618ed0847a",
+            "title": "02:00 PM",
+            "description": "<p>Retorno&nbsp;al&nbsp;centro&nbsp;de&nbsp;Cusco.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "6ebdb674-c240-429a-9d8d-e8d450d81d2c",
+        "departure_date": "2026-03-02",
+        "departure_time": "08:00:00",
+        "arrive_date": "2026-03-06",
+        "arrive_time": "20:11:00",
+        "service": {
+          "id": "553847c6-44b9-4f18-9870-b462943ab202",
+          "title": "City Tour Cusco",
+          "type": "group",
+          "duration_value": 5,
+          "duration_unit": "hours",
+          "summary": "<p>La&nbsp;introducción&nbsp;perfecta&nbsp;a&nbsp;la&nbsp;capital&nbsp;imperial.&nbsp;Este&nbsp;recorrido&nbsp;combina&nbsp;la&nbsp;riqueza&nbsp;colonial&nbsp;del&nbsp;centro&nbsp;de&nbsp;la&nbsp;ciudad&nbsp;con&nbsp;la&nbsp;monumentalidad&nbsp;de&nbsp;los&nbsp;centros&nbsp;arqueológicos&nbsp;periféricos,&nbsp;permitiéndole&nbsp;entender&nbsp;la&nbsp;superposición&nbsp;de&nbsp;culturas&nbsp;en&nbsp;el&nbsp;ombligo&nbsp;del&nbsp;mundo.</p>"
+        },
+        "person": {
+          "id": "28497a1f-d82c-4291-8790-7e5a1d9e929d",
+          "full_name": "Cristian Monzon Guzman"
+        },
+        "cost": 25.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "d4b0b3b7-8785-4bba-8b5d-06c56b5483c2",
+            "title": "09:00 AM",
+            "description": "<p>Visita&nbsp;guiada&nbsp;al&nbsp;Templo&nbsp;del&nbsp;Sol&nbsp;(Qoricancha).</p>"
+          },
+          {
+            "id": "a5eb79ff-37eb-44e3-aeb4-84a20dfa283e",
+            "title": "10:30 AM",
+            "description": "<p>Traslado&nbsp;y&nbsp;recorrido&nbsp;por&nbsp;la&nbsp;fortaleza&nbsp;de&nbsp;Sacsayhuaman.</p>"
+          },
+          {
+            "id": "519f8dda-3280-4c2d-ad1d-4b69eea6b510",
+            "title": "11:30 AM",
+            "description": "<p>Visita&nbsp;al&nbsp;centro&nbsp;ritual&nbsp;de&nbsp;Qenqo.</p>"
+          },
+          {
+            "id": "2bad7dfd-6e61-49c0-abc0-4b26ea2d7c1d",
+            "title": "12:15 PM",
+            "description": "<p>Parada&nbsp;en&nbsp;Puca&nbsp;Pucara&nbsp;(Fortaleza&nbsp;Roja).</p>"
+          },
+          {
+            "id": "47f2ac2a-91f6-4ecf-895d-75a393ca6341",
+            "title": "12:45 PM",
+            "description": "<p>Visita&nbsp;a&nbsp;las&nbsp;fuentes&nbsp;ceremoniales&nbsp;de&nbsp;Tambomachay.</p>"
+          },
+          {
+            "id": "a5d12cdb-efe8-47ed-b195-ef618ed0847a",
+            "title": "02:00 PM",
+            "description": "<p>Retorno&nbsp;al&nbsp;centro&nbsp;de&nbsp;Cusco.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "afa1343c-9df9-4df6-b143-ae9ed295514a",
+        "departure_date": "2026-03-02",
+        "departure_time": "09:00:00",
+        "arrive_date": "2026-04-02",
+        "arrive_time": "20:36:00",
+        "service": {
+          "id": "7da1b512-b886-4471-bf14-f7b295990532",
+          "title": "El Camino del Apu Ausangate",
+          "type": "group",
+          "duration_value": 3,
+          "duration_unit": "days",
+          "summary": "<p>Un&nbsp;tour&nbsp;diseñado&nbsp;para&nbsp;fotógrafos&nbsp;y&nbsp;montañistas&nbsp;que&nbsp;buscan&nbsp;paisajes&nbsp;irreales&nbsp;y&nbsp;la&nbsp;famosa&nbsp;Montaña&nbsp;de&nbsp;Siete&nbsp;Colores.</p>"
+        },
+        "person": {
+          "id": "2e9a70d4-e9c4-4c59-9f11-4f89acc2d14d",
+          "full_name": "Pasajero Temp temp-2"
+        },
+        "cost": 250.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "88ebb82a-b947-4d82-b8d8-ad993bde6c90",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;de&nbsp;Cusco&nbsp;hacia&nbsp;Upis,&nbsp;camping&nbsp;al&nbsp;pie&nbsp;del&nbsp;nevado&nbsp;Ausangate&nbsp;con&nbsp;baños&nbsp;termales.</p>"
+          },
+          {
+            "id": "bcebb020-0071-44a0-b12b-1d99d9012687",
+            "title": "Dia 2",
+            "description": "<p>Caminata&nbsp;por&nbsp;pasos&nbsp;de&nbsp;altura&nbsp;rodeando&nbsp;lagunas&nbsp;turquesas&nbsp;(Pucacocha).&nbsp;Campamento&nbsp;cerca&nbsp;de&nbsp;la&nbsp;montaña&nbsp;de&nbsp;colores.</p>"
+          },
+          {
+            "id": "8dd7764f-5342-4e63-921f-7f22726ba4db",
+            "title": "Dia 3",
+            "description": "<p>Llegada&nbsp;a&nbsp;Vinicunca&nbsp;(Montaña&nbsp;Arcoíris)&nbsp;temprano&nbsp;en&nbsp;la&nbsp;mañana&nbsp;antes&nbsp;de&nbsp;la&nbsp;multitud.&nbsp;Descenso&nbsp;y&nbsp;retorno&nbsp;a&nbsp;la&nbsp;ciudad&nbsp;de&nbsp;Cusco.</p><p></p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "84d9ed7c-930a-4c83-99a0-331feeef13be",
+        "departure_date": "2026-03-02",
+        "departure_time": "20:13:00",
+        "arrive_date": "2026-05-14",
+        "arrive_time": "21:13:00",
+        "service": {
+          "id": "0e629236-9d16-449e-9b8c-d05e75918090",
+          "title": "Salkantay Trek a Machu Picchu",
+          "type": "arbitrary",
+          "duration_value": 4,
+          "duration_unit": "days",
+          "summary": "<p>Una&nbsp;caminata&nbsp;épica&nbsp;que&nbsp;atraviesa&nbsp;desde&nbsp;picos&nbsp;nevados&nbsp;hasta&nbsp;la&nbsp;densa&nbsp;selva&nbsp;alta,&nbsp;llegando&nbsp;a&nbsp;Machu&nbsp;Picchu&nbsp;por&nbsp;una&nbsp;ruta&nbsp;alternativa.</p>"
+        },
+        "person": {
+          "id": "fb4740fc-a415-42aa-a535-497956a3198f",
+          "full_name": "Luis Bustamante"
+        },
+        "cost": 125.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "5baaaa3d-9c77-461b-a32f-00b47d575cdf",
+            "title": "Dia 1",
+            "description": "<p>Cusco&nbsp;a&nbsp;Soraypampa.&nbsp;Visita&nbsp;a&nbsp;la&nbsp;Laguna&nbsp;Humantay&nbsp;(4,200m).</p>"
+          },
+          {
+            "id": "518182f7-f255-4aec-b558-d6c89a580164",
+            "title": "Dia 2",
+            "description": "<p>Cruce&nbsp;del&nbsp;Abra&nbsp;Salkantay,&nbsp;el&nbsp;punto&nbsp;más&nbsp;alto,&nbsp;y&nbsp;descenso&nbsp;hacia&nbsp;el&nbsp;bosque&nbsp;nuboso&nbsp;(Chaullay).</p>"
+          },
+          {
+            "id": "6180062f-dd71-486d-bbad-d88f35918016",
+            "title": "Dia 3",
+            "description": "<p>Caminata&nbsp;por&nbsp;el&nbsp;valle&nbsp;de&nbsp;Santa&nbsp;Teresa&nbsp;hacia&nbsp;Hidroeléctrica&nbsp;y&nbsp;finalmente&nbsp;Aguas&nbsp;Calientes.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "dad141c9-a17a-4dc4-957a-79c4233c2428",
+        "departure_date": "2026-03-02",
+        "departure_time": "20:13:00",
+        "arrive_date": "2026-05-14",
+        "arrive_time": "21:13:00",
+        "service": {
+          "id": "0e629236-9d16-449e-9b8c-d05e75918090",
+          "title": "Salkantay Trek a Machu Picchu",
+          "type": "arbitrary",
+          "duration_value": 4,
+          "duration_unit": "days",
+          "summary": "<p>Una&nbsp;caminata&nbsp;épica&nbsp;que&nbsp;atraviesa&nbsp;desde&nbsp;picos&nbsp;nevados&nbsp;hasta&nbsp;la&nbsp;densa&nbsp;selva&nbsp;alta,&nbsp;llegando&nbsp;a&nbsp;Machu&nbsp;Picchu&nbsp;por&nbsp;una&nbsp;ruta&nbsp;alternativa.</p>"
+        },
+        "person": {
+          "id": "cb5788e3-827d-42bb-ac31-394aabc4a7a4",
+          "full_name": "Pepe Pepe"
+        },
+        "cost": 125.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "5baaaa3d-9c77-461b-a32f-00b47d575cdf",
+            "title": "Dia 1",
+            "description": "<p>Cusco&nbsp;a&nbsp;Soraypampa.&nbsp;Visita&nbsp;a&nbsp;la&nbsp;Laguna&nbsp;Humantay&nbsp;(4,200m).</p>"
+          },
+          {
+            "id": "518182f7-f255-4aec-b558-d6c89a580164",
+            "title": "Dia 2",
+            "description": "<p>Cruce&nbsp;del&nbsp;Abra&nbsp;Salkantay,&nbsp;el&nbsp;punto&nbsp;más&nbsp;alto,&nbsp;y&nbsp;descenso&nbsp;hacia&nbsp;el&nbsp;bosque&nbsp;nuboso&nbsp;(Chaullay).</p>"
+          },
+          {
+            "id": "6180062f-dd71-486d-bbad-d88f35918016",
+            "title": "Dia 3",
+            "description": "<p>Caminata&nbsp;por&nbsp;el&nbsp;valle&nbsp;de&nbsp;Santa&nbsp;Teresa&nbsp;hacia&nbsp;Hidroeléctrica&nbsp;y&nbsp;finalmente&nbsp;Aguas&nbsp;Calientes.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "868838d2-9444-4a25-bdba-c43bba9ca653",
+        "departure_date": "2026-03-02",
+        "departure_time": "20:13:00",
+        "arrive_date": "2026-05-14",
+        "arrive_time": "21:13:00",
+        "service": {
+          "id": "0e629236-9d16-449e-9b8c-d05e75918090",
+          "title": "Salkantay Trek a Machu Picchu",
+          "type": "arbitrary",
+          "duration_value": 4,
+          "duration_unit": "days",
+          "summary": "<p>Una&nbsp;caminata&nbsp;épica&nbsp;que&nbsp;atraviesa&nbsp;desde&nbsp;picos&nbsp;nevados&nbsp;hasta&nbsp;la&nbsp;densa&nbsp;selva&nbsp;alta,&nbsp;llegando&nbsp;a&nbsp;Machu&nbsp;Picchu&nbsp;por&nbsp;una&nbsp;ruta&nbsp;alternativa.</p>"
+        },
+        "person": {
+          "id": "46bbf972-5677-4e46-8f71-0450e729d25a",
+          "full_name": "Pasajero Temp temp-1"
+        },
+        "cost": 125.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "5baaaa3d-9c77-461b-a32f-00b47d575cdf",
+            "title": "Dia 1",
+            "description": "<p>Cusco&nbsp;a&nbsp;Soraypampa.&nbsp;Visita&nbsp;a&nbsp;la&nbsp;Laguna&nbsp;Humantay&nbsp;(4,200m).</p>"
+          },
+          {
+            "id": "518182f7-f255-4aec-b558-d6c89a580164",
+            "title": "Dia 2",
+            "description": "<p>Cruce&nbsp;del&nbsp;Abra&nbsp;Salkantay,&nbsp;el&nbsp;punto&nbsp;más&nbsp;alto,&nbsp;y&nbsp;descenso&nbsp;hacia&nbsp;el&nbsp;bosque&nbsp;nuboso&nbsp;(Chaullay).</p>"
+          },
+          {
+            "id": "6180062f-dd71-486d-bbad-d88f35918016",
+            "title": "Dia 3",
+            "description": "<p>Caminata&nbsp;por&nbsp;el&nbsp;valle&nbsp;de&nbsp;Santa&nbsp;Teresa&nbsp;hacia&nbsp;Hidroeléctrica&nbsp;y&nbsp;finalmente&nbsp;Aguas&nbsp;Calientes.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "938ce35e-c847-41cb-8ab6-ec1d89da764c",
+        "departure_date": "2026-03-02",
+        "departure_time": "20:13:00",
+        "arrive_date": "2026-05-14",
+        "arrive_time": "21:13:00",
+        "service": {
+          "id": "0e629236-9d16-449e-9b8c-d05e75918090",
+          "title": "Salkantay Trek a Machu Picchu",
+          "type": "arbitrary",
+          "duration_value": 4,
+          "duration_unit": "days",
+          "summary": "<p>Una&nbsp;caminata&nbsp;épica&nbsp;que&nbsp;atraviesa&nbsp;desde&nbsp;picos&nbsp;nevados&nbsp;hasta&nbsp;la&nbsp;densa&nbsp;selva&nbsp;alta,&nbsp;llegando&nbsp;a&nbsp;Machu&nbsp;Picchu&nbsp;por&nbsp;una&nbsp;ruta&nbsp;alternativa.</p>"
+        },
+        "person": {
+          "id": "28497a1f-d82c-4291-8790-7e5a1d9e929d",
+          "full_name": "Cristian Monzon Guzman"
+        },
+        "cost": 125.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "5baaaa3d-9c77-461b-a32f-00b47d575cdf",
+            "title": "Dia 1",
+            "description": "<p>Cusco&nbsp;a&nbsp;Soraypampa.&nbsp;Visita&nbsp;a&nbsp;la&nbsp;Laguna&nbsp;Humantay&nbsp;(4,200m).</p>"
+          },
+          {
+            "id": "518182f7-f255-4aec-b558-d6c89a580164",
+            "title": "Dia 2",
+            "description": "<p>Cruce&nbsp;del&nbsp;Abra&nbsp;Salkantay,&nbsp;el&nbsp;punto&nbsp;más&nbsp;alto,&nbsp;y&nbsp;descenso&nbsp;hacia&nbsp;el&nbsp;bosque&nbsp;nuboso&nbsp;(Chaullay).</p>"
+          },
+          {
+            "id": "6180062f-dd71-486d-bbad-d88f35918016",
+            "title": "Dia 3",
+            "description": "<p>Caminata&nbsp;por&nbsp;el&nbsp;valle&nbsp;de&nbsp;Santa&nbsp;Teresa&nbsp;hacia&nbsp;Hidroeléctrica&nbsp;y&nbsp;finalmente&nbsp;Aguas&nbsp;Calientes.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "77094529-782f-4ae3-8408-edbcd3afa378",
+        "departure_date": "2026-03-03",
+        "departure_time": "20:16:00",
+        "arrive_date": "2026-03-19",
+        "arrive_time": "20:17:00",
+        "service": {
+          "id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "title": "Valle Sagrado de los Incas (Vip)",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>Un&nbsp;recorrido&nbsp;profundo&nbsp;por&nbsp;el&nbsp;valle&nbsp;más&nbsp;fértil&nbsp;de&nbsp;los&nbsp;Andes,&nbsp;visitando&nbsp;laboratorios&nbsp;agrícolas&nbsp;y&nbsp;pueblos&nbsp;que&nbsp;mantienen&nbsp;viva&nbsp;la&nbsp;cultura&nbsp;inca.</p>"
+        },
+        "person": {
+          "id": "83aea660-c830-460d-bef9-e0e87f347bd0",
+          "full_name": "Pasajero Temp temp-5"
+        },
+        "cost": 115.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "5f073e6e-6076-4943-afcb-0a35fd4fb99c",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;hacia&nbsp;Chinchero&nbsp;para&nbsp;ver&nbsp;demostraciones&nbsp;textiles.&nbsp;Visita&nbsp;a&nbsp;los&nbsp;laboratorios&nbsp;agrícolas&nbsp;de&nbsp;Moray&nbsp;y&nbsp;las&nbsp;Salineras&nbsp;de&nbsp;Maras.&nbsp;Pernocte&nbsp;en&nbsp;Ollantaytambo&nbsp;o&nbsp;Cusco.</p>"
+          },
+          {
+            "id": "72ea1660-fc41-47bc-ae5a-187409b99c73",
+            "title": "Dia 2",
+            "description": "<p>Exploración&nbsp;de&nbsp;la&nbsp;fortaleza&nbsp;de&nbsp;Ollantaytambo&nbsp;y&nbsp;el&nbsp;mercado&nbsp;de&nbsp;Pisac.&nbsp;Almuerzo&nbsp;buffet&nbsp;incluido&nbsp;en&nbsp;el&nbsp;corazón&nbsp;del&nbsp;Valle.&nbsp;Retorno&nbsp;a&nbsp;Cusco&nbsp;por&nbsp;la&nbsp;tarde.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "248e4aea-7bb1-4dcd-b6e6-3b2fcd0de130",
+        "departure_date": "2026-03-03",
+        "departure_time": "20:16:00",
+        "arrive_date": "2026-03-19",
+        "arrive_time": "20:17:00",
+        "service": {
+          "id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "title": "Valle Sagrado de los Incas (Vip)",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>Un&nbsp;recorrido&nbsp;profundo&nbsp;por&nbsp;el&nbsp;valle&nbsp;más&nbsp;fértil&nbsp;de&nbsp;los&nbsp;Andes,&nbsp;visitando&nbsp;laboratorios&nbsp;agrícolas&nbsp;y&nbsp;pueblos&nbsp;que&nbsp;mantienen&nbsp;viva&nbsp;la&nbsp;cultura&nbsp;inca.</p>"
+        },
+        "person": {
+          "id": "e2b9f682-8c8b-42fc-90b5-e638263de8e7",
+          "full_name": "Mario Maria"
+        },
+        "cost": 115.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "5f073e6e-6076-4943-afcb-0a35fd4fb99c",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;hacia&nbsp;Chinchero&nbsp;para&nbsp;ver&nbsp;demostraciones&nbsp;textiles.&nbsp;Visita&nbsp;a&nbsp;los&nbsp;laboratorios&nbsp;agrícolas&nbsp;de&nbsp;Moray&nbsp;y&nbsp;las&nbsp;Salineras&nbsp;de&nbsp;Maras.&nbsp;Pernocte&nbsp;en&nbsp;Ollantaytambo&nbsp;o&nbsp;Cusco.</p>"
+          },
+          {
+            "id": "72ea1660-fc41-47bc-ae5a-187409b99c73",
+            "title": "Dia 2",
+            "description": "<p>Exploración&nbsp;de&nbsp;la&nbsp;fortaleza&nbsp;de&nbsp;Ollantaytambo&nbsp;y&nbsp;el&nbsp;mercado&nbsp;de&nbsp;Pisac.&nbsp;Almuerzo&nbsp;buffet&nbsp;incluido&nbsp;en&nbsp;el&nbsp;corazón&nbsp;del&nbsp;Valle.&nbsp;Retorno&nbsp;a&nbsp;Cusco&nbsp;por&nbsp;la&nbsp;tarde.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "f06d0787-1856-426f-9d16-8a52f7b96848",
+        "departure_date": "2026-03-03",
+        "departure_time": "20:16:00",
+        "arrive_date": "2026-03-19",
+        "arrive_time": "20:17:00",
+        "service": {
+          "id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "title": "Valle Sagrado de los Incas (Vip)",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>Un&nbsp;recorrido&nbsp;profundo&nbsp;por&nbsp;el&nbsp;valle&nbsp;más&nbsp;fértil&nbsp;de&nbsp;los&nbsp;Andes,&nbsp;visitando&nbsp;laboratorios&nbsp;agrícolas&nbsp;y&nbsp;pueblos&nbsp;que&nbsp;mantienen&nbsp;viva&nbsp;la&nbsp;cultura&nbsp;inca.</p>"
+        },
+        "person": {
+          "id": "bd8f423d-3422-45ee-bbb7-6f775f9c11c4",
+          "full_name": "Jose Maria"
+        },
+        "cost": 115.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "5f073e6e-6076-4943-afcb-0a35fd4fb99c",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;hacia&nbsp;Chinchero&nbsp;para&nbsp;ver&nbsp;demostraciones&nbsp;textiles.&nbsp;Visita&nbsp;a&nbsp;los&nbsp;laboratorios&nbsp;agrícolas&nbsp;de&nbsp;Moray&nbsp;y&nbsp;las&nbsp;Salineras&nbsp;de&nbsp;Maras.&nbsp;Pernocte&nbsp;en&nbsp;Ollantaytambo&nbsp;o&nbsp;Cusco.</p>"
+          },
+          {
+            "id": "72ea1660-fc41-47bc-ae5a-187409b99c73",
+            "title": "Dia 2",
+            "description": "<p>Exploración&nbsp;de&nbsp;la&nbsp;fortaleza&nbsp;de&nbsp;Ollantaytambo&nbsp;y&nbsp;el&nbsp;mercado&nbsp;de&nbsp;Pisac.&nbsp;Almuerzo&nbsp;buffet&nbsp;incluido&nbsp;en&nbsp;el&nbsp;corazón&nbsp;del&nbsp;Valle.&nbsp;Retorno&nbsp;a&nbsp;Cusco&nbsp;por&nbsp;la&nbsp;tarde.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "678ceab6-b874-4013-958a-8597c45aec2f",
+        "departure_date": "2026-03-03",
+        "departure_time": "20:16:00",
+        "arrive_date": "2026-03-19",
+        "arrive_time": "20:17:00",
+        "service": {
+          "id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "title": "Valle Sagrado de los Incas (Vip)",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>Un&nbsp;recorrido&nbsp;profundo&nbsp;por&nbsp;el&nbsp;valle&nbsp;más&nbsp;fértil&nbsp;de&nbsp;los&nbsp;Andes,&nbsp;visitando&nbsp;laboratorios&nbsp;agrícolas&nbsp;y&nbsp;pueblos&nbsp;que&nbsp;mantienen&nbsp;viva&nbsp;la&nbsp;cultura&nbsp;inca.</p>"
+        },
+        "person": {
+          "id": "2e9a70d4-e9c4-4c59-9f11-4f89acc2d14d",
+          "full_name": "Pasajero Temp temp-2"
+        },
+        "cost": 115.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "5f073e6e-6076-4943-afcb-0a35fd4fb99c",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;hacia&nbsp;Chinchero&nbsp;para&nbsp;ver&nbsp;demostraciones&nbsp;textiles.&nbsp;Visita&nbsp;a&nbsp;los&nbsp;laboratorios&nbsp;agrícolas&nbsp;de&nbsp;Moray&nbsp;y&nbsp;las&nbsp;Salineras&nbsp;de&nbsp;Maras.&nbsp;Pernocte&nbsp;en&nbsp;Ollantaytambo&nbsp;o&nbsp;Cusco.</p>"
+          },
+          {
+            "id": "72ea1660-fc41-47bc-ae5a-187409b99c73",
+            "title": "Dia 2",
+            "description": "<p>Exploración&nbsp;de&nbsp;la&nbsp;fortaleza&nbsp;de&nbsp;Ollantaytambo&nbsp;y&nbsp;el&nbsp;mercado&nbsp;de&nbsp;Pisac.&nbsp;Almuerzo&nbsp;buffet&nbsp;incluido&nbsp;en&nbsp;el&nbsp;corazón&nbsp;del&nbsp;Valle.&nbsp;Retorno&nbsp;a&nbsp;Cusco&nbsp;por&nbsp;la&nbsp;tarde.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "2af17790-a042-4951-98fa-bdea56881f2d",
+        "departure_date": "2026-03-03",
+        "departure_time": "20:16:00",
+        "arrive_date": "2026-03-19",
+        "arrive_time": "20:17:00",
+        "service": {
+          "id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "title": "Valle Sagrado de los Incas (Vip)",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>Un&nbsp;recorrido&nbsp;profundo&nbsp;por&nbsp;el&nbsp;valle&nbsp;más&nbsp;fértil&nbsp;de&nbsp;los&nbsp;Andes,&nbsp;visitando&nbsp;laboratorios&nbsp;agrícolas&nbsp;y&nbsp;pueblos&nbsp;que&nbsp;mantienen&nbsp;viva&nbsp;la&nbsp;cultura&nbsp;inca.</p>"
+        },
+        "person": {
+          "id": "46bbf972-5677-4e46-8f71-0450e729d25a",
+          "full_name": "Pasajero Temp temp-1"
+        },
+        "cost": 115.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "5f073e6e-6076-4943-afcb-0a35fd4fb99c",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;hacia&nbsp;Chinchero&nbsp;para&nbsp;ver&nbsp;demostraciones&nbsp;textiles.&nbsp;Visita&nbsp;a&nbsp;los&nbsp;laboratorios&nbsp;agrícolas&nbsp;de&nbsp;Moray&nbsp;y&nbsp;las&nbsp;Salineras&nbsp;de&nbsp;Maras.&nbsp;Pernocte&nbsp;en&nbsp;Ollantaytambo&nbsp;o&nbsp;Cusco.</p>"
+          },
+          {
+            "id": "72ea1660-fc41-47bc-ae5a-187409b99c73",
+            "title": "Dia 2",
+            "description": "<p>Exploración&nbsp;de&nbsp;la&nbsp;fortaleza&nbsp;de&nbsp;Ollantaytambo&nbsp;y&nbsp;el&nbsp;mercado&nbsp;de&nbsp;Pisac.&nbsp;Almuerzo&nbsp;buffet&nbsp;incluido&nbsp;en&nbsp;el&nbsp;corazón&nbsp;del&nbsp;Valle.&nbsp;Retorno&nbsp;a&nbsp;Cusco&nbsp;por&nbsp;la&nbsp;tarde.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "ac2d76e7-6d3f-4b36-a3fe-c156660f2816",
+        "departure_date": "2026-03-03",
+        "departure_time": "20:16:00",
+        "arrive_date": "2026-03-19",
+        "arrive_time": "20:17:00",
+        "service": {
+          "id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "title": "Valle Sagrado de los Incas (Vip)",
+          "type": "private",
+          "duration_value": 2,
+          "duration_unit": "days",
+          "summary": "<p>Un&nbsp;recorrido&nbsp;profundo&nbsp;por&nbsp;el&nbsp;valle&nbsp;más&nbsp;fértil&nbsp;de&nbsp;los&nbsp;Andes,&nbsp;visitando&nbsp;laboratorios&nbsp;agrícolas&nbsp;y&nbsp;pueblos&nbsp;que&nbsp;mantienen&nbsp;viva&nbsp;la&nbsp;cultura&nbsp;inca.</p>"
+        },
+        "person": {
+          "id": "28497a1f-d82c-4291-8790-7e5a1d9e929d",
+          "full_name": "Cristian Monzon Guzman"
+        },
+        "cost": 115.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "5f073e6e-6076-4943-afcb-0a35fd4fb99c",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;hacia&nbsp;Chinchero&nbsp;para&nbsp;ver&nbsp;demostraciones&nbsp;textiles.&nbsp;Visita&nbsp;a&nbsp;los&nbsp;laboratorios&nbsp;agrícolas&nbsp;de&nbsp;Moray&nbsp;y&nbsp;las&nbsp;Salineras&nbsp;de&nbsp;Maras.&nbsp;Pernocte&nbsp;en&nbsp;Ollantaytambo&nbsp;o&nbsp;Cusco.</p>"
+          },
+          {
+            "id": "72ea1660-fc41-47bc-ae5a-187409b99c73",
+            "title": "Dia 2",
+            "description": "<p>Exploración&nbsp;de&nbsp;la&nbsp;fortaleza&nbsp;de&nbsp;Ollantaytambo&nbsp;y&nbsp;el&nbsp;mercado&nbsp;de&nbsp;Pisac.&nbsp;Almuerzo&nbsp;buffet&nbsp;incluido&nbsp;en&nbsp;el&nbsp;corazón&nbsp;del&nbsp;Valle.&nbsp;Retorno&nbsp;a&nbsp;Cusco&nbsp;por&nbsp;la&nbsp;tarde.</p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "bef465fa-8767-4fbc-ba4a-5e34f16f890a",
+        "departure_date": "2026-03-24",
+        "departure_time": "20:15:00",
+        "arrive_date": "2026-05-14",
+        "arrive_time": "20:16:00",
+        "service": {
+          "id": "7da1b512-b886-4471-bf14-f7b295990532",
+          "title": "El Camino del Apu Ausangate",
+          "type": "group",
+          "duration_value": 3,
+          "duration_unit": "days",
+          "summary": "<p>Un&nbsp;tour&nbsp;diseñado&nbsp;para&nbsp;fotógrafos&nbsp;y&nbsp;montañistas&nbsp;que&nbsp;buscan&nbsp;paisajes&nbsp;irreales&nbsp;y&nbsp;la&nbsp;famosa&nbsp;Montaña&nbsp;de&nbsp;Siete&nbsp;Colores.</p>"
+        },
+        "person": {
+          "id": "bd8f423d-3422-45ee-bbb7-6f775f9c11c4",
+          "full_name": "Jose Maria"
+        },
+        "cost": 250.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "88ebb82a-b947-4d82-b8d8-ad993bde6c90",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;de&nbsp;Cusco&nbsp;hacia&nbsp;Upis,&nbsp;camping&nbsp;al&nbsp;pie&nbsp;del&nbsp;nevado&nbsp;Ausangate&nbsp;con&nbsp;baños&nbsp;termales.</p>"
+          },
+          {
+            "id": "bcebb020-0071-44a0-b12b-1d99d9012687",
+            "title": "Dia 2",
+            "description": "<p>Caminata&nbsp;por&nbsp;pasos&nbsp;de&nbsp;altura&nbsp;rodeando&nbsp;lagunas&nbsp;turquesas&nbsp;(Pucacocha).&nbsp;Campamento&nbsp;cerca&nbsp;de&nbsp;la&nbsp;montaña&nbsp;de&nbsp;colores.</p>"
+          },
+          {
+            "id": "8dd7764f-5342-4e63-921f-7f22726ba4db",
+            "title": "Dia 3",
+            "description": "<p>Llegada&nbsp;a&nbsp;Vinicunca&nbsp;(Montaña&nbsp;Arcoíris)&nbsp;temprano&nbsp;en&nbsp;la&nbsp;mañana&nbsp;antes&nbsp;de&nbsp;la&nbsp;multitud.&nbsp;Descenso&nbsp;y&nbsp;retorno&nbsp;a&nbsp;la&nbsp;ciudad&nbsp;de&nbsp;Cusco.</p><p></p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "23e6cc61-623e-4b48-94b9-503a10acb3ab",
+        "departure_date": "2026-03-24",
+        "departure_time": "20:15:00",
+        "arrive_date": "2026-05-14",
+        "arrive_time": "20:16:00",
+        "service": {
+          "id": "7da1b512-b886-4471-bf14-f7b295990532",
+          "title": "El Camino del Apu Ausangate",
+          "type": "group",
+          "duration_value": 3,
+          "duration_unit": "days",
+          "summary": "<p>Un&nbsp;tour&nbsp;diseñado&nbsp;para&nbsp;fotógrafos&nbsp;y&nbsp;montañistas&nbsp;que&nbsp;buscan&nbsp;paisajes&nbsp;irreales&nbsp;y&nbsp;la&nbsp;famosa&nbsp;Montaña&nbsp;de&nbsp;Siete&nbsp;Colores.</p>"
+        },
+        "person": {
+          "id": "e2b9f682-8c8b-42fc-90b5-e638263de8e7",
+          "full_name": "Mario Maria"
+        },
+        "cost": 250.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "88ebb82a-b947-4d82-b8d8-ad993bde6c90",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;de&nbsp;Cusco&nbsp;hacia&nbsp;Upis,&nbsp;camping&nbsp;al&nbsp;pie&nbsp;del&nbsp;nevado&nbsp;Ausangate&nbsp;con&nbsp;baños&nbsp;termales.</p>"
+          },
+          {
+            "id": "bcebb020-0071-44a0-b12b-1d99d9012687",
+            "title": "Dia 2",
+            "description": "<p>Caminata&nbsp;por&nbsp;pasos&nbsp;de&nbsp;altura&nbsp;rodeando&nbsp;lagunas&nbsp;turquesas&nbsp;(Pucacocha).&nbsp;Campamento&nbsp;cerca&nbsp;de&nbsp;la&nbsp;montaña&nbsp;de&nbsp;colores.</p>"
+          },
+          {
+            "id": "8dd7764f-5342-4e63-921f-7f22726ba4db",
+            "title": "Dia 3",
+            "description": "<p>Llegada&nbsp;a&nbsp;Vinicunca&nbsp;(Montaña&nbsp;Arcoíris)&nbsp;temprano&nbsp;en&nbsp;la&nbsp;mañana&nbsp;antes&nbsp;de&nbsp;la&nbsp;multitud.&nbsp;Descenso&nbsp;y&nbsp;retorno&nbsp;a&nbsp;la&nbsp;ciudad&nbsp;de&nbsp;Cusco.</p><p></p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "f9fb495e-7c65-47b4-bac2-86e932f3a75b",
+        "departure_date": "2026-03-24",
+        "departure_time": "20:15:00",
+        "arrive_date": "2026-05-14",
+        "arrive_time": "20:16:00",
+        "service": {
+          "id": "7da1b512-b886-4471-bf14-f7b295990532",
+          "title": "El Camino del Apu Ausangate",
+          "type": "group",
+          "duration_value": 3,
+          "duration_unit": "days",
+          "summary": "<p>Un&nbsp;tour&nbsp;diseñado&nbsp;para&nbsp;fotógrafos&nbsp;y&nbsp;montañistas&nbsp;que&nbsp;buscan&nbsp;paisajes&nbsp;irreales&nbsp;y&nbsp;la&nbsp;famosa&nbsp;Montaña&nbsp;de&nbsp;Siete&nbsp;Colores.</p>"
+        },
+        "person": {
+          "id": "fb4740fc-a415-42aa-a535-497956a3198f",
+          "full_name": "Luis Bustamante"
+        },
+        "cost": 250.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "88ebb82a-b947-4d82-b8d8-ad993bde6c90",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;de&nbsp;Cusco&nbsp;hacia&nbsp;Upis,&nbsp;camping&nbsp;al&nbsp;pie&nbsp;del&nbsp;nevado&nbsp;Ausangate&nbsp;con&nbsp;baños&nbsp;termales.</p>"
+          },
+          {
+            "id": "bcebb020-0071-44a0-b12b-1d99d9012687",
+            "title": "Dia 2",
+            "description": "<p>Caminata&nbsp;por&nbsp;pasos&nbsp;de&nbsp;altura&nbsp;rodeando&nbsp;lagunas&nbsp;turquesas&nbsp;(Pucacocha).&nbsp;Campamento&nbsp;cerca&nbsp;de&nbsp;la&nbsp;montaña&nbsp;de&nbsp;colores.</p>"
+          },
+          {
+            "id": "8dd7764f-5342-4e63-921f-7f22726ba4db",
+            "title": "Dia 3",
+            "description": "<p>Llegada&nbsp;a&nbsp;Vinicunca&nbsp;(Montaña&nbsp;Arcoíris)&nbsp;temprano&nbsp;en&nbsp;la&nbsp;mañana&nbsp;antes&nbsp;de&nbsp;la&nbsp;multitud.&nbsp;Descenso&nbsp;y&nbsp;retorno&nbsp;a&nbsp;la&nbsp;ciudad&nbsp;de&nbsp;Cusco.</p><p></p>"
+          }
+        ]
+      },
+      {
+        "service_quote_person_id": "17f3612b-0d09-4260-86ed-02d4ed9de4eb",
+        "departure_date": "2026-03-24",
+        "departure_time": "20:15:00",
+        "arrive_date": "2026-05-14",
+        "arrive_time": "20:16:00",
+        "service": {
+          "id": "7da1b512-b886-4471-bf14-f7b295990532",
+          "title": "El Camino del Apu Ausangate",
+          "type": "group",
+          "duration_value": 3,
+          "duration_unit": "days",
+          "summary": "<p>Un&nbsp;tour&nbsp;diseñado&nbsp;para&nbsp;fotógrafos&nbsp;y&nbsp;montañistas&nbsp;que&nbsp;buscan&nbsp;paisajes&nbsp;irreales&nbsp;y&nbsp;la&nbsp;famosa&nbsp;Montaña&nbsp;de&nbsp;Siete&nbsp;Colores.</p>"
+        },
+        "person": {
+          "id": "83aea660-c830-460d-bef9-e0e87f347bd0",
+          "full_name": "Pasajero Temp temp-5"
+        },
+        "cost": 250.0,
+        "notes": null,
+        "itinerary_details": [
+          {
+            "id": "88ebb82a-b947-4d82-b8d8-ad993bde6c90",
+            "title": "Dia 1",
+            "description": "<p>Salida&nbsp;de&nbsp;Cusco&nbsp;hacia&nbsp;Upis,&nbsp;camping&nbsp;al&nbsp;pie&nbsp;del&nbsp;nevado&nbsp;Ausangate&nbsp;con&nbsp;baños&nbsp;termales.</p>"
+          },
+          {
+            "id": "bcebb020-0071-44a0-b12b-1d99d9012687",
+            "title": "Dia 2",
+            "description": "<p>Caminata&nbsp;por&nbsp;pasos&nbsp;de&nbsp;altura&nbsp;rodeando&nbsp;lagunas&nbsp;turquesas&nbsp;(Pucacocha).&nbsp;Campamento&nbsp;cerca&nbsp;de&nbsp;la&nbsp;montaña&nbsp;de&nbsp;colores.</p>"
+          },
+          {
+            "id": "8dd7764f-5342-4e63-921f-7f22726ba4db",
+            "title": "Dia 3",
+            "description": "<p>Llegada&nbsp;a&nbsp;Vinicunca&nbsp;(Montaña&nbsp;Arcoíris)&nbsp;temprano&nbsp;en&nbsp;la&nbsp;mañana&nbsp;antes&nbsp;de&nbsp;la&nbsp;multitud.&nbsp;Descenso&nbsp;y&nbsp;retorno&nbsp;a&nbsp;la&nbsp;ciudad&nbsp;de&nbsp;Cusco.</p><p></p>"
+          }
+        ]
+      }
+    ],
+    "media_gallery": {
+      "all_photos": [
+        {
+          "id": "7bc4356e-d0ff-4b97-bcbe-d9a156726b5d",
+          "type": "image",
+          "title": "Cover",
+          "description": "Service cover image",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/imagen_1.webp",
+          "is_cover": true,
+          "source": "service",
+          "source_id": "553847c6-44b9-4f18-9870-b462943ab202",
+          "source_name": "City Tour Cusco"
+        },
+        {
+          "id": "2fcf28b2-db23-4a75-a854-214623198977",
+          "type": "image",
+          "title": "Media 4",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/imagen_5.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "553847c6-44b9-4f18-9870-b462943ab202",
+          "source_name": "City Tour Cusco"
+        },
+        {
+          "id": "5ef3666c-bf60-48d4-83fc-0a9f51395f55",
+          "type": "image",
+          "title": "Media 3",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/imagen_4.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "553847c6-44b9-4f18-9870-b462943ab202",
+          "source_name": "City Tour Cusco"
+        },
+        {
+          "id": "ffb249c8-8934-4591-8635-d7e00c089f92",
+          "type": "image",
+          "title": "Media 2",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/imagen_3.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "553847c6-44b9-4f18-9870-b462943ab202",
+          "source_name": "City Tour Cusco"
+        },
+        {
+          "id": "a71c6f47-622c-45fa-9bab-f0f8f708b48f",
+          "type": "image",
+          "title": "Media 1",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/imagen_2.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "553847c6-44b9-4f18-9870-b462943ab202",
+          "source_name": "City Tour Cusco"
+        },
+        {
+          "id": "26e40d05-a40e-4e3f-96fc-30270574e3f8",
+          "type": "image",
+          "title": "Cover",
+          "description": "Service cover image",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_3.webp",
+          "is_cover": true,
+          "source": "service",
+          "source_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "source_name": "Valle Sagrado de los Incas (Vip)"
+        },
+        {
+          "id": "aebe7690-f676-469b-b985-7cf33daa9725",
+          "type": "image",
+          "title": "Media 4",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_5.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "source_name": "Valle Sagrado de los Incas (Vip)"
+        },
+        {
+          "id": "65087896-57c4-44e7-ba10-5312c11d6345",
+          "type": "image",
+          "title": "Media 3",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_4.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "source_name": "Valle Sagrado de los Incas (Vip)"
+        },
+        {
+          "id": "d9500639-f8aa-436b-84ff-368ce3d8ea85",
+          "type": "image",
+          "title": "Media 2",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_2.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "source_name": "Valle Sagrado de los Incas (Vip)"
+        },
+        {
+          "id": "8109ba85-cea3-46de-939b-d56184db732f",
+          "type": "image",
+          "title": "Media 1",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_1.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "source_name": "Valle Sagrado de los Incas (Vip)"
+        },
+        {
+          "id": "b74c2553-d7e9-46b2-ae73-1dc99dd3af5d",
+          "type": "image",
+          "title": "Cover",
+          "description": "Service cover image",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_5_pLtRPAY.webp",
+          "is_cover": true,
+          "source": "service",
+          "source_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "source_name": "Machu Picchu \"Conexión Amanecer\""
+        },
+        {
+          "id": "b5f9320f-d854-4ddb-8f7a-1dff084acd2a",
+          "type": "image",
+          "title": "Media 4",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_4_w0i5QEQ.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "source_name": "Machu Picchu \"Conexión Amanecer\""
+        },
+        {
+          "id": "ddb33e03-78b2-4502-adc5-51ab6f3f2e88",
+          "type": "image",
+          "title": "Media 3",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_3_GVie4xX.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "source_name": "Machu Picchu \"Conexión Amanecer\""
+        },
+        {
+          "id": "0b2258ea-ea06-4567-869d-80010b257a8d",
+          "type": "image",
+          "title": "Media 2",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_2_CFlfgPt.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "source_name": "Machu Picchu \"Conexión Amanecer\""
+        },
+        {
+          "id": "30e235a7-655b-4c11-b347-a2802abcf269",
+          "type": "image",
+          "title": "Media 1",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_1_Vlf0mx7.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "source_name": "Machu Picchu \"Conexión Amanecer\""
+        },
+        {
+          "id": "e5ffded8-58e3-432a-a9da-8e8d35df27d2",
+          "type": "image",
+          "title": "Cover",
+          "description": "Service cover image",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_5_0DxFd2F.webp",
+          "is_cover": true,
+          "source": "service",
+          "source_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+          "source_name": "Salkantay Trek a Machu Picchu"
+        },
+        {
+          "id": "05eb3e99-2e0a-4184-b128-9ccbfd2b154c",
+          "type": "image",
+          "title": "Media 4",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_4_COjljnw.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+          "source_name": "Salkantay Trek a Machu Picchu"
+        },
+        {
+          "id": "9f3a01ac-0ea0-4141-860c-9cb325417c19",
+          "type": "image",
+          "title": "Media 3",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_3_DFJ1Bqh.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+          "source_name": "Salkantay Trek a Machu Picchu"
+        },
+        {
+          "id": "28356626-0c72-4381-871b-9f00ad560c23",
+          "type": "image",
+          "title": "Media 2",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_2_1Tv6HrO.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+          "source_name": "Salkantay Trek a Machu Picchu"
+        },
+        {
+          "id": "eafed371-7d49-436d-bf1c-74ede9a2e317",
+          "type": "image",
+          "title": "Media 1",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_1_ffhtWdw.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+          "source_name": "Salkantay Trek a Machu Picchu"
+        },
+        {
+          "id": "74d46f2b-98ac-4702-8323-35bcafa7a486",
+          "type": "image",
+          "title": "Cover",
+          "description": "Service cover image",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_1_tU5XrRu.webp",
+          "is_cover": true,
+          "source": "service",
+          "source_id": "7da1b512-b886-4471-bf14-f7b295990532",
+          "source_name": "El Camino del Apu Ausangate"
+        },
+        {
+          "id": "98dd6362-8364-4c72-92de-bb97885b8616",
+          "type": "image",
+          "title": "Media 4",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_5_SILSJH1.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "7da1b512-b886-4471-bf14-f7b295990532",
+          "source_name": "El Camino del Apu Ausangate"
+        },
+        {
+          "id": "4996695c-ebc5-4603-a12c-2cf5b28a8a0e",
+          "type": "image",
+          "title": "Media 3",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_4_AtQxst5.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "7da1b512-b886-4471-bf14-f7b295990532",
+          "source_name": "El Camino del Apu Ausangate"
+        },
+        {
+          "id": "ea65b2c6-87a7-426c-9063-1ae7247b168e",
+          "type": "image",
+          "title": "Media 2",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_3_4EP5VZq.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "7da1b512-b886-4471-bf14-f7b295990532",
+          "source_name": "El Camino del Apu Ausangate"
+        },
+        {
+          "id": "ecec955c-5e54-4343-9b41-a85055eb7312",
+          "type": "image",
+          "title": "Media 1",
+          "description": "",
+          "url": null,
+          "file": "/media_files/media/2026/02/24/image_2_UYr4FjO.webp",
+          "is_cover": false,
+          "source": "service",
+          "source_id": "7da1b512-b886-4471-bf14-f7b295990532",
+          "source_name": "El Camino del Apu Ausangate"
+        }
+      ],
+      "services_media": [
+        {
+          "service_id": "553847c6-44b9-4f18-9870-b462943ab202",
+          "service_title": "City Tour Cusco",
+          "media": [
+            {
+              "id": "7bc4356e-d0ff-4b97-bcbe-d9a156726b5d",
+              "type": "image",
+              "title": "Cover",
+              "description": "Service cover image",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/imagen_1.webp",
+              "is_cover": true
+            },
+            {
+              "id": "2fcf28b2-db23-4a75-a854-214623198977",
+              "type": "image",
+              "title": "Media 4",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/imagen_5.webp",
+              "is_cover": false
+            },
+            {
+              "id": "5ef3666c-bf60-48d4-83fc-0a9f51395f55",
+              "type": "image",
+              "title": "Media 3",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/imagen_4.webp",
+              "is_cover": false
+            },
+            {
+              "id": "ffb249c8-8934-4591-8635-d7e00c089f92",
+              "type": "image",
+              "title": "Media 2",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/imagen_3.webp",
+              "is_cover": false
+            },
+            {
+              "id": "a71c6f47-622c-45fa-9bab-f0f8f708b48f",
+              "type": "image",
+              "title": "Media 1",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/imagen_2.webp",
+              "is_cover": false
+            }
+          ]
+        },
+        {
+          "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "service_title": "Valle Sagrado de los Incas (Vip)",
+          "media": [
+            {
+              "id": "26e40d05-a40e-4e3f-96fc-30270574e3f8",
+              "type": "image",
+              "title": "Cover",
+              "description": "Service cover image",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_3.webp",
+              "is_cover": true
+            },
+            {
+              "id": "aebe7690-f676-469b-b985-7cf33daa9725",
+              "type": "image",
+              "title": "Media 4",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_5.webp",
+              "is_cover": false
+            },
+            {
+              "id": "65087896-57c4-44e7-ba10-5312c11d6345",
+              "type": "image",
+              "title": "Media 3",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_4.webp",
+              "is_cover": false
+            },
+            {
+              "id": "d9500639-f8aa-436b-84ff-368ce3d8ea85",
+              "type": "image",
+              "title": "Media 2",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_2.webp",
+              "is_cover": false
+            },
+            {
+              "id": "8109ba85-cea3-46de-939b-d56184db732f",
+              "type": "image",
+              "title": "Media 1",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_1.webp",
+              "is_cover": false
+            }
+          ]
+        },
+        {
+          "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "service_title": "Machu Picchu \"Conexión Amanecer\"",
+          "media": [
+            {
+              "id": "b74c2553-d7e9-46b2-ae73-1dc99dd3af5d",
+              "type": "image",
+              "title": "Cover",
+              "description": "Service cover image",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_5_pLtRPAY.webp",
+              "is_cover": true
+            },
+            {
+              "id": "b5f9320f-d854-4ddb-8f7a-1dff084acd2a",
+              "type": "image",
+              "title": "Media 4",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_4_w0i5QEQ.webp",
+              "is_cover": false
+            },
+            {
+              "id": "ddb33e03-78b2-4502-adc5-51ab6f3f2e88",
+              "type": "image",
+              "title": "Media 3",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_3_GVie4xX.webp",
+              "is_cover": false
+            },
+            {
+              "id": "0b2258ea-ea06-4567-869d-80010b257a8d",
+              "type": "image",
+              "title": "Media 2",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_2_CFlfgPt.webp",
+              "is_cover": false
+            },
+            {
+              "id": "30e235a7-655b-4c11-b347-a2802abcf269",
+              "type": "image",
+              "title": "Media 1",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_1_Vlf0mx7.webp",
+              "is_cover": false
+            }
+          ]
+        },
+        {
+          "service_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+          "service_title": "Salkantay Trek a Machu Picchu",
+          "media": [
+            {
+              "id": "e5ffded8-58e3-432a-a9da-8e8d35df27d2",
+              "type": "image",
+              "title": "Cover",
+              "description": "Service cover image",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_5_0DxFd2F.webp",
+              "is_cover": true
+            },
+            {
+              "id": "05eb3e99-2e0a-4184-b128-9ccbfd2b154c",
+              "type": "image",
+              "title": "Media 4",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_4_COjljnw.webp",
+              "is_cover": false
+            },
+            {
+              "id": "9f3a01ac-0ea0-4141-860c-9cb325417c19",
+              "type": "image",
+              "title": "Media 3",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_3_DFJ1Bqh.webp",
+              "is_cover": false
+            },
+            {
+              "id": "28356626-0c72-4381-871b-9f00ad560c23",
+              "type": "image",
+              "title": "Media 2",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_2_1Tv6HrO.webp",
+              "is_cover": false
+            },
+            {
+              "id": "eafed371-7d49-436d-bf1c-74ede9a2e317",
+              "type": "image",
+              "title": "Media 1",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_1_ffhtWdw.webp",
+              "is_cover": false
+            }
+          ]
+        },
+        {
+          "service_id": "7da1b512-b886-4471-bf14-f7b295990532",
+          "service_title": "El Camino del Apu Ausangate",
+          "media": [
+            {
+              "id": "74d46f2b-98ac-4702-8323-35bcafa7a486",
+              "type": "image",
+              "title": "Cover",
+              "description": "Service cover image",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_1_tU5XrRu.webp",
+              "is_cover": true
+            },
+            {
+              "id": "98dd6362-8364-4c72-92de-bb97885b8616",
+              "type": "image",
+              "title": "Media 4",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_5_SILSJH1.webp",
+              "is_cover": false
+            },
+            {
+              "id": "4996695c-ebc5-4603-a12c-2cf5b28a8a0e",
+              "type": "image",
+              "title": "Media 3",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_4_AtQxst5.webp",
+              "is_cover": false
+            },
+            {
+              "id": "ea65b2c6-87a7-426c-9063-1ae7247b168e",
+              "type": "image",
+              "title": "Media 2",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_3_4EP5VZq.webp",
+              "is_cover": false
+            },
+            {
+              "id": "ecec955c-5e54-4343-9b41-a85055eb7312",
+              "type": "image",
+              "title": "Media 1",
+              "description": "",
+              "url": null,
+              "file": "/media_files/media/2026/02/24/image_2_UYr4FjO.webp",
+              "is_cover": false
+            }
+          ]
+        }
+      ],
+      "persons_media": []
+    },
+    "cost_summary": {
+      "total_price": 3740.0,
+      "currency": "USD",
+      "total_services": 5,
+      "total_persons": 8,
+      "by_service_type": {
+        "group": {
+          "count": 9,
+          "total": 1350.0,
+          "services": [
+            "El Camino del Apu Ausangate",
+            "City Tour Cusco"
+          ]
+        },
+        "private": {
+          "count": 14,
+          "total": 1890.0,
+          "services": [
+            "Machu Picchu \"Conexión Amanecer\"",
+            "Valle Sagrado de los Incas (Vip)"
+          ]
+        },
+        "arbitrary": {
+          "count": 4,
+          "total": 500.0,
+          "services": [
+            "Salkantay Trek a Machu Picchu"
+          ]
+        }
+      },
+      "by_person": [
+        {
+          "person_id": "e2b9f682-8c8b-42fc-90b5-e638263de8e7",
+          "person_name": "Mario Maria",
+          "total": 540.0,
+          "services_count": 4
+        },
+        {
+          "person_id": "2e9a70d4-e9c4-4c59-9f11-4f89acc2d14d",
+          "person_name": "Pasajero Temp temp-2",
+          "total": 540.0,
+          "services_count": 4
+        },
+        {
+          "person_id": "fb4740fc-a415-42aa-a535-497956a3198f",
+          "person_name": "Luis Bustamante",
+          "total": 525.0,
+          "services_count": 3
+        },
+        {
+          "person_id": "83aea660-c830-460d-bef9-e0e87f347bd0",
+          "person_name": "Pasajero Temp temp-5",
+          "total": 515.0,
+          "services_count": 3
+        },
+        {
+          "person_id": "bd8f423d-3422-45ee-bbb7-6f775f9c11c4",
+          "person_name": "Jose Maria",
+          "total": 515.0,
+          "services_count": 3
+        },
+        {
+          "person_id": "28497a1f-d82c-4291-8790-7e5a1d9e929d",
+          "person_name": "Cristian Monzon Guzman",
+          "total": 415.0,
+          "services_count": 4
+        },
+        {
+          "person_id": "46bbf972-5677-4e46-8f71-0450e729d25a",
+          "person_name": "Pasajero Temp temp-1",
+          "total": 390.0,
+          "services_count": 3
+        },
+        {
+          "person_id": "cb5788e3-827d-42bb-ac31-394aabc4a7a4",
+          "person_name": "Pepe Pepe",
+          "total": 300.0,
+          "services_count": 3
+        }
+      ],
+      "by_service": [
+        {
+          "service_id": "7da1b512-b886-4471-bf14-f7b295990532",
+          "service_name": "El Camino del Apu Ausangate",
+          "service_type": "group",
+          "total": 1250.0,
+          "persons_count": 5
+        },
+        {
+          "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+          "service_name": "Machu Picchu \"Conexión Amanecer\"",
+          "service_type": "private",
+          "total": 1200.0,
+          "persons_count": 8
+        },
+        {
+          "service_id": "d427b527-1019-4de7-979f-e2f9780af28c",
+          "service_name": "Valle Sagrado de los Incas (Vip)",
+          "service_type": "private",
+          "total": 690.0,
+          "persons_count": 6
+        },
+        {
+          "service_id": "0e629236-9d16-449e-9b8c-d05e75918090",
+          "service_name": "Salkantay Trek a Machu Picchu",
+          "service_type": "arbitrary",
+          "total": 500.0,
+          "persons_count": 4
+        },
+        {
+          "service_id": "553847c6-44b9-4f18-9870-b462943ab202",
+          "service_name": "City Tour Cusco",
+          "service_type": "group",
+          "total": 100.0,
+          "persons_count": 4
+        }
+      ]
+    }
+  }
+  ```
+
 
 ## ToDo
 Este módulo nos permite gestionar las pendientes de cada usuario
@@ -1699,6 +6774,26 @@ Este endpoint nos permite cambiar el estado de un _todo_ pasando el id por la ur
 - change-status: `POST` http://localhost:8000/api/todo/54e6dcea-be7f-4d67-8f9a-a0e584253792/change-status/
 
 
-# TODO:
+## TODO:
+1. Hacer las validaciones para los servicios al crear, validar lo siguiente:
+   - Validar que el precioRule en caso de los grupales este solo puede tener uno, y el valor que pongas es el mismo de precio referencial, no puede tener pricingTier
+   - Validar que el precioRule en caso de los privados este pueden tener varios preciosRules pero no pueden tener pricingTier
+   - Validar que el pricingTier solo son para arbitrarios y que no pueden tener priceRules
+2. Documentar todo relacionado a auditlog.
+3. Eliminar unit_price de ServiceQuotePerson
+4. Agregar en ServiceQuotePerson:
+   - departure_date
+   - arrive_date
+   - departure_time
+   - arrive_time
+5. Se debe poder duplicar las versiones de las cotizaciones
+6. Se debe poder versionar las cotizaciones
+7. La logica para hacer un calcular la cotización es la siguiente:
+   - Los tours (services) que son de tipo grupal se multiplican por la cantidad de personas que se apuntan a ese tour
+   - Los tour (services) que son de tipo privado estos tienen una logica de la siguiente, este maneja precios que se dividen y precios que se multiplican
+     - Los precios que se dividen es el total de personas que se apuntan a ese tour entre el valor que se divide (Ejemplo: 500 USD dividido entre 5 personas, cada uno paga 100 USD) y todo eso se va sumando entre los diversos items que tenga de este tipo.
+     - Los precios que se multiplican es el valor del precio multiplicado por la cantidad de personas (Ejemplo: 100 USD multiplicado por 5 personas, cada uno paga 100 USD pero el total es 500 USD) y todo eso se va sumando entre los diversos items que tenga de este tipo.
+   - Los tours (services) que son de tipo arbitrario, estos mantienen un rango de precios _PricingTier_ y el precio final se calcula dependiendo de la cantidad de personas que se apunten a ese tour, se busca el rango que corresponda a esa cantidad de personas y se toma el precio total de ese rango.
+   
 
-## DOCUMENTAR TODO RELACIONADO A AUDITLOG
+

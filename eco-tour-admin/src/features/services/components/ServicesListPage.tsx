@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { ServicesTable } from '../components/ServicesTable';
 import { useServices } from '../hooks/useServices';
 import { useService } from '../hooks/useService';
-import { Plus } from 'lucide-react';
+import { Plus, Tag } from 'lucide-react';
 import { CreateServiceModal } from './CreateServiceModal';
 import { EditServiceModal } from './EditServiceModal';
+import { TagsManagerModal } from './TagsManagerModal';
 import { ServiceFiltersComponent } from './ServiceFilters';
 import { deleteService, ServiceFilters } from '../api/servicesApi';
 import { useQueryClient } from '@tanstack/react-query';
@@ -13,6 +14,7 @@ export const ServicesListPage = () => {
   const [filters, setFilters] = useState<ServiceFilters>({});
   const { data, isLoading, error } = useServices(filters);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isTagsModalOpen, setIsTagsModalOpen] = useState(false);
   const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
@@ -63,23 +65,43 @@ export const ServicesListPage = () => {
             Gestiona los servicios disponibles
           </p>
         </div>
-        <button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium"
-          style={{
-            backgroundColor: '#00bf35',
-            color: '#ffffff',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#00932c'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#00bf35'
-          }}
-        >
-          <Plus size={20} />
-          Crear Servicio
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setIsTagsModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium border"
+            style={{
+              borderColor: '#00bf35',
+              color: '#00932c',
+              backgroundColor: '#ffffff',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#edfff2'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#ffffff'
+            }}
+          >
+            <Tag size={20} />
+            Etiquetas
+          </button>
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium"
+            style={{
+              backgroundColor: '#00bf35',
+              color: '#ffffff',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#00932c'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#00bf35'
+            }}
+          >
+            <Plus size={20} />
+            Crear Servicio
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
@@ -106,6 +128,11 @@ export const ServicesListPage = () => {
       <CreateServiceModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+      />
+
+      <TagsManagerModal
+        isOpen={isTagsModalOpen}
+        onClose={() => setIsTagsModalOpen(false)}
       />
 
       {editingService && (

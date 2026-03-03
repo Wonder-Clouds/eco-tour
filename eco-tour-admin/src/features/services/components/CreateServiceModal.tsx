@@ -21,7 +21,8 @@ export const CreateServiceModal = ({ isOpen, onClose }: CreateServiceModalProps)
   const [includes, setIncludes] = useState('')
   const [excludes, setExcludes] = useState('')
   const [type, setType] = useState<TypeService>('private')
-  const [price, setPrice] = useState('')
+  const [referencePrice, setReferencePrice] = useState('')
+  const [departureTime, setDepartureTime] = useState('')
   const [durationValue, setDurationValue] = useState(1)
   const [durationUnit, setDurationUnit] = useState<DurationUnit>('days')
   const [data, setData] = useState<DataItem[]>([{ title: '', description: '' }])
@@ -87,7 +88,8 @@ export const CreateServiceModal = ({ isOpen, onClose }: CreateServiceModalProps)
     setIncludes('')
     setExcludes('')
     setType('private')
-    setPrice('')
+    setReferencePrice('')
+    setDepartureTime('')
     setDurationValue(1)
     setDurationUnit('days')
     setData([{ title: '', description: '' }])
@@ -108,7 +110,8 @@ export const CreateServiceModal = ({ isOpen, onClose }: CreateServiceModalProps)
         includes,
         excludes,
         type,
-        price,
+        reference_price: referencePrice,
+        departure_time: departureTime || undefined,
         duration_value: durationValue,
         duration_unit: durationUnit,
         data: data.filter((d) => d.title.trim() !== ''),
@@ -176,16 +179,28 @@ export const CreateServiceModal = ({ isOpen, onClose }: CreateServiceModalProps)
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Precio *
+                Precio de Referencia *
               </label>
               <input
                 type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                value={referencePrice}
+                onChange={(e) => setReferencePrice(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 required
                 min={0}
                 step="0.01"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Hora de Salida
+              </label>
+              <input
+                type="time"
+                value={departureTime}
+                onChange={(e) => setDepartureTime(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
 

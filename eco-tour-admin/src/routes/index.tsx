@@ -97,7 +97,7 @@ const destinosPopulares = [
 const actividadReciente = [
   { id: 1, tipo: 'reserva', mensaje: 'Nueva reserva para Machu Picchu 2D/1N', tiempo: 'Hace 5 min', icono: Calendar },
   { id: 2, tipo: 'usuario', mensaje: 'Nuevo usuario registrado: Juan Pérez', tiempo: 'Hace 15 min', icono: Users },
-  { id: 3, tipo: 'pago', mensaje: 'Pago recibido: S/. 1,250.00', tiempo: 'Hace 30 min', icono: DollarSign },
+  { id: 3, tipo: 'pago', mensaje: 'Pago recibido: $1,250.00', tiempo: 'Hace 30 min', icono: DollarSign },
   { id: 4, tipo: 'servicio', mensaje: 'Servicio actualizado: Valle Sagrado Full Day', tiempo: 'Hace 1 hora', icono: Package },
   { id: 5, tipo: 'review', mensaje: 'Nueva reseña 5 estrellas recibida', tiempo: 'Hace 2 horas', icono: Star },
 ]
@@ -219,7 +219,7 @@ const Dashboard = () => {
             <TrendingUp size={20} style={{ color: '#00bf35' }} />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold" style={{ color: '#085f24' }}>S/. 52,000</div>
+            <div className="text-2xl font-bold" style={{ color: '#085f24' }}>$52,000</div>
             <div className="flex items-center text-xs text-green-600">
               <ArrowUpRight size={14} />
               <span>+8% vs mes anterior</span>
@@ -278,7 +278,7 @@ const Dashboard = () => {
                   stroke="#085f24"
                   strokeWidth={2}
                   dot={{ fill: '#085f24' }}
-                  name="Ingresos (S/.)"
+                  name="Ingresos ($)"
                 />
               </AreaChart>
             </ResponsiveContainer>

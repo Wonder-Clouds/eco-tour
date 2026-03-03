@@ -19,12 +19,13 @@ interface Props {
 }
 
 // Función para formatear el precio
-const formatPrice = (price: number | undefined) => {
-  if (price === undefined || price === null) return 'S/. 0.00'
-  return new Intl.NumberFormat('es-PE', {
+const formatPrice = (price: string | number | undefined) => {
+  if (price === undefined || price === null) return '$0.00'
+  const numPrice = typeof price === 'string' ? parseFloat(price) : price
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'PEN',
-  }).format(price)
+    currency: 'USD',
+  }).format(numPrice)
 }
 
 
@@ -170,7 +171,7 @@ export const PackageDetailPage = ({ packageId }: Props) => {
                               </span>
                               <span className="flex items-center gap-1">
                                 <DollarSign size={14} />
-                                {formatPrice(service.price)}
+                                {formatPrice(service.reference_price)}
                               </span>
                             </div>
                           </div>
@@ -211,20 +212,20 @@ export const PackageDetailPage = ({ packageId }: Props) => {
 
         {/* Columna lateral */}
         <div className="space-y-6">
-          {/* Precio Total */}
+          {/* Precio de Referencia */}
           <Card className="border-0 shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
                 <DollarSign size={20} />
-                Precio Total
+                Precio de Referencia
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold" style={{ color: '#085f24' }}>
-                {formatPrice(pkg.price)}
+                {formatPrice(pkg.reference_price)}
               </p>
               <p className="text-gray-500 text-sm mt-1">
-                Suma de todos los servicios
+                Precio de referencia del paquete
               </p>
             </CardContent>
           </Card>

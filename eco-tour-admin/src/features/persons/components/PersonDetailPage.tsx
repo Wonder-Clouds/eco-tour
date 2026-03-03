@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { usePerson } from '../hooks/usePerson'
 import { useCountries, getCountryLabel } from '../hooks/useCountries'
-import { ArrowLeft, Mail, Phone, Calendar, Flag, FileText, User, Upload, Image } from 'lucide-react'
+import { useGroups } from '@/features/groups/hooks/useGroups'
+import { ArrowLeft, Mail, Phone, Calendar, Flag, FileText, User, Upload, Image, Edit3, Users } from 'lucide-react'
 import { PersonMediaModal } from './PersonMediaModal'
+import { EditPersonModal } from './EditPersonModal'
 
 interface Props {
   personId: string
@@ -11,9 +13,16 @@ interface Props {
 
 export const PersonDetailPage = ({ personId }: Props) => {
   const navigate = useNavigate()
-  const { data: person, isLoading, error } = usePerson(personId)
+  const { data: person, isLoading, error, refetch } = usePerson(personId)
   const { data: countries } = useCountries()
+  const { data: allGroups } = useGroups()
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+
+  // Get group details from person's group IDs
+  const personGroups = allGroups?.filter(group =>
+    person?.group?.includes(group.id)
+  ) || []
 
   if (isLoading) {
     return (
@@ -49,16 +58,28 @@ export const PersonDetailPage = ({ personId }: Props) => {
             <p className="text-gray-600">Detalle del cliente</p>
           </div>
         </div>
-        <button
-          onClick={() => setIsMediaModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium"
-          style={{ backgroundColor: '#00bf35', color: '#ffffff' }}
-          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#00932c' }}
-          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#00bf35' }}
-        >
-          <Upload size={20} />
-          Gestionar Archivos
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsEditModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium border"
+            style={{ borderColor: '#2563eb', color: '#2563eb' }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#eff6ff' }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
+          >
+            <Edit3 size={20} />
+            Editar
+          </button>
+          <button
+            onClick={() => setIsMediaModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium"
+            style={{ backgroundColor: '#00bf35', color: '#ffffff' }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#00932c' }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#00bf35' }}
+          >
+            <Upload size={20} />
+            Gestionar Archivos
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -217,19 +238,35 @@ export const PersonDetailPage = ({ personId }: Props) => {
         )}
 
         {/* Grupos */}
-        {person.group && person.group.length > 0 && (
+        {personGroups.length > 0 && (
           <div className="bg-white rounded-lg shadow-md p-6 lg:col-span-3">
-            <h3 className="text-lg font-semibold mb-4" style={{ color: '#085f24' }}>
-              Grupos
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: '#085f24' }}>
+              <Users size={20} />
+              Grupos ({personGroups.length})
             </h3>
-            <div className="flex flex-wrap gap-2">
-              {person.group.map((group) => (
-                <span
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {personGroups.map((group) => (
+                <a
                   key={group.id}
-                  className="px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800"
+                  href={`/groups/${group.id}`}
+                  className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition hover:border-green-300"
                 >
-                  {group.name}
-                </span>
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold"
+                    style={{ backgroundColor: '#00932c' }}
+                  >
+                    <Users size={18} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-900 truncate">{group.name}</p>
+                    <p className="text-sm text-gray-500">
+                      {group.total_people} {group.total_people === 1 ? 'persona' : 'personas'}
+                    </p>
+                    {group.contact_info && (
+                      <p className="text-xs text-gray-400 truncate">Contacto: {group.contact_info}</p>
+                    )}
+                  </div>
+                </a>
               ))}
             </div>
           </div>
@@ -242,6 +279,16 @@ export const PersonDetailPage = ({ personId }: Props) => {
         onClose={() => setIsMediaModalOpen(false)}
         personId={personId}
         existingMedia={person.media}
+      />
+
+      {/* Modal de edición */}
+      <EditPersonModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false)
+          refetch()
+        }}
+        person={person}
       />
     </div>
   )

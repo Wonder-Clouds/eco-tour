@@ -1,0 +1,16 @@
+meta {
+  name: Get Quote Public
+  type: http
+  seq: 6
+}
+
+get {
+  url: http://localhost:8000/api/quote/public/40edc3d0-363e-46ca-9605-0e9b8fe270d3/
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

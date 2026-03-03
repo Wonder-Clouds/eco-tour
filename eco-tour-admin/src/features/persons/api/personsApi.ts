@@ -43,12 +43,14 @@ export interface UpdatePersonData {
   passport_number?: string
   birth_date?: string
   nationality?: string
+  is_generic?: boolean
 }
 
 // ==================== GET ====================
 
 export const getPersonsSummary = async (filters?: PersonFilters): Promise<SummaryPerson[]> => {
   const params = new URLSearchParams()
+  params.append('limit', '1000')
 
   if (filters) {
     if (filters.q) params.append('q', filters.q)
@@ -56,7 +58,7 @@ export const getPersonsSummary = async (filters?: PersonFilters): Promise<Summar
   }
 
   const queryString = params.toString()
-  const url = queryString ? `/person/summary/?${queryString}` : '/person/summary/'
+  const url = `/person/summary/?${queryString}`
 
   const response = await api.get<PaginatedResponse<SummaryPerson>>(url)
   return response.data.results
@@ -64,6 +66,7 @@ export const getPersonsSummary = async (filters?: PersonFilters): Promise<Summar
 
 export const getPersons = async (filters?: PersonFilters): Promise<Person[]> => {
   const params = new URLSearchParams()
+  params.append('limit', '1000')
 
   if (filters) {
     if (filters.q) params.append('q', filters.q)
@@ -71,7 +74,7 @@ export const getPersons = async (filters?: PersonFilters): Promise<Person[]> => 
   }
 
   const queryString = params.toString()
-  const url = queryString ? `/person/?${queryString}` : '/person/'
+  const url = `/person/?${queryString}`
 
   const response = await api.get<PaginatedResponse<Person>>(url)
   return response.data.results
