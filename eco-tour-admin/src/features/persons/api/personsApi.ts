@@ -43,6 +43,7 @@ export interface UpdatePersonData {
   passport_number?: string
   birth_date?: string
   nationality?: string
+  is_generic?: boolean
 }
 
 // ==================== GET ====================
