@@ -11,7 +11,6 @@ class PersonSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'last_name', 'email', 'phone_number', 'media', 
                   'passport_number', 'group', 'birth_date', 'nationality', 'is_generic',
                   'created_at', 'updated_at']
-        read_only_fields = ['is_generic']
 
 
 class PersonSummarySerializer(serializers.ModelSerializer):

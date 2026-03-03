@@ -11,7 +11,7 @@ from shared.pagination import CustomPagination
 from .models import Quote, ServiceQuotePerson
 from .serializers import (
     QuoteSerializer, SimpleQuoteSerializer, ServiceQuotePersonSerializer,
-    QuoteFullDetailSerializer, QuoteVersionEditSerializer
+    QuoteFullDetailSerializer, QuoteVersionEditSerializer, QuotePublicDetailSerializer
 )
 from person.models import Person
 from group.models import Group
@@ -352,6 +352,81 @@ class QuoteViewSet(viewsets.ModelViewSet):
         )
 
         return Response(summary_data)
+
+    # ------------------------------------------------------------------
+    # TOGGLE: Cambiar estado público/privado de cotización
+    # ------------------------------------------------------------------
+    @action(detail=True, methods=['post'], url_path='toggle-public')
+    def toggle_public(self, request, pk=None):
+        """
+        Cambia el estado de visibilidad pública de una cotización.
+
+        Si is_public=False, lo cambia a True y viceversa.
+        Requiere autenticación.
+
+        Retorna:
+        - is_public: nuevo estado
+        - message: descripción del cambio
+        - public_url: URL pública para compartir (si está activo)
+        """
+        quote = self.get_object()
+
+        # Toggle del estado
+        quote.is_public = not quote.is_public
+        quote.save(update_fields=['is_public'])
+
+        # Construir URL pública
+        public_url = None
+        if quote.is_public:
+            # Obtener el dominio desde el request
+            domain = request.build_absolute_uri('/')[:-1]  # Remueve el / final
+            public_url = f"{domain}/api/quote/public/{quote.id}/"
+
+        return Response({
+            'quote_id': str(quote.id),
+            'is_public': quote.is_public,
+            'message': 'Cotización ahora es pública' if quote.is_public else 'Cotización ahora es privada',
+            'public_url': public_url
+        }, status=status.HTTP_200_OK)
+
+    # ------------------------------------------------------------------
+    # VISTA PÚBLICA: Detalle completo de cotización (SIN autenticación)
+    # ------------------------------------------------------------------
+    @action(detail=False, methods=['get'], url_path='public/(?P<quote_id>[^/.]+)',
+            permission_classes=[])
+    def public_detail(self, request, quote_id=None):
+        """
+        Obtiene el detalle completo de una cotización pública SIN autenticación.
+
+        Esta vista está diseñada para mostrar al cliente toda la información
+        necesaria de su cotización de forma profesional:
+
+        📋 Incluye:
+        - Información del grupo
+        - Personas con fotos, datos completos y costos individuales
+        - Servicios completos con:
+          * Galería de fotos/imágenes
+          * Itinerarios detallados paso a paso
+          * Precios y reglas de pricing según tipo (group/private/arbitrary)
+          * Tags y categorías
+          * Qué incluye y qué no incluye
+        - Cronograma completo ordenado por fecha/hora
+        - Galería de medias organizada por servicios y personas
+        - Resumen de costos detallado por persona, servicio y tipo
+        - Estado de vigencia (expirado o no)
+
+        ⚠️ Solo funciona si la cotización tiene is_public=True
+        """
+        try:
+            quote = Quote.objects.get(id=quote_id, is_public=True)
+        except Quote.DoesNotExist:
+            return Response({
+                'error': 'Cotización no encontrada o no es pública',
+                'message': 'La cotización solicitada no existe o no está disponible públicamente'
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = QuotePublicDetailSerializer(quote)
+        return Response(serializer.data)
 
 
 class ServiceQuotePersonViewSet(viewsets.ModelViewSet):

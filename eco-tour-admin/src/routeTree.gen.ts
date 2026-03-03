@@ -14,16 +14,22 @@ import { Route as QuotesRouteImport } from './routes/quotes'
 import { Route as PersonsRouteImport } from './routes/persons'
 import { Route as PackagesRouteImport } from './routes/packages'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as GroupsRouteImport } from './routes/groups'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as QuotesIndexRouteImport } from './routes/quotes.index'
 import { Route as PersonsIndexRouteImport } from './routes/persons.index'
 import { Route as PackagesIndexRouteImport } from './routes/packages.index'
+import { Route as GroupsIndexRouteImport } from './routes/groups.index'
 import { Route as ServicesIdRouteImport } from './routes/services.$id'
 import { Route as QuotesNewRouteImport } from './routes/quotes.new'
 import { Route as QuotesIdRouteImport } from './routes/quotes.$id'
 import { Route as PersonsIdRouteImport } from './routes/persons.$id'
 import { Route as PackagesIdRouteImport } from './routes/packages.$id'
+import { Route as GroupsNewRouteImport } from './routes/groups.new'
+import { Route as GroupsIdRouteImport } from './routes/groups.$id'
+import { Route as QuotesIdIndexRouteImport } from './routes/quotes.$id.index'
+import { Route as QuotesPublicIdRouteImport } from './routes/quotes.public.$id'
 import { Route as QuotesIdEditRouteImport } from './routes/quotes.$id.edit'
 
 const ServicesRoute = ServicesRouteImport.update({
@@ -51,6 +57,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GroupsRoute = GroupsRouteImport.update({
+  id: '/groups',
+  path: '/groups',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -75,6 +86,11 @@ const PackagesIndexRoute = PackagesIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PackagesRoute,
+} as any)
+const GroupsIndexRoute = GroupsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GroupsRoute,
 } as any)
 const ServicesIdRoute = ServicesIdRouteImport.update({
   id: '/$id',
@@ -101,6 +117,26 @@ const PackagesIdRoute = PackagesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => PackagesRoute,
 } as any)
+const GroupsNewRoute = GroupsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => GroupsRoute,
+} as any)
+const GroupsIdRoute = GroupsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => GroupsRoute,
+} as any)
+const QuotesIdIndexRoute = QuotesIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => QuotesIdRoute,
+} as any)
+const QuotesPublicIdRoute = QuotesPublicIdRouteImport.update({
+  id: '/public/$id',
+  path: '/public/$id',
+  getParentRoute: () => QuotesRoute,
+} as any)
 const QuotesIdEditRoute = QuotesIdEditRouteImport.update({
   id: '/edit',
   path: '/edit',
@@ -109,110 +145,143 @@ const QuotesIdEditRoute = QuotesIdEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/groups': typeof GroupsRouteWithChildren
   '/login': typeof LoginRoute
   '/packages': typeof PackagesRouteWithChildren
   '/persons': typeof PersonsRouteWithChildren
   '/quotes': typeof QuotesRouteWithChildren
   '/services': typeof ServicesRouteWithChildren
+  '/groups/$id': typeof GroupsIdRoute
+  '/groups/new': typeof GroupsNewRoute
   '/packages/$id': typeof PackagesIdRoute
   '/persons/$id': typeof PersonsIdRoute
   '/quotes/$id': typeof QuotesIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
   '/services/$id': typeof ServicesIdRoute
+  '/groups/': typeof GroupsIndexRoute
   '/packages/': typeof PackagesIndexRoute
   '/persons/': typeof PersonsIndexRoute
   '/quotes/': typeof QuotesIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/quotes/$id/edit': typeof QuotesIdEditRoute
+  '/quotes/public/$id': typeof QuotesPublicIdRoute
+  '/quotes/$id/': typeof QuotesIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/groups/$id': typeof GroupsIdRoute
+  '/groups/new': typeof GroupsNewRoute
   '/packages/$id': typeof PackagesIdRoute
   '/persons/$id': typeof PersonsIdRoute
-  '/quotes/$id': typeof QuotesIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
   '/services/$id': typeof ServicesIdRoute
+  '/groups': typeof GroupsIndexRoute
   '/packages': typeof PackagesIndexRoute
   '/persons': typeof PersonsIndexRoute
   '/quotes': typeof QuotesIndexRoute
   '/services': typeof ServicesIndexRoute
   '/quotes/$id/edit': typeof QuotesIdEditRoute
+  '/quotes/public/$id': typeof QuotesPublicIdRoute
+  '/quotes/$id': typeof QuotesIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/groups': typeof GroupsRouteWithChildren
   '/login': typeof LoginRoute
   '/packages': typeof PackagesRouteWithChildren
   '/persons': typeof PersonsRouteWithChildren
   '/quotes': typeof QuotesRouteWithChildren
   '/services': typeof ServicesRouteWithChildren
+  '/groups/$id': typeof GroupsIdRoute
+  '/groups/new': typeof GroupsNewRoute
   '/packages/$id': typeof PackagesIdRoute
   '/persons/$id': typeof PersonsIdRoute
   '/quotes/$id': typeof QuotesIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
   '/services/$id': typeof ServicesIdRoute
+  '/groups/': typeof GroupsIndexRoute
   '/packages/': typeof PackagesIndexRoute
   '/persons/': typeof PersonsIndexRoute
   '/quotes/': typeof QuotesIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/quotes/$id/edit': typeof QuotesIdEditRoute
+  '/quotes/public/$id': typeof QuotesPublicIdRoute
+  '/quotes/$id/': typeof QuotesIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/groups'
     | '/login'
     | '/packages'
     | '/persons'
     | '/quotes'
     | '/services'
+    | '/groups/$id'
+    | '/groups/new'
     | '/packages/$id'
     | '/persons/$id'
     | '/quotes/$id'
     | '/quotes/new'
     | '/services/$id'
+    | '/groups/'
     | '/packages/'
     | '/persons/'
     | '/quotes/'
     | '/services/'
     | '/quotes/$id/edit'
+    | '/quotes/public/$id'
+    | '/quotes/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
+    | '/groups/$id'
+    | '/groups/new'
     | '/packages/$id'
     | '/persons/$id'
-    | '/quotes/$id'
     | '/quotes/new'
     | '/services/$id'
+    | '/groups'
     | '/packages'
     | '/persons'
     | '/quotes'
     | '/services'
     | '/quotes/$id/edit'
+    | '/quotes/public/$id'
+    | '/quotes/$id'
   id:
     | '__root__'
     | '/'
+    | '/groups'
     | '/login'
     | '/packages'
     | '/persons'
     | '/quotes'
     | '/services'
+    | '/groups/$id'
+    | '/groups/new'
     | '/packages/$id'
     | '/persons/$id'
     | '/quotes/$id'
     | '/quotes/new'
     | '/services/$id'
+    | '/groups/'
     | '/packages/'
     | '/persons/'
     | '/quotes/'
     | '/services/'
     | '/quotes/$id/edit'
+    | '/quotes/public/$id'
+    | '/quotes/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GroupsRoute: typeof GroupsRouteWithChildren
   LoginRoute: typeof LoginRoute
   PackagesRoute: typeof PackagesRouteWithChildren
   PersonsRoute: typeof PersonsRouteWithChildren
@@ -257,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/groups': {
+      id: '/groups'
+      path: '/groups'
+      fullPath: '/groups'
+      preLoaderRoute: typeof GroupsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -291,6 +367,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/packages/'
       preLoaderRoute: typeof PackagesIndexRouteImport
       parentRoute: typeof PackagesRoute
+    }
+    '/groups/': {
+      id: '/groups/'
+      path: '/'
+      fullPath: '/groups/'
+      preLoaderRoute: typeof GroupsIndexRouteImport
+      parentRoute: typeof GroupsRoute
     }
     '/services/$id': {
       id: '/services/$id'
@@ -327,6 +410,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PackagesIdRouteImport
       parentRoute: typeof PackagesRoute
     }
+    '/groups/new': {
+      id: '/groups/new'
+      path: '/new'
+      fullPath: '/groups/new'
+      preLoaderRoute: typeof GroupsNewRouteImport
+      parentRoute: typeof GroupsRoute
+    }
+    '/groups/$id': {
+      id: '/groups/$id'
+      path: '/$id'
+      fullPath: '/groups/$id'
+      preLoaderRoute: typeof GroupsIdRouteImport
+      parentRoute: typeof GroupsRoute
+    }
+    '/quotes/$id/': {
+      id: '/quotes/$id/'
+      path: '/'
+      fullPath: '/quotes/$id/'
+      preLoaderRoute: typeof QuotesIdIndexRouteImport
+      parentRoute: typeof QuotesIdRoute
+    }
+    '/quotes/public/$id': {
+      id: '/quotes/public/$id'
+      path: '/public/$id'
+      fullPath: '/quotes/public/$id'
+      preLoaderRoute: typeof QuotesPublicIdRouteImport
+      parentRoute: typeof QuotesRoute
+    }
     '/quotes/$id/edit': {
       id: '/quotes/$id/edit'
       path: '/edit'
@@ -336,6 +447,21 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface GroupsRouteChildren {
+  GroupsIdRoute: typeof GroupsIdRoute
+  GroupsNewRoute: typeof GroupsNewRoute
+  GroupsIndexRoute: typeof GroupsIndexRoute
+}
+
+const GroupsRouteChildren: GroupsRouteChildren = {
+  GroupsIdRoute: GroupsIdRoute,
+  GroupsNewRoute: GroupsNewRoute,
+  GroupsIndexRoute: GroupsIndexRoute,
+}
+
+const GroupsRouteWithChildren =
+  GroupsRoute._addFileChildren(GroupsRouteChildren)
 
 interface PackagesRouteChildren {
   PackagesIdRoute: typeof PackagesIdRoute
@@ -366,10 +492,12 @@ const PersonsRouteWithChildren =
 
 interface QuotesIdRouteChildren {
   QuotesIdEditRoute: typeof QuotesIdEditRoute
+  QuotesIdIndexRoute: typeof QuotesIdIndexRoute
 }
 
 const QuotesIdRouteChildren: QuotesIdRouteChildren = {
   QuotesIdEditRoute: QuotesIdEditRoute,
+  QuotesIdIndexRoute: QuotesIdIndexRoute,
 }
 
 const QuotesIdRouteWithChildren = QuotesIdRoute._addFileChildren(
@@ -380,12 +508,14 @@ interface QuotesRouteChildren {
   QuotesIdRoute: typeof QuotesIdRouteWithChildren
   QuotesNewRoute: typeof QuotesNewRoute
   QuotesIndexRoute: typeof QuotesIndexRoute
+  QuotesPublicIdRoute: typeof QuotesPublicIdRoute
 }
 
 const QuotesRouteChildren: QuotesRouteChildren = {
   QuotesIdRoute: QuotesIdRouteWithChildren,
   QuotesNewRoute: QuotesNewRoute,
   QuotesIndexRoute: QuotesIndexRoute,
+  QuotesPublicIdRoute: QuotesPublicIdRoute,
 }
 
 const QuotesRouteWithChildren =
@@ -407,6 +537,7 @@ const ServicesRouteWithChildren = ServicesRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GroupsRoute: GroupsRouteWithChildren,
   LoginRoute: LoginRoute,
   PackagesRoute: PackagesRouteWithChildren,
   PersonsRoute: PersonsRouteWithChildren,

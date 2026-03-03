@@ -1,11 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { QuoteDetailPage } from '@/features/quotes/components/QuoteDetailPage'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/quotes/$id')({
-  component: QuoteDetail,
+  component: QuoteLayout,
 })
 
-function QuoteDetail() {
-  const { id } = Route.useParams()
-  return <QuoteDetailPage quoteId={id} />
+function QuoteLayout() {
+  return <Outlet />
 }

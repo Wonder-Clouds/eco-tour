@@ -40,6 +40,23 @@ export const getServices = async (filters?: ServiceFilters): Promise<SummaryServ
   return response.data.results
 }
 
+// Get full services with departure_time
+export const getServicesFull = async (filters?: ServiceFilters): Promise<Service[]> => {
+  const params = new URLSearchParams()
+  params.append('limit', '1000')
+
+  if (filters) {
+    if (filters.search) params.append('search', filters.search)
+    if (filters.type) params.append('type', filters.type)
+  }
+
+  const queryString = params.toString()
+  const url = `/service/?${queryString}`
+
+  const response = await api.get<PaginatedResponse<Service>>(url)
+  return response.data.results
+}
+
 export const getServiceById = async (id: string): Promise<Service> => {
   const response = await api.get<Service>(`/service/${id}`)
   return response.data

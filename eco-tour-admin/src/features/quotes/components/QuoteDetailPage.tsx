@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useQuoteFullDetail } from '../hooks/useQuotes'
-import { useDeleteQuote, useUpdateQuoteStatus, useCreateVersion } from '../hooks/useQuoteMutations'
+import { useDeleteQuote, useUpdateQuoteStatus, useCreateVersion, useToggleQuotePublic } from '../hooks/useQuoteMutations'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { QuoteStatus } from '@/types/quote.type'
@@ -24,6 +24,10 @@ import {
   Tag,
   AlertCircle,
   Edit3,
+  Share2,
+  Link,
+  ExternalLink,
+  Download,
 } from 'lucide-react'
 
 interface Props {
@@ -94,16 +98,25 @@ const getTypeStyles = (type: string) => {
 }
 
 export const QuoteDetailPage = ({ quoteId }: Props) => {
-  const { data: quote, isLoading, error } = useQuoteFullDetail(quoteId)
+  const { data: quote, isLoading, error, refetch } = useQuoteFullDetail(quoteId)
   const navigate = useNavigate()
   const deleteQuoteMutation = useDeleteQuote()
   const updateStatusMutation = useUpdateQuoteStatus(quoteId)
   const createVersionMutation = useCreateVersion(quoteId)
+  const togglePublicMutation = useToggleQuotePublic()
 
   const [expandedPersons, setExpandedPersons] = useState<Set<string>>(new Set())
   const [expandedServices, setExpandedServices] = useState<Set<string>>(new Set())
   const [showSchedule, setShowSchedule] = useState(true)
   const [isDuplicating, setIsDuplicating] = useState(false)
+  const [showShareModal, setShowShareModal] = useState(false)
+  const [isTogglingPublic, setIsTogglingPublic] = useState(false)
+  const [linkCopied, setLinkCopied] = useState(false)
+
+  // Derive public state from quote data
+  const isCurrentlyPublic = quote?.is_public === true
+  // Generate URL - always available if quote is public
+  const publicUrl = isCurrentlyPublic ? `${window.location.origin}/quotes/public/${quoteId}` : null
 
   const togglePerson = (personId: string) => {
     const newExpanded = new Set(expandedPersons)
@@ -162,13 +175,89 @@ export const QuoteDetailPage = ({ quoteId }: Props) => {
 
       if (newQuote?.id) {
         // Redirigir a la nueva versión para editarla
-        window.location.href = `/quotes/${newQuote.id}/edit`
+        navigate({ to: '/quotes/$id/edit', params: { id: newQuote.id } })
       }
     } catch (err) {
       console.error('Error al duplicar:', err)
       alert('Error al duplicar la cotización')
     } finally {
       setIsDuplicating(false)
+    }
+  }
+
+  // Compartir cotización - mostrar modal si ya es público, o hacer público
+  const handleShare = async () => {
+    // Si ya es público según los datos del quote, solo mostrar el modal
+    if (quote?.is_public === true) {
+      setShowShareModal(true)
+      return
+    }
+
+    // Si no es público, hacerlo público usando toggle-public
+    setIsTogglingPublic(true)
+    try {
+      const result = await togglePublicMutation.mutateAsync(quoteId)
+      console.log('Toggle result:', result)
+
+      // Refrescar datos y esperar resultado
+      const { data: updatedQuote } = await refetch()
+
+      // Verificar que se hizo público
+      if (updatedQuote?.is_public === true) {
+        setShowShareModal(true)
+      } else {
+        // Si por alguna razón no se actualizó, mostrar igual el modal
+        // porque el toggle ya se ejecutó exitosamente
+        setShowShareModal(true)
+      }
+    } catch (err) {
+      console.error('Error al compartir:', err)
+      alert('Error al generar el enlace público')
+    } finally {
+      setIsTogglingPublic(false)
+    }
+  }
+
+  // Hacer privada la cotización
+  const handleMakePrivate = async () => {
+    setIsTogglingPublic(true)
+    try {
+      await togglePublicMutation.mutateAsync(quoteId)
+      await refetch()
+      setShowShareModal(false)
+    } catch (err) {
+      console.error('Error al hacer privada:', err)
+      alert('Error al cambiar el estado')
+    } finally {
+      setIsTogglingPublic(false)
+    }
+  }
+
+  const copyToClipboard = () => {
+    if (publicUrl) {
+      navigator.clipboard.writeText(publicUrl)
+      setLinkCopied(true)
+      setTimeout(() => setLinkCopied(false), 2000)
+    }
+  }
+
+  // Descargar PDF de la vista pública
+  const handleDownloadPdf = () => {
+    if (!quote) return
+
+    // Abrir la vista pública en una nueva ventana para imprimir/guardar como PDF
+    const publicViewUrl = `${window.location.origin}/quotes/public/${quoteId}`
+    const printWindow = window.open(publicViewUrl, '_blank')
+
+    if (printWindow) {
+      // Esperar a que cargue y mostrar diálogo de impresión
+      printWindow.onload = () => {
+        setTimeout(() => {
+          printWindow.print()
+        }, 1500) // Dar tiempo para que carguen las imágenes
+      }
+    } else {
+      alert('Por favor, permite las ventanas emergentes para descargar el PDF')
     }
   }
 
@@ -245,24 +334,42 @@ export const QuoteDetailPage = ({ quoteId }: Props) => {
 
         {/* Acciones */}
         <div className="flex items-center gap-2">
+          {/* Share button - always visible */}
+          <Button
+            onClick={handleShare}
+            disabled={isTogglingPublic}
+            variant={isCurrentlyPublic ? "outline" : "default"}
+            className="flex items-center gap-2"
+            style={isCurrentlyPublic
+              ? { borderColor: '#00bf35', color: '#00bf35' }
+              : { backgroundColor: '#00bf35' }
+            }
+          >
+            {isTogglingPublic ? <Loader2 className="animate-spin" size={16} /> : <Share2 size={16} />}
+            {isCurrentlyPublic ? 'Ver enlace público' : 'Compartir'}
+          </Button>
+
+          {/* Download PDF button */}
+          <Button
+            onClick={handleDownloadPdf}
+            variant="outline"
+            className="flex items-center gap-2"
+            style={{ borderColor: '#6b7280', color: '#6b7280' }}
+          >
+            <Download size={16} />
+            Descargar PDF
+          </Button>
+
           {quote.status === 'draft' && (
             <>
-              <a
-                href={`/quotes/${quoteId}/edit`}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition"
+              <Button
+                onClick={() => navigate({ to: '/quotes/$id/edit', params: { id: quoteId } })}
+                variant="outline"
+                className="flex items-center gap-2"
                 style={{ borderColor: '#2563eb', color: '#2563eb' }}
               >
                 <Edit3 size={16} />
                 Editar
-              </a>
-              <Button
-                onClick={() => handleStatusChange('pending')}
-                disabled={updateStatusMutation.isPending}
-                className="flex items-center gap-2"
-                style={{ backgroundColor: '#d97706' }}
-              >
-                <Send size={16} />
-                Enviar a Revisión
               </Button>
             </>
           )}
@@ -289,14 +396,15 @@ export const QuoteDetailPage = ({ quoteId }: Props) => {
             </>
           )}
           {(quote.status === 'rejected' || quote.status === 'approved') && (
-            <a
-              href={`/quotes/${quoteId}/edit?newVersion=true`}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition"
+            <Button
+              onClick={() => navigate({ to: '/quotes/$id/edit', params: { id: quoteId }, search: { newVersion: 'true' } })}
+              variant="outline"
+              className="flex items-center gap-2"
               style={{ borderColor: '#2563eb', color: '#2563eb' }}
             >
               <Edit3 size={16} />
               Editar (Nueva Versión)
-            </a>
+            </Button>
           )}
           <Button
             onClick={handleDuplicate}
@@ -894,6 +1002,112 @@ export const QuoteDetailPage = ({ quoteId }: Props) => {
           )}
         </div>
       </div>
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold flex items-center gap-2" style={{ color: '#085f24' }}>
+                <Share2 size={20} />
+                Compartir Cotización
+              </h3>
+              <button
+                onClick={() => setShowShareModal(false)}
+                className="p-2 rounded-full hover:bg-gray-100 transition"
+              >
+                <span className="text-gray-500">✕</span>
+              </button>
+            </div>
+
+            {/* Status indicator */}
+            <div className="flex items-center gap-3 mb-6 p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                <CheckCircle size={20} className="text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-green-800">Cotización pública</p>
+                <p className="text-xs text-green-600">Tu cliente puede ver este enlace</p>
+              </div>
+            </div>
+
+            <p className="text-gray-600 mb-3 text-sm">
+              Comparte este enlace con tu cliente para que pueda ver el itinerario:
+            </p>
+            {(() => {
+              // Always generate URL when modal is shown (toggle was successful)
+              const shareUrl = `${window.location.origin}/quotes/public/${quoteId}`
+              return (
+                <>
+                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border mb-4">
+                    <Link size={16} className="text-gray-400 shrink-0" />
+                    <input
+                      type="text"
+                      value={shareUrl}
+                      readOnly
+                      className="flex-1 bg-transparent text-sm text-gray-700 outline-none truncate"
+                    />
+                  </div>
+
+                  {/* Copied feedback */}
+                  {linkCopied && (
+                    <div className="mb-4 p-2 bg-green-100 rounded-lg text-center">
+                      <p className="text-sm text-green-700 font-medium flex items-center justify-center gap-2">
+                        <CheckCircle size={16} />
+                        ¡Enlace copiado!
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3 mb-4">
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(shareUrl)
+                        setLinkCopied(true)
+                        setTimeout(() => setLinkCopied(false), 2000)
+                      }}
+                      className="flex-1 h-11"
+                      style={{ backgroundColor: '#00bf35' }}
+                    >
+                      <Copy size={16} className="mr-2" />
+                      {linkCopied ? '¡Copiado!' : 'Copiar enlace'}
+                    </Button>
+                    <Button
+                      onClick={() => window.open(shareUrl, '_blank')}
+                      variant="outline"
+                      className="flex-1 h-11 flex items-center justify-center gap-2"
+                    >
+                      <ExternalLink size={16} />
+                      Ver vista pública
+                    </Button>
+                  </div>
+                </>
+              )
+            })()}
+
+            {/* Make private button */}
+            <div className="pt-4 border-t">
+              <button
+                onClick={handleMakePrivate}
+                disabled={isTogglingPublic}
+                className="w-full flex items-center justify-center gap-2 text-sm text-red-600 hover:text-red-700 py-2 rounded-lg hover:bg-red-50 transition disabled:opacity-50"
+              >
+                {isTogglingPublic ? (
+                  <>
+                    <Loader2 className="animate-spin" size={14} />
+                    Cambiando...
+                  </>
+                ) : (
+                  <>
+                    <XCircle size={14} />
+                    Hacer privada esta cotización
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

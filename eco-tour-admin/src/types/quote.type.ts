@@ -1,5 +1,6 @@
 import { Media } from './media.type'
 
+// Estados de cotización (según STATUS_QUOTE_CHOICES del backend)
 export type QuoteStatus = 'draft' | 'pending' | 'approved' | 'rejected'
 
 // ==================== QUOTE BÁSICO ====================
@@ -139,7 +140,9 @@ export interface ServiceDetail {
   pricing_info: PricingInfo
   persons_in_service: ServicePersonAssignment[]
   total_cost_for_service: number
+  people_count?: number
   itineraries: ServiceItinerary[]
+  photos: Media[]
   media: Media[]
   tags: ServiceTag[]
 }
@@ -236,6 +239,7 @@ export interface QuoteFullDetail {
   valid_until?: string
   total_price: string
   notes?: string
+  is_public?: boolean
   created_at: string
   updated_at: string
   parent_quote?: string
@@ -257,6 +261,8 @@ export interface BulkServiceInput {
   person_id?: string       // Para personas existentes
   departure_date: string
   departure_time?: string
+  arrive_date?: string     // Fecha de llegada individual
+  arrive_time?: string     // Hora de llegada individual
   notes?: string
 }
 

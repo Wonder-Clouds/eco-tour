@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuotes } from '../hooks/useQuotes'
 import { useDeleteQuote } from '../hooks/useQuoteMutations'
+import { createVersion } from '../api/quotesApi'
 import { QuotesTable } from './QuotesTable'
 import { QuoteFiltersComponent } from './QuoteFilters'
 import { QuoteFilters } from '@/types/quote.type'
@@ -8,8 +9,9 @@ import { Plus, FileText, Loader2 } from 'lucide-react'
 
 export const QuotesListPage = () => {
   const [filters, setFilters] = useState<QuoteFilters>({})
-  const { data: quotes = [], isLoading, error } = useQuotes(filters)
+  const { data: quotes = [], isLoading, error, refetch } = useQuotes(filters)
   const deleteQuoteMutation = useDeleteQuote()
+  const [duplicating, setDuplicating] = useState<string | null>(null)
 
   const handleDelete = async (id: string) => {
     if (confirm('¿Estás seguro de eliminar esta cotización? Esta acción no se puede deshacer.')) {
@@ -22,9 +24,31 @@ export const QuotesListPage = () => {
     }
   }
 
-  const handleDuplicate = async (id: string) => {
-    // Redirigir a la página de edición con opción de crear nueva versión
+  const handleEdit = (id: string) => {
     window.location.href = `/quotes/${id}/edit`
+  }
+
+  const handleDuplicate = async (id: string) => {
+    if (!confirm('¿Deseas crear una copia de esta cotización? Se creará una nueva versión con todos los datos.')) {
+      return
+    }
+
+    setDuplicating(id)
+    try {
+      // Usar el endpoint create-version del backend
+      const newQuote = await createVersion(id, {})
+      await refetch()
+
+      // Redirigir a la nueva versión creada
+      if (newQuote?.id) {
+        window.location.href = `/quotes/${newQuote.id}`
+      }
+    } catch (error) {
+      console.error('Error al duplicar cotización:', error)
+      alert('Error al duplicar la cotización')
+    } finally {
+      setDuplicating(null)
+    }
   }
 
   if (error) {
@@ -135,7 +159,9 @@ export const QuotesListPage = () => {
         <QuotesTable
           quotes={quotes}
           onDelete={handleDelete}
+          onEdit={handleEdit}
           onDuplicate={handleDuplicate}
+          duplicatingId={duplicating}
         />
       )}
     </div>
