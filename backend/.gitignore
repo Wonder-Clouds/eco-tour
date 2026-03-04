@@ -9,3 +9,4 @@ __pycache__/
 
 postgres/
 media_files/
+staticfiles/
