@@ -29,20 +29,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-pfg@8zgf@e_#m4rcpf1+fu32b3pi8$&u3d-c7537%9-(i0@0hc')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True').lower() == 'True'
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if os.getenv('CORS_ALLOWED_ORIGINS') else []
+CORS_ALLOW_CREDENTIALS = True
 
 # Allowed hosts
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 # CSRF trusted origins
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if os.getenv('CSRF_TRUSTED_ORIGINS') else []
 
 # On development allow all origins
 if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
     ALLOWED_HOSTS = ['*']
 
 CORS_ALLOW_METHODS = [
@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     'pay',
     'tag',
     'todo',
+    'authentication',
 
     # Third party apps
     'corsheaders',
@@ -230,5 +231,5 @@ SIMPLE_JWT = {
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': os.getenv('SIGNING_KEY'),
     'AUTH_HEADER_TYPES': ('Bearer',),
-    'TOKEN_OBTAIN_PAIR_SERIALIZER': 'jwt.serializers.CustomTokenObtainPairSerializer',
+    'TOKEN_OBTAIN_PAIR_SERIALIZER': 'authentication.serializers.CustomTokenObtainPairSerializer',
 }
