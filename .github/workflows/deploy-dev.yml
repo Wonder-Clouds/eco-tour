@@ -8,7 +8,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      TARGET_DIR: "~/eco-tour-dev"
+      # Definimos solo el nombre de la carpeta
+      TARGET_DIR: "eco-tour-dev"
       PROJECT_NAME: "eco-tour"
 
     steps:
@@ -22,22 +23,28 @@ jobs:
           envs: TARGET_DIR, PROJECT_NAME, ENV_DATA
           script: |
             set -e
+            
+            # Usamos $HOME para entrar a la carpeta de forma segura y dinámica
+            cd "$HOME/$TARGET_DIR"
+            
             echo "📍 Directorio actual: $(pwd)"
-            cd ${TARGET_DIR}
             echo "🚀 Desplegando DEV desde rama dev..."
             
+            # Sincronización forzada con la rama dev
             git fetch origin dev
             git reset --hard origin/dev
 
-            # Crear el archivo .env desde el secreto de desarrollo
+            # Crear el archivo .env desde el secreto de desarrollo de GitHub
             echo "$ENV_DATA" > .env
 
-            # Limpiar imágenes viejas
+            # Limpieza de imágenes de Podman para ahorrar espacio
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
+            # Reinicio de servicios
             podman-compose stop backend frontend || true
             podman-compose build backend frontend
             podman-compose up -d backend frontend
+            
             echo "✅ Desarrollo actualizado correctamente"
         env:
           ENV_DATA: ${{ secrets.ENV_DEV }}

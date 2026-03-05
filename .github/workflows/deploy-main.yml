@@ -8,7 +8,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      TARGET_DIR: "~/eco-tour-main"
+      # Definimos solo el nombre de la carpeta de producción
+      TARGET_DIR: "eco-tour-main"
       PROJECT_NAME: "eco-tour"
 
     steps:
@@ -22,22 +23,30 @@ jobs:
           envs: TARGET_DIR, PROJECT_NAME, ENV_DATA
           script: |
             set -e
+            
+            # Entramos a la carpeta usando la variable $HOME del sistema
+            cd "$HOME/$TARGET_DIR"
+            
             echo "📍 Directorio actual: $(pwd)"
-            cd ${TARGET_DIR}
             echo "🚀 Desplegando PROD desde rama main..."
             
+            # Sincronización limpia con la rama main
             git fetch origin main
             git reset --hard origin/main
 
-            # Crear el archivo .env desde el secreto
+            # Crear el archivo .env desde el secreto de producción
             echo "$ENV_DATA" > .env
+            echo "📝 Archivo .env de Producción actualizado"
 
-            # Limpiar imágenes viejas
+            # Limpiar imágenes viejas de Podman para liberar espacio en Cusco
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
+            # Reinicio de servicios de producción
             podman-compose stop backend frontend || true
             podman-compose build backend frontend
             podman-compose up -d backend frontend
-            echo "✅ Producción actualizada"
+            
+            echo "✅ Producción actualizada correctamente"
         env:
+          # Usamos el secreto específico para producción
           ENV_DATA: ${{ secrets.ENV_MAIN }}
