@@ -23,4 +23,4 @@ RUN chmod +x /app/entrypoint.sh
 EXPOSE 8000
 
 # CMD final: entrypoint se encarga de migraciones y luego lanza Gunicorn
-CMD ["/app/entrypoint.sh", "gunicorn", "--pythonpath", "/app", "backend.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+CMD ["/app/entrypoint.sh", "gunicorn", "--pythonpath", "/app", "server.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
