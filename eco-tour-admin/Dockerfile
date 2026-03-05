@@ -3,27 +3,24 @@ FROM node:20-bookworm AS build
 
 WORKDIR /app
 
-# variable usada por Vite
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL}
 
-# activar pnpm estable
-RUN corepack enable
-RUN corepack prepare pnpm@9.12.0 --activate
+RUN corepack enable && corepack prepare pnpm@9.12.0 --activate
 
-# copiar solo deps primero (mejor cache)
 COPY package.json pnpm-lock.yaml ./
 
-# instalar dependencias
+# CONFIGURACIÓN CLAVE: Forzar el hoisting de dependencias
+# Esto asegura que ohash y otras piezas de Nitro estén donde Vite las busca
+RUN pnpm config set shamefully-hoist true
 RUN pnpm install --frozen-lockfile
 
-# FIX para bug de nitro en algunos entornos
-RUN pnpm add ohash
-
-# copiar código
+# Copiar el resto del código
 COPY . .
 
-# build
+# Limpiar caché de Nitro/Vite antes de compilar (por si acaso)
+RUN rm -rf .nitro .output
+
 RUN pnpm run build
 
 
