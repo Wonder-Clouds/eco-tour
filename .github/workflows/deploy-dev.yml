@@ -1,0 +1,37 @@
+name: Deploy Development (Dev)
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_DIR: "~/eco-tour-dev"
+      PROJECT_NAME: "eco-tour"
+
+    steps:
+      - name: Deploy to VPS (Development)
+        uses: appleboy/ssh-action@1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          envs: TARGET_DIR, PROJECT_NAME
+          script: |
+            set -e
+            cd ${TARGET_DIR}
+            echo "🚀 Desplegando DEV desde rama dev..."
+            
+            git fetch origin dev
+            git reset --hard origin/dev
+
+            # Limpiar imágenes viejas
+            podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
+
+            podman-compose stop backend frontend || true
+            podman-compose build backend frontend
+            podman-compose up -d backend frontend
+            echo "✅ Desarrollo actualizado"
