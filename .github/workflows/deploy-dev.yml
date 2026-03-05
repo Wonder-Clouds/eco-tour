@@ -8,7 +8,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      # Nombre de la carpeta de desarrollo en tu VPS
       TARGET_DIR: "eco-tour-dev"
       PROJECT_NAME: "eco-tour"
 
@@ -24,7 +23,7 @@ jobs:
           script: |
             set -e
             
-            # Navegar al directorio usando la variable $HOME segura
+            # Navegar al directorio de desarrollo de forma segura
             cd "$HOME/$TARGET_DIR"
             
             echo "📍 Directorio actual: $(pwd)"
@@ -38,16 +37,16 @@ jobs:
             echo "$ENV_DATA" > .env
             echo "📝 Archivo .env de Desarrollo actualizado"
 
-            # Limpiar imágenes antiguas para no saturar el disco del VPS
+            # Limpiar imágenes antiguas
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
             # Detener servicios antes de reconstruir
             podman-compose stop backend frontend || true
 
             # CONSTRUCCIÓN CON ULIMIT EXTENDIDO
-            # Solución para el error EMFILE (too many open files)
+            # Pasamos el argumento a través de podman-compose para evitar errores de argumentos no reconocidos
             echo "⚙️ Reconstruyendo imágenes con ulimit 65k..."
-            podman-compose build --ulimit nofile=65536:65536 backend frontend
+            podman-compose build --podman-build-args "--ulimit nofile=65536:65536" backend frontend
 
             # Levantar servicios en segundo plano
             echo "🚀 Levantando servicios actualizados..."
@@ -55,5 +54,4 @@ jobs:
             
             echo "✅ Desarrollo actualizado correctamente"
         env:
-          # Secreto específico para el entorno de desarrollo
           ENV_DATA: ${{ secrets.ENV_DEV }}
