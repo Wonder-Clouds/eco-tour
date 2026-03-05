@@ -23,6 +23,7 @@ jobs:
           script: |
             set -e
             cd ${TARGET_DIR}
+            echo "📍 Directorio actual: $(pwd)"
             echo "🚀 Desplegando DEV desde rama dev..."
             
             git fetch origin dev
