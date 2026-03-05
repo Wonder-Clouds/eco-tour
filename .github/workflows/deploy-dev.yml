@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Deploy to VPS (Development)
-        uses: appleboy/ssh-action@1.0.0
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
@@ -30,7 +30,6 @@ jobs:
 
             # Crear el archivo .env desde el secreto de desarrollo
             echo "$ENV_DATA" > .env
-            echo "📝 Archivo .env de Desarrollo actualizado"
 
             # Limpiar imágenes viejas
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
