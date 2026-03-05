@@ -33,14 +33,20 @@ jobs:
             echo "🧹 Limpiando imágenes antiguas..."
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
+            echo "🛑 Deteniendo contenedores..."
             podman-compose stop backend frontend || true
 
-            # CORRECCIÓN DE SINTAXIS AQUÍ:
-            echo "⚙️ Reconstruyendo con ulimit 65k vía podman-build-args..."
-            podman-compose build --podman-build-args "--ulimit nofile=65536:65536" backend frontend
+            echo "⚙️ Reconstruyendo imágenes con Podman directo (ulimit 65k)..."
+            
+            # Build Backend
+            podman build --ulimit nofile=65536:65536 -t ${PROJECT_NAME}_backend:latest ./backend
+            
+            # Build Frontend
+            podman build --ulimit nofile=65536:65536 -t ${PROJECT_NAME}_frontend:latest ./frontend
 
             echo "🚀 Levantando servicios..."
             podman-compose up -d backend frontend
+            
             echo "✅ Producción actualizada correctamente"
         env:
           ENV_DATA: ${{ secrets.ENV_MAIN }}
