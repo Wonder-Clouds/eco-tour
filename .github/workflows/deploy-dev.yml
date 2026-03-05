@@ -33,23 +33,19 @@ jobs:
             echo "🧹 Limpiando imágenes antiguas..."
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
-            echo "🛑 Deteniendo contenedores..."
             podman-compose stop backend frontend || true
 
-            # USAMOS PODMAN DIRECTAMENTE PARA EL BUILD
-            # Esto evita las limitaciones de podman-compose y acepta el ulimit
-            echo "⚙️ Reconstruyendo imágenes con Podman directo (ulimit 65k)..."
+            echo "⚙️ Reconstruyendo imágenes con Podman directo..."
             
-            # Build Backend
+            # Backend (Este funcionó bien)
             podman build --ulimit nofile=65536:65536 -t ${PROJECT_NAME}_backend:latest ./backend
             
-            # Build Frontend
-            podman build --ulimit nofile=65536:65536 -t ${PROJECT_NAME}_frontend:latest ./frontend
+            # Frontend (Ajustado al nombre de tu carpeta: eco-tour-admin)
+            # Si tu carpeta se llama distinto, cambia "./eco-tour-admin" por el nombre correcto
+            podman build --ulimit nofile=65536:65536 -t ${PROJECT_NAME}_frontend:latest ./eco-tour-admin
 
             echo "🚀 Levantando servicios..."
-            # Usamos up para que podman-compose use las imágenes recién creadas
             podman-compose up -d backend frontend
-            
             echo "✅ Desarrollo actualizado correctamente"
         env:
           ENV_DATA: ${{ secrets.ENV_DEV }}

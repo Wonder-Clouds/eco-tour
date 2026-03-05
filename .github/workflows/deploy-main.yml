@@ -33,18 +33,19 @@ jobs:
             echo "🧹 Limpiando imágenes antiguas..."
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
-            echo "🛑 Deteniendo contenedores..."
+            echo "🛑 Deteniendo contenedores de producción..."
             podman-compose stop backend frontend || true
 
             echo "⚙️ Reconstruyendo imágenes con Podman directo (ulimit 65k)..."
             
-            # Build Backend
+            # Construcción del Backend
             podman build --ulimit nofile=65536:65536 -t ${PROJECT_NAME}_backend:latest ./backend
             
-            # Build Frontend
-            podman build --ulimit nofile=65536:65536 -t ${PROJECT_NAME}_frontend:latest ./frontend
+            # Construcción del Frontend (Ajustar nombre de carpeta si es necesario)
+            # Usamos eco-tour-admin basándonos en tu estructura de archivos
+            podman build --ulimit nofile=65536:65536 -t ${PROJECT_NAME}_frontend:latest ./eco-tour-admin
 
-            echo "🚀 Levantando servicios..."
+            echo "🚀 Levantando servicios en producción..."
             podman-compose up -d backend frontend
             
             echo "✅ Producción actualizada correctamente"
