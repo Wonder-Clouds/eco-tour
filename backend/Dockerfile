@@ -1,18 +1,26 @@
-# Esta imagen ya trae GCC, Make, y todas las librerías de desarrollo
 FROM python:3.10-bookworm 
 
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Ya no necesitas instalar casi nada con apt-get, viene casi todo
-RUN apt-get update && apt-get install -y netcat-openbsd libmagic1
+# Instalamos dependencias de sistema
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    netcat-openbsd \
+    libmagic1 \
+    && rm -rf /var/lib/apt/lists/*
 
+# Aseguramos que Gunicorn esté instalado aunque no esté en requirements.txt
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
 COPY . .
+
+# Permisos de ejecución
 RUN chmod +x /app/entrypoint.sh
+
 EXPOSE 8000
 
-CMD ["sh", "-c", "/app/entrypoint.sh && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 --workers 4 core.wsgi:application"]
+# El comando debe ser un solo proceso. Es mejor que el entrypoint 
+# prepare la DB y LUEGO lance gunicorn.
+CMD ["/app/entrypoint.sh"]
