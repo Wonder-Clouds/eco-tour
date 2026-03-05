@@ -3,37 +3,41 @@ FROM node:20-bookworm AS build
 
 WORKDIR /app
 
+# Argumentos de construcción
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL}
 
+# Habilitar pnpm de forma eficiente
 RUN corepack enable && corepack prepare pnpm@9.12.0 --activate
 
+# Solo copiar archivos de dependencias primero
 COPY package.json pnpm-lock.yaml ./
 
-# CONFIGURACIÓN CLAVE: Forzar el hoisting de dependencias
-# Esto asegura que ohash y otras piezas de Nitro estén donde Vite las busca
-RUN pnpm config set shamefully-hoist true
+# Instalación limpia
 RUN pnpm install --frozen-lockfile
 
-# Copiar el resto del código
+# Copiar el resto del código y construir
 COPY . .
-
-# Limpiar caché de Nitro/Vite antes de compilar (por si acaso)
-RUN rm -rf .nitro .output
-
 RUN pnpm run build
 
-
 # ---------- Stage 2: Production ----------
+# Usamos slim para reducir el tamaño de la imagen (aprox 150MB menos)
 FROM node:20-bookworm-slim
 
 WORKDIR /app
 
+# Definir entorno
 ENV NODE_ENV=production
+ENV PORT=3000
 
-# copiar build final
+# Copiar el build desde la etapa anterior
+# Nota: Nos aseguramos de copiar la carpeta .output completa
 COPY --from=build /app/.output ./.output
+
+# Seguridad: No ejecutar como root
+USER node
 
 EXPOSE 3000
 
+# Usar el path estándar de Nitro/Nuxt
 CMD ["node", ".output/server/index.mjs"]
