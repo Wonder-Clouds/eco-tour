@@ -24,16 +24,14 @@ jobs:
             set -e
             cd "$HOME/$TARGET_DIR"
             
-            echo "🚀 Sincronizando código de Producción..."
+            echo "🚀 Sincronizando código de PROD..."
             git fetch origin main
             git reset --hard origin/main
 
             echo "$ENV_DATA" > .env
             
-            echo "🧹 Limpiando imágenes y caché de construcción..."
-            # Eliminamos imágenes viejas
+            echo "🧹 Limpiando recursos..."
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
-            # Forzamos limpieza de caché para evitar errores de dependencias fantasmas
             podman builder prune -f
 
             podman-compose stop backend frontend || true
@@ -41,16 +39,15 @@ jobs:
             echo "⚙️ Reconstruyendo Backend..."
             podman build -t ${PROJECT_NAME}_backend:latest ./backend
             
-            echo "⚙️ Reconstruyendo Frontend con parche Nitro (ohash)..."
-            # Este comando inyecta ohash en el proceso de instalación del Dockerfile
-            # Soluciona el error de Rollup sin modificar tu código fuente
-            sed -i 's/pnpm install/pnpm add ohash \&\& pnpm install/g' ./eco-tour-admin/Dockerfile || true
+            echo "🔧 Aplicando parche de dependencias en package.json..."
+            # Parche para error de Rollup/Nitro en producción
+            sed -i '/"dependencies": {/a \    "ohash": "latest",' ./eco-tour-admin/package.json
             
+            echo "⚙️ Reconstruyendo Frontend..."
             podman build -t ${PROJECT_NAME}_frontend:latest ./eco-tour-admin
 
-            echo "🚀 Levantando servicios en Producción..."
+            echo "🚀 Levantando servicios..."
             podman-compose up -d backend frontend
-            
             echo "✅ Producción actualizada correctamente"
         env:
           ENV_DATA: ${{ secrets.ENV_MAIN }}

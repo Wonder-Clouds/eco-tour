@@ -24,30 +24,31 @@ jobs:
             set -e
             cd "$HOME/$TARGET_DIR"
             
-            echo "🚀 Sincronizando código..."
+            echo "🚀 Sincronizando código de DEV..."
             git fetch origin dev
             git reset --hard origin/dev
 
             echo "$ENV_DATA" > .env
             
-            echo "🧹 Limpiando imágenes obsoletas..."
+            echo "🧹 Limpiando recursos..."
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
+            podman builder prune -f
 
             podman-compose stop backend frontend || true
 
             echo "⚙️ Reconstruyendo Backend..."
             podman build -t ${PROJECT_NAME}_backend:latest ./backend
             
-            echo "⚙️ Reconstruyendo Frontend con parche de dependencias..."
-            # PARCHE: Inyectamos ohash directamente en el Dockerfile antes de construir
-            # Esto soluciona el error de Nitro Nightly sin tocar tu repositorio local
-            sed -i 's/pnpm install/pnpm add ohash \&\& pnpm install/g' ./eco-tour-admin/Dockerfile || true
+            echo "🔧 Aplicando parche de dependencias en package.json..."
+            # Inyectamos ohash directamente en la sección de dependencies
+            # Esto garantiza que pnpm lo instale sin importar el Dockerfile
+            sed -i '/"dependencies": {/a \    "ohash": "latest",' ./eco-tour-admin/package.json
             
+            echo "⚙️ Reconstruyendo Frontend..."
             podman build -t ${PROJECT_NAME}_frontend:latest ./eco-tour-admin
 
             echo "🚀 Levantando servicios..."
             podman-compose up -d backend frontend
-            echo "✅ Desarrollo actualizado"
-
+            echo "✅ Desarrollo actualizado correctamente"
         env:
           ENV_DATA: ${{ secrets.ENV_DEV }}
