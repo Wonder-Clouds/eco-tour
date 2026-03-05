@@ -46,6 +46,10 @@ services:
       context: ./eco-tour-admin
       args:
         - VITE_API_URL=${VITE_API_URL}
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
     restart: always
     ports:
       - "${FRONTEND_PORT}:3000"

@@ -1,20 +1,24 @@
 # Stage 1: Build
-FROM node:current-alpine3.20 AS build
+FROM node:20-alpine3.20 AS build 
+# Cambié "current" por "20" (LTS) para mayor estabilidad
 WORKDIR /app
+
+# Instalar dependencias necesarias para compilación en Alpine
+RUN apk add --no-cache libc6-compat
+
 RUN npm install -g pnpm
+
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install
+
+# Usar --frozen-lockfile para evitar que pnpm intente modificar el lock
+# y --aggregate-output para reducir el ruido en consola
+RUN pnpm install --frozen-lockfile
+
 COPY . .
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
-RUN pnpm run build
 
-# Stage 2: Serve with Node (Adios Nginx)
-FROM node:current-alpine3.20
-WORKDIR /app
-COPY --from=build /app/.output ./.output
-# Nitro usa el puerto 3000 por defecto
-EXPOSE 3000
-ENV PORT=3000
-ENV HOST=0.0.0.0
-CMD ["node", ".output/server/index.mjs"]
+# Aumentar la memoria de Node para el build si es necesario
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+RUN pnpm run build
