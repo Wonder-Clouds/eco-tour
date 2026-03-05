@@ -1,4 +1,3 @@
-# Dockerfile
 FROM python:3.10-bookworm
 
 WORKDIR /app
@@ -15,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
-# Copiar el código
+# Copiar todo el código
 COPY . .
 
 # Dar permisos de ejecución al entrypoint
@@ -23,5 +22,5 @@ RUN chmod +x /app/entrypoint.sh
 
 EXPOSE 8000
 
-# CMD final pasa Gunicorn al entrypoint
-CMD ["/app/entrypoint.sh", "gunicorn", "backend.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+# CMD final: entrypoint se encarga de migraciones y luego lanza Gunicorn
+CMD ["/app/entrypoint.sh", "gunicorn", "--pythonpath", "/app", "backend.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
