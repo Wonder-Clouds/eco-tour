@@ -22,36 +22,25 @@ jobs:
           envs: TARGET_DIR, PROJECT_NAME, ENV_DATA
           script: |
             set -e
-            
-            # Navegar al directorio de producción de forma segura
             cd "$HOME/$TARGET_DIR"
             
-            echo "📍 Directorio actual: $(pwd)"
-            echo "🚀 Iniciando despliegue en PROD..."
-            
-            # Sincronización total con la rama main
+            echo "🚀 Actualizando código de PROD..."
             git fetch origin main
             git reset --hard origin/main
 
-            # Inyectar variables de entorno desde los Secrets de GitHub
             echo "$ENV_DATA" > .env
-            echo "📝 Archivo .env actualizado"
-
-            # Limpiar imágenes antiguas para optimizar espacio
+            
+            echo "🧹 Limpiando imágenes antiguas..."
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
-            # Detener contenedores actuales
             podman-compose stop backend frontend || true
 
-            # CONSTRUCCIÓN CON ULIMIT EXTENDIDO
-            # Usamos --podman-build-args para inyectar el ulimit directamente en el comando build de Podman
-            echo "⚙️ Reconstruyendo imágenes con ulimit extendido..."
+            # CORRECCIÓN DE SINTAXIS AQUÍ:
+            echo "⚙️ Reconstruyendo con ulimit 65k vía podman-build-args..."
             podman-compose build --podman-build-args "--ulimit nofile=65536:65536" backend frontend
 
-            # Levantar los nuevos servicios
-            echo "🚀 Levantando servicios actualizados..."
+            echo "🚀 Levantando servicios..."
             podman-compose up -d backend frontend
-            
             echo "✅ Producción actualizada correctamente"
         env:
           ENV_DATA: ${{ secrets.ENV_MAIN }}
