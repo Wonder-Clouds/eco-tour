@@ -8,7 +8,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      # Definimos solo el nombre de la carpeta de producción
       TARGET_DIR: "eco-tour-main"
       PROJECT_NAME: "eco-tour"
 
@@ -24,29 +23,35 @@ jobs:
           script: |
             set -e
             
-            # Entramos a la carpeta usando la variable $HOME del sistema
+            # Navegar al directorio de producción de forma segura
             cd "$HOME/$TARGET_DIR"
             
             echo "📍 Directorio actual: $(pwd)"
-            echo "🚀 Desplegando PROD desde rama main..."
+            echo "🚀 Iniciando despliegue en PROD..."
             
-            # Sincronización limpia con la rama main
+            # Sincronización total con la rama main
             git fetch origin main
             git reset --hard origin/main
 
-            # Crear el archivo .env desde el secreto de producción
+            # Inyectar variables de entorno desde los Secrets de GitHub
             echo "$ENV_DATA" > .env
-            echo "📝 Archivo .env de Producción actualizado"
+            echo "📝 Archivo .env actualizado"
 
-            # Limpiar imágenes viejas de Podman para liberar espacio en Cusco
+            # Limpiar imágenes antiguas para optimizar espacio en el VPS
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
-            # Reinicio de servicios de producción
+            # Detener contenedores actuales
             podman-compose stop backend frontend || true
-            podman-compose build backend frontend
+
+            # CONSTRUCCIÓN CON LÍMITE DE ARCHIVOS AUMENTADO
+            # Esto soluciona el error EMFILE de Nitro/Vite de forma garantizada
+            echo "⚙️ Reconstruyendo imágenes con ulimit extendido..."
+            podman-compose build --ulimit nofile=65536:65536 backend frontend
+
+            # Levantar los nuevos servicios
+            echo "🚀 Levantando servicios actualizados..."
             podman-compose up -d backend frontend
             
             echo "✅ Producción actualizada correctamente"
         env:
-          # Usamos el secreto específico para producción
           ENV_DATA: ${{ secrets.ENV_MAIN }}

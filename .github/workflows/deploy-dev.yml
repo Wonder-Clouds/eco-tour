@@ -8,7 +8,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      # Definimos solo el nombre de la carpeta
+      # Nombre de la carpeta de desarrollo en tu VPS
       TARGET_DIR: "eco-tour-dev"
       PROJECT_NAME: "eco-tour"
 
@@ -24,27 +24,36 @@ jobs:
           script: |
             set -e
             
-            # Usamos $HOME para entrar a la carpeta de forma segura y dinámica
+            # Navegar al directorio usando la variable $HOME segura
             cd "$HOME/$TARGET_DIR"
             
             echo "📍 Directorio actual: $(pwd)"
-            echo "🚀 Desplegando DEV desde rama dev..."
+            echo "🚀 Iniciando despliegue en DEV..."
             
-            # Sincronización forzada con la rama dev
+            # Sincronización total con la rama dev
             git fetch origin dev
             git reset --hard origin/dev
 
-            # Crear el archivo .env desde el secreto de desarrollo de GitHub
+            # Generar archivo .env desde los Secrets de GitHub
             echo "$ENV_DATA" > .env
+            echo "📝 Archivo .env de Desarrollo actualizado"
 
-            # Limpieza de imágenes de Podman para ahorrar espacio
+            # Limpiar imágenes antiguas para no saturar el disco del VPS
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
-            # Reinicio de servicios
+            # Detener servicios antes de reconstruir
             podman-compose stop backend frontend || true
-            podman-compose build backend frontend
+
+            # CONSTRUCCIÓN CON ULIMIT EXTENDIDO
+            # Solución para el error EMFILE (too many open files)
+            echo "⚙️ Reconstruyendo imágenes con ulimit 65k..."
+            podman-compose build --ulimit nofile=65536:65536 backend frontend
+
+            # Levantar servicios en segundo plano
+            echo "🚀 Levantando servicios actualizados..."
             podman-compose up -d backend frontend
             
             echo "✅ Desarrollo actualizado correctamente"
         env:
+          # Secreto específico para el entorno de desarrollo
           ENV_DATA: ${{ secrets.ENV_DEV }}
