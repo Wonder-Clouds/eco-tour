@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          envs: TARGET_DIR, PROJECT_NAME
+          envs: TARGET_DIR, PROJECT_NAME, ENV_DATA
           script: |
             set -e
             cd ${TARGET_DIR}
@@ -28,10 +28,16 @@ jobs:
             git fetch origin dev
             git reset --hard origin/dev
 
+            # Crear el archivo .env desde el secreto de desarrollo
+            echo "$ENV_DATA" > .env
+            echo "📝 Archivo .env de Desarrollo actualizado"
+
             # Limpiar imágenes viejas
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
             podman-compose stop backend frontend || true
             podman-compose build backend frontend
             podman-compose up -d backend frontend
-            echo "✅ Desarrollo actualizado"
+            echo "✅ Desarrollo actualizado correctamente"
+        env:
+          ENV_DATA: ${{ secrets.ENV_DEV }}

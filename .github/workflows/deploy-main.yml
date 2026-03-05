@@ -19,14 +19,17 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          envs: TARGET_DIR, PROJECT_NAME
+          envs: TARGET_DIR, PROJECT_NAME, ENV_DATA
           script: |
             set -e
-            cd  ${TARGET_DIR}
+            cd ${TARGET_DIR}
             echo "🚀 Desplegando PROD desde rama main..."
             
             git fetch origin main
             git reset --hard origin/main
+
+            # Crear el archivo .env desde el secreto
+            echo "$ENV_DATA" > .env
 
             # Limpiar imágenes viejas
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
@@ -35,3 +38,5 @@ jobs:
             podman-compose build backend frontend
             podman-compose up -d backend frontend
             echo "✅ Producción actualizada"
+        env:
+          ENV_DATA: ${{ secrets.ENV_MAIN }}
