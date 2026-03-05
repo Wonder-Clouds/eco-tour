@@ -24,24 +24,25 @@ jobs:
             set -e
             cd "$HOME/$TARGET_DIR"
             
-            echo "🚀 Sincronizando código de DEV..."
+            echo "🚀 Sincronizando código..."
             git fetch origin dev
             git reset --hard origin/dev
 
             echo "$ENV_DATA" > .env
             
-            echo "🧹 Limpiando recursos..."
-            podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
-            podman builder prune -f
+            echo "🛑 Deteniendo y eliminando contenedores viejos..."
+            # Usamos down para borrar contenedores y redes antes de tocar imágenes
+            podman-compose down || true
 
-            podman-compose stop backend frontend || true
+            echo "🧹 Limpiando imágenes obsoletas..."
+            # Forzamos el borrado de imágenes del proyecto
+            podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | awk '{print $2}' | xargs -r podman rmi -f || true
+            podman builder prune -f
 
             echo "⚙️ Reconstruyendo Backend..."
             podman build -t ${PROJECT_NAME}_backend:latest ./backend
             
-            echo "🔧 Aplicando parche de dependencias en package.json..."
-            # Inyectamos ohash directamente en la sección de dependencies
-            # Esto garantiza que pnpm lo instale sin importar el Dockerfile
+            echo "🔧 Aplicando parche de dependencias..."
             sed -i '/"dependencies": {/a \    "ohash": "latest",' ./eco-tour-admin/package.json
             
             echo "⚙️ Reconstruyendo Frontend..."

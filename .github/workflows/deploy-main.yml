@@ -30,17 +30,17 @@ jobs:
 
             echo "$ENV_DATA" > .env
             
-            echo "🧹 Limpiando recursos..."
-            podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
-            podman builder prune -f
+            echo "🛑 Deteniendo y eliminando contenedores viejos..."
+            podman-compose down || true
 
-            podman-compose stop backend frontend || true
+            echo "🧹 Limpiando imágenes obsoletas..."
+            podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | awk '{print $2}' | xargs -r podman rmi -f || true
+            podman builder prune -f
 
             echo "⚙️ Reconstruyendo Backend..."
             podman build -t ${PROJECT_NAME}_backend:latest ./backend
             
-            echo "🔧 Aplicando parche de dependencias en package.json..."
-            # Parche para error de Rollup/Nitro en producción
+            echo "🔧 Aplicando parche de dependencias..."
             sed -i '/"dependencies": {/a \    "ohash": "latest",' ./eco-tour-admin/package.json
             
             echo "⚙️ Reconstruyendo Frontend..."
