@@ -37,16 +37,16 @@ jobs:
             echo "$ENV_DATA" > .env
             echo "📝 Archivo .env actualizado"
 
-            # Limpiar imágenes antiguas para optimizar espacio en el VPS
+            # Limpiar imágenes antiguas para optimizar espacio
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
             # Detener contenedores actuales
             podman-compose stop backend frontend || true
 
-            # CONSTRUCCIÓN CON LÍMITE DE ARCHIVOS AUMENTADO
-            # Esto soluciona el error EMFILE de Nitro/Vite de forma garantizada
+            # CONSTRUCCIÓN CON ULIMIT EXTENDIDO
+            # Usamos --podman-build-args para inyectar el ulimit directamente en el comando build de Podman
             echo "⚙️ Reconstruyendo imágenes con ulimit extendido..."
-            podman-compose build --ulimit nofile=65536:65536 backend frontend
+            podman-compose build --podman-build-args "--ulimit nofile=65536:65536" backend frontend
 
             # Levantar los nuevos servicios
             echo "🚀 Levantando servicios actualizados..."
