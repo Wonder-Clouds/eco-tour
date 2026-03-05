@@ -24,30 +24,23 @@ jobs:
             set -e
             cd "$HOME/$TARGET_DIR"
             
-            echo "🚀 Actualizando código de PROD..."
+            echo "🚀 Sincronizando código..."
             git fetch origin main
             git reset --hard origin/main
 
             echo "$ENV_DATA" > .env
             
-            echo "🧹 Limpiando imágenes antiguas..."
+            echo "🧹 Limpiando imágenes obsoletas..."
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
-            echo "🛑 Deteniendo contenedores de producción..."
             podman-compose stop backend frontend || true
 
-            echo "⚙️ Reconstruyendo imágenes con Podman directo (ulimit 65k)..."
-            
-            # Construcción del Backend
-            podman build --ulimit nofile=65536:65536 -t ${PROJECT_NAME}_backend:latest ./backend
-            
-            # Construcción del Frontend (Ajustar nombre de carpeta si es necesario)
-            # Usamos eco-tour-admin basándonos en tu estructura de archivos
-            podman build --ulimit nofile=65536:65536 -t ${PROJECT_NAME}_frontend:latest ./eco-tour-admin
+            echo "⚙️ Reconstruyendo imágenes..."
+            podman build -t ${PROJECT_NAME}_backend:latest ./backend
+            podman build -t ${PROJECT_NAME}_frontend:latest ./eco-tour-admin
 
-            echo "🚀 Levantando servicios en producción..."
+            echo "🚀 Levantando servicios..."
             podman-compose up -d backend frontend
-            
-            echo "✅ Producción actualizada correctamente"
+            echo "✅ Producción actualizada"
         env:
           ENV_DATA: ${{ secrets.ENV_MAIN }}

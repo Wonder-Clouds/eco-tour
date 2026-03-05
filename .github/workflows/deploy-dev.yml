@@ -24,28 +24,23 @@ jobs:
             set -e
             cd "$HOME/$TARGET_DIR"
             
-            echo "🚀 Actualizando código de DEV..."
+            echo "🚀 Sincronizando código..."
             git fetch origin dev
             git reset --hard origin/dev
 
             echo "$ENV_DATA" > .env
             
-            echo "🧹 Limpiando imágenes antiguas..."
+            echo "🧹 Limpiando imágenes obsoletas..."
             podman images --format "{{.Repository}} {{.ID}}" | grep ${PROJECT_NAME} | tail -n +2 | awk '{print $2}' | xargs -r podman rmi -f || true
 
             podman-compose stop backend frontend || true
 
-            echo "⚙️ Reconstruyendo imágenes con Podman directo..."
-            
-            # Backend (Este funcionó bien)
-            podman build --ulimit nofile=65536:65536 -t ${PROJECT_NAME}_backend:latest ./backend
-            
-            # Frontend (Ajustado al nombre de tu carpeta: eco-tour-admin)
-            # Si tu carpeta se llama distinto, cambia "./eco-tour-admin" por el nombre correcto
-            podman build --ulimit nofile=65536:65536 -t ${PROJECT_NAME}_frontend:latest ./eco-tour-admin
+            echo "⚙️ Reconstruyendo imágenes (Usando ulimit global del sistema)..."
+            podman build -t ${PROJECT_NAME}_backend:latest ./backend
+            podman build -t ${PROJECT_NAME}_frontend:latest ./eco-tour-admin
 
             echo "🚀 Levantando servicios..."
             podman-compose up -d backend frontend
-            echo "✅ Desarrollo actualizado correctamente"
+            echo "✅ Desarrollo actualizado"
         env:
           ENV_DATA: ${{ secrets.ENV_DEV }}
