@@ -1,0 +1,53 @@
+name: Deploy Development (Dev)
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_DIR: "eco-tour-dev"
+      PROJECT_NAME: "eco-tour"
+
+    steps:
+      - name: Deploy to VPS (Development)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          envs: TARGET_DIR, PROJECT_NAME, ENV_DATA
+          script: |
+            set -e
+            cd "$HOME/$TARGET_DIR"
+            
+            echo "🚀 Sincronizando código..."
+            git fetch origin dev
+            git reset --hard origin/dev
+
+            echo "$ENV_DATA" > .env
+            
+            echo "🛑 Bajando contenedores anteriores..."
+            podman-compose down || true
+
+            echo "⚙️ Reconstruyendo Backend..."
+            podman build -t ${PROJECT_NAME}_backend:latest ./backend
+            
+            echo "⚙️ Reconstruyendo Frontend (Sin parches de mrd)..."
+            # El UNICO comando extra necesario es este ulimit para que Vite no se ahogue
+            podman build \
+              --ulimit nofile=65536:65536 \
+              -t ${PROJECT_NAME}_frontend:latest ./eco-tour-admin
+
+            echo "🚀 Levantando servicios..."
+            podman-compose up -d
+            
+            echo "🧹 Limpiando imágenes viejas..."
+            podman image prune -f
+            
+            echo "✅ Todo listo y limpio"
+        env:
+          ENV_DATA: ${{ secrets.ENV_DEV }}
