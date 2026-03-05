@@ -64,7 +64,7 @@ volumes:
   postgresql:
 
 networks:
-  eco-main:
+  main-network:
     external: true
-  eco-dev:
+  dev-network:
     external: true
