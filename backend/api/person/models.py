@@ -36,25 +36,11 @@ class Person(SafeDeleteModel):
             self.email = f"{self.first_name.lower()}.{self.last_name.lower()}.{str(self.id)[:8]}@noemail.ecotour.com"
         super().save(*args, **kwargs)
 
+        self.first_name = self.first_name.lower()
+        self.last_name = self.last_name.lower()
+
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
-    
-    @classmethod
-    def get_or_create_generic_person(cls, group):
-        """Get or create a generic person for temporary use in quotes"""
-        generic_person, created = cls.objects.get_or_create(
-            first_name="Persona",
-            last_name="Genérica",
-            is_generic=True,
-            defaults={
-                'email': f"generic.person.{uuid.uuid4().hex[:8]}@noemail.ecotour.com"
-            }
-        )
-        # Ensure the generic person is associated with the group
-        if group not in generic_person.group.all():
-            generic_person.group.add(group)
-        
-        return generic_person
+        return f"{self.first_name.capitalize()} {self.last_name.capitalize()}"
 
 auditlog.register(Person)
 

@@ -1,4 +1,3 @@
-import { Group } from './group.type'
 import { Media } from './media.type'
 
 export interface Person {
@@ -9,7 +8,7 @@ export interface Person {
   phone_number: string
   media?: Media[]
   passport_number: string
-  group?: Group[]
+  group?: string[]  // Array of group IDs
   birth_date: string
   nationality: string
   is_generic: boolean

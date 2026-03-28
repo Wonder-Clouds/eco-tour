@@ -18,8 +18,101 @@ from api.itinerary.serializers import BulkCreateItinerarySerializer
 from api.data.serializers import BulkCreateDataSerializer
 from shared.pagination import CustomPagination
 from .filters import ServiceFilter
-from .models import Service
-from .serializers import ServiceSerializer, ServiceAllInOneSerializer, ServiceSummarySerializer
+from .models import Service, PriceRule, PricingTier
+from .serializers import (
+    ServiceSerializer, ServiceAllInOneSerializer, ServiceSummarySerializer,
+    PriceRuleSerializer, PricingTierSerializer,
+    CreatePriceRuleSerializer, PriceRuleUpdateSerializer,
+    PricingTierCreateSerializer, PricingTierUpdateSerializer,
+    BulkCreatePriceRuleSerializer, BulkCreatePricingTierSerializer
+)
+from tag.serializers import BulkAddTagsSerializer
+
+
+class PriceRuleViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing PriceRules.
+
+    Provides full CRUD operations:
+    - GET /price-rule/ - List all price rules
+    - POST /price-rule/ - Create a new price rule
+    - GET /price-rule/{pk}/ - Retrieve a specific price rule
+    - PUT /price-rule/{pk}/ - Update a price rule
+    - PATCH /price-rule/{pk}/ - Partial update a price rule
+    - DELETE /price-rule/{pk}/ - Delete a price rule
+    """
+    permission_classes = [IsAuthenticated]
+    queryset = PriceRule.objects.all()
+    pagination_class = CustomPagination
+    serializer_class = PriceRuleSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return CreatePriceRuleSerializer
+        if self.action in ['update', 'partial_update']:
+            return PriceRuleUpdateSerializer
+        return PriceRuleSerializer
+
+    @action(detail=True, methods=['post'], url_path='add-price-rule')
+    def create_price_rule(self, request, pk=None):
+        try:
+            service = Service.objects.get(id=pk)
+        except:
+            return Response({"error": "Service not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CreatePriceRuleSerializer(
+            data=request.data,
+            context={'service': service}
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PricingTierViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing PricingTiers.
+
+    Provides full CRUD operations:
+    - GET /pricing-tier/ - List all pricing tiers
+    - POST /pricing-tier/ - Create a new pricing tier
+    - GET /pricing-tier/{pk}/ - Retrieve a specific pricing tier
+    - PUT /pricing-tier/{pk}/ - Update a pricing tier
+    - PATCH /pricing-tier/{pk}/ - Partial update a pricing tier
+    - DELETE /pricing-tier/{pk}/ - Delete a pricing tier
+    """
+    permission_classes = [IsAuthenticated]
+    queryset = PricingTier.objects.all()
+    pagination_class = CustomPagination
+    serializer_class = PricingTierSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return PricingTierCreateSerializer
+        if self.action in ['update', 'partial_update']:
+            return PricingTierUpdateSerializer
+        return PricingTierSerializer
+
+    @action(detail=True, methods=['post'], url_path='add-pricing-tier')
+    def create_pricing_tier(self, request, pk=None):
+        try:
+            service = Service.objects.get(id=pk)
+        except:
+            return Response({"error": "Service not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = PricingTierCreateSerializer(
+            data=request.data,
+            context={'service': service}
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Create your views here.
@@ -259,16 +352,159 @@ class ServiceViewSet(viewsets.ModelViewSet):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+    @action(detail=True, methods=['post'], url_path='bulk-add-price-rules')
+    def bulk_add_price_rules(self, request, pk=None):
+        """
+        Bulk add multiple price rules to a service.
+
+        Expects a JSON payload with:
+        {
+            "items": [
+                {
+                    "concept": "Rule concept",
+                    "amount": 10.00,
+                    "calculation_type": "multiply"
+                },
+                ...
+            ]
+        }
+        """
+        try:
+            service = Service.objects.get(pk=pk)
+        except Service.DoesNotExist:
+            return Response({"error": "Service not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = BulkCreatePriceRuleSerializer(
+            data=request.data,
+            context={'service': service}
+        )
+
+        if serializer.is_valid():
+            try:
+                with transaction.atomic():
+                    serializer.save()
+                    created_items = serializer.context.get('created_items', [])
+                    errors = serializer.context.get('errors', [])
+
+                    return Response({
+                        "message": f"Successfully created {len(created_items)} price rules",
+                        "created": created_items,
+                        "failed": len(errors),
+                        "errors": errors if errors else None
+                    }, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({
+                    "error": "Failed to create price rules",
+                    "detail": str(e)
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'], url_path='bulk-add-pricing-tiers')
+    def bulk_add_pricing_tiers(self, request, pk=None):
+        """
+        Bulk add multiple pricing tiers to a service.
+
+        Expects a JSON payload with:
+        {
+            "items": [
+                {
+                    "min_people": 1,
+                    "max_people": 5,
+                    "total_price": 100.00
+                },
+                ...
+            ]
+        }
+        """
+        try:
+            service = Service.objects.get(pk=pk)
+        except Service.DoesNotExist:
+            return Response({"error": "Service not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = BulkCreatePricingTierSerializer(
+            data=request.data,
+            context={'service': service}
+        )
+
+        if serializer.is_valid():
+            try:
+                with transaction.atomic():
+                    serializer.save()
+                    created_items = serializer.context.get('created_items', [])
+                    errors = serializer.context.get('errors', [])
+
+                    return Response({
+                        "message": f"Successfully created {len(created_items)} pricing tiers",
+                        "created": created_items,
+                        "failed": len(errors),
+                        "errors": errors if errors else None
+                    }, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({
+                    "error": "Failed to create pricing tiers",
+                    "detail": str(e)
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'], url_path='bulk-add-tags')
+    def bulk_add_tags(self, request, pk=None):
+        """
+        Bulk add multiple existing tags to a service.
+
+        Expects a JSON payload with:
+        {
+            "tags": [
+                "uuid-of-tag-1",
+                "uuid-of-tag-2",
+                ...
+            ]
+        }
+
+        All tags must already exist. Returns error if any tag UUID is not found.
+        """
+        try:
+            service = Service.objects.get(pk=pk)
+        except Service.DoesNotExist:
+            return Response({"error": "Service not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = BulkAddTagsSerializer(
+            data=request.data,
+            context={'service': service}
+        )
+
+        if serializer.is_valid():
+            try:
+                with transaction.atomic():
+                    serializer.save()
+                    added_tags = serializer.context.get('added_tags', [])
+
+                    return Response({
+                        "message": f"Successfully added {len(added_tags)} tags to service",
+                        "tags": added_tags
+                    }, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({
+                    "error": "Failed to add tags",
+                    "detail": str(e)
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=['post'], url_path='all-in-one-service')
     def all_in_one_service(self, request, pk=None):
         """
-        Create a service with itinerary, data, and media in a single request.
+        Create a service with itinerary, data, price_rules, pricing_tiers, and media in a single request.
 
         Accepts multipart/form-data with:
-        - title, duration, summary, price, includes, excludes, type (service fields)
+        - title, duration_value, duration_unit, summary, price, includes, excludes, type, departure_time (service fields)
         - media (multiple files with same key name)
         - itinerary: JSON array of itinerary objects
         - data: JSON array of data objects
+        - price_rules: JSON array of price rule objects
+        - pricing_tiers: JSON array of pricing tier objects
         - cover (file field for cover image)
         """
         from django.contrib.contenttypes.models import ContentType
@@ -286,6 +522,21 @@ class ServiceViewSet(viewsets.ModelViewSet):
                 data['data'] = json.loads(data['data'])
             except json.JSONDecodeError:
                 return Response({"error": "Invalid JSON for data."}, status=status.HTTP_400_BAD_REQUEST)
+        if 'price_rules' in data and isinstance(data['price_rules'], str):
+            try:
+                data['price_rules'] = json.loads(data['price_rules'])
+            except json.JSONDecodeError:
+                return Response({"error": "Invalid JSON for price_rules."}, status=status.HTTP_400_BAD_REQUEST)
+        if 'pricing_tiers' in data and isinstance(data['pricing_tiers'], str):
+            try:
+                data['pricing_tiers'] = json.loads(data['pricing_tiers'])
+            except json.JSONDecodeError:
+                return Response({"error": "Invalid JSON for pricing_tiers."}, status=status.HTTP_400_BAD_REQUEST)
+        if 'tags' in data and isinstance(data['tags'], str):
+            try:
+                data['tags'] = json.loads(data['tags'])
+            except json.JSONDecodeError:
+                return Response({"error": "Invalid JSON for tags."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Extract cover file if present
         cover_file = request.FILES.get('cover', None)

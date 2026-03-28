@@ -1,0 +1,53 @@
+name: Deploy Production (Main)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_DIR: "eco-tour-main"
+      PROJECT_NAME: "eco-tour"
+
+    steps:
+      - name: Deploy to VPS (Production)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          envs: TARGET_DIR, PROJECT_NAME, ENV_DATA
+          script: |
+            set -e
+            cd "$HOME/$TARGET_DIR"
+            
+            echo "🚀 Sincronizando código de PROD..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "$ENV_DATA" > .env
+            
+            echo "🛑 Deteniendo servicios actuales..."
+            podman-compose down || true
+
+            echo "⚙️ Reconstruyendo Backend..."
+            podman build -t ${PROJECT_NAME}_backend:latest ./backend
+            
+            echo "⚙️ Reconstruyendo Frontend (Limpio y Estable)..."
+            # El flag --ulimit nofile es OBLIGATORIO para que Vite no falle al abrir archivos
+            podman build \
+              --ulimit nofile=65536:65536 \
+              -t ${PROJECT_NAME}_frontend:latest ./eco-tour-admin
+
+            echo "🚀 Levantando servicios en Producción..."
+            podman-compose up -d
+            
+            echo "🧹 Limpiando imágenes obsoletas..."
+            podman image prune -f
+            
+            echo "✅ Producción actualizada correctamente"
+        env:
+          ENV_DATA: ${{ secrets.ENV_MAIN }}

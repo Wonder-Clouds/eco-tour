@@ -63,7 +63,9 @@ function RootLayout({ children }: { children: React.ReactNode }) {
   const [isMounted, setIsMounted] = React.useState(false)
   const { isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
-  const isLoginPage = router.state.location.pathname === '/login'
+  const pathname = router.state.location.pathname
+  const isLoginPage = pathname === '/login'
+  const isPublicPage = pathname.startsWith('/quotes/public/')
 
   React.useEffect(() => {
     setIsMounted(true)
@@ -75,6 +77,11 @@ function RootLayout({ children }: { children: React.ReactNode }) {
         <LoadingIcon size={32} />
       </div>
     )
+  }
+
+  // Public pages don't need authentication or dashboard layout
+  if (isPublicPage) {
+    return children
   }
 
   if (isLoading) {

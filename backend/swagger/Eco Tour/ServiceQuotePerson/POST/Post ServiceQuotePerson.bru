@@ -1,0 +1,29 @@
+meta {
+  name: Post ServiceQuotePerson
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:8000/api/service-quote-person/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "person_id": "f8f30244-81de-4eb9-b929-480b189a70a3",
+    "service_id": "9fa1eb00-803f-42b3-9014-7427369ba624",
+    "departure_date": "2026-05-10",
+    "departure_time": "08:00:00",
+    "arrive_date": "2026-05-10",
+    "arrive_time": "12:00:00",
+    "notes": "Coordinadora del equipo",
+    "quote_id": "26e8039a-2c7f-4e19-a8ff-6c6dea529836"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

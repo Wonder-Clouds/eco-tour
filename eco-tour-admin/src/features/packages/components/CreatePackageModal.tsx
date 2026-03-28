@@ -87,6 +87,7 @@ const SortableItem = ({ id, order, serviceName, onRemove }: SortableItemProps) =
 export const CreatePackageModal = ({ isOpen, onClose }: Props) => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [referencePrice, setReferencePrice] = useState('')
   const [selectedServices, setSelectedServices] = useState<CreatePackageServiceInput[]>([])
   const [serviceSearchTerm, setServiceSearchTerm] = useState('')
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -161,12 +162,14 @@ export const CreatePackageModal = ({ isOpen, onClose }: Props) => {
       {
         title,
         description,
+        reference_price: referencePrice ? Number(referencePrice) : undefined,
         services: selectedServices,
       },
       {
         onSuccess: () => {
           setTitle('')
           setDescription('')
+          setReferencePrice('')
           setSelectedServices([])
           setServiceSearchTerm('')
           onClose()
@@ -230,6 +233,22 @@ export const CreatePackageModal = ({ isOpen, onClose }: Props) => {
               placeholder="Descripción del paquete"
               className="bg-white rounded-lg"
               style={{ minHeight: '120px' }}
+            />
+          </div>
+
+          {/* Precio de Referencia */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Precio de Referencia
+            </label>
+            <input
+              type="number"
+              value={referencePrice}
+              onChange={(e) => setReferencePrice(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="0.00"
+              min={0}
+              step="0.01"
             />
           </div>
 

@@ -1,0 +1,38 @@
+meta {
+  name: Post Bulk PricingTier
+  type: http
+  seq: 11
+}
+
+post {
+  url: http://localhost:8000/api/service/51b0c356-79d2-4b1f-9951-650fb438aa3d/bulk-add-pricing-tiers/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "items": [
+      {
+        "min_people": 1,
+        "max_people": 2,
+        "total_price": 100
+      },
+      {
+        "min_people": 2,
+        "max_people": 3,
+        "total_price": 200
+      },
+      {
+        "min_people": 3,
+        "max_people": 5,
+        "total_price": 500
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

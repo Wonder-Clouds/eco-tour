@@ -1,0 +1,16 @@
+meta {
+  name: Get PriceRule by Id
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8000/api/price-rule/0225c4e2-5b5b-403c-a9e9-711db0ab0b15
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

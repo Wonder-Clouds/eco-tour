@@ -1,0 +1,22 @@
+meta {
+  name: Remove Person from Group
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8000/api/group/fd718429-cedd-4616-86f1-f687427958b1/remove-person/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "person_id": "c6f55248-9676-4926-9bd3-7ad6553eb596"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

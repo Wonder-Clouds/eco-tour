@@ -1,0 +1,22 @@
+meta {
+  name: Patch PricingTier
+  type: http
+  seq: 1
+}
+
+patch {
+  url: http://localhost:8000/api/pricing-tier/b6cf8c43-4c98-44ba-bf55-c3a07bae50cb/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "total_price": "100.00"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

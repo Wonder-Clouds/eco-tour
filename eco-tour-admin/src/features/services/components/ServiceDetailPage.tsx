@@ -22,7 +22,7 @@ interface Props {
 // Función para formatear el tipo de servicio
 const formatType = (type: string) => {
   const types: Record<string, string> = {
-    group: 'General',
+    group: 'Grupal',
     arbitrary: 'Arbitrario',
     private: 'Privado',
   }
@@ -53,9 +53,9 @@ const formatDuration = (value: number, unit: string) => {
 
 // Función para formatear el precio
 const formatPrice = (price: string) => {
-  return new Intl.NumberFormat('es-PE', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'PEN',
+    currency: 'USD',
   }).format(parseFloat(price))
 }
 
@@ -273,21 +273,43 @@ export const ServiceDetailPage = ({ serviceId }: Props) => {
 
         {/* Columna lateral */}
         <div className="space-y-6">
-          {/* Precio */}
+          {/* Precio de Referencia */}
           <Card className="border-0 shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
                 <DollarSign size={20} />
-                Precio
+                Precio de Referencia
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold" style={{ color: '#085f24' }}>
-                {formatPrice(service.price)}
+                {formatPrice(service.reference_price)}
               </p>
               <p className="text-gray-500 text-sm mt-1">por persona</p>
             </CardContent>
           </Card>
+
+          {/* Hora de Salida */}
+          {service.departure_time && (
+            <Card className="border-0 shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
+                  <Clock size={20} />
+                  Hora de Salida
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xl font-semibold">
+                  {(() => {
+                    const [hours, minutes] = service.departure_time!.split(':').map(Number)
+                    const period = hours >= 12 ? 'PM' : 'AM'
+                    const displayHours = hours % 12 || 12
+                    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`
+                  })()}
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Duración */}
           <Card className="border-0 shadow-md">
@@ -306,6 +328,84 @@ export const ServiceDetailPage = ({ serviceId }: Props) => {
               </p>
             </CardContent>
           </Card>
+
+          {/* Etiquetas */}
+          {service.tags && service.tags.length > 0 && (
+            <Card className="border-0 shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
+                  Etiquetas
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {service.tags.map((tag) => (
+                    <span
+                      key={tag.id}
+                      className="px-3 py-1 rounded-full text-xs font-medium"
+                      style={{ backgroundColor: '#edfff2', color: '#00932c' }}
+                    >
+                      {tag.name}
+                    </span>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Reglas de Precio - Solo para group y private */}
+          {(service.type === 'group' || service.type === 'private') && service.price_rules && service.price_rules.length > 0 && (
+            <Card className="border-0 shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
+                  Reglas de Precio
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {service.price_rules.map((rule) => (
+                    <div key={rule.id} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+                      <span className="font-medium">{rule.concept}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-600">{formatPrice(rule.amount)}</span>
+                        <span className="px-2 py-0.5 text-xs rounded-full" style={{
+                          backgroundColor: rule.calculation_type === 'multiply' ? '#edfff2' : '#fef2f2',
+                          color: rule.calculation_type === 'multiply' ? '#00932c' : '#dc2626'
+                        }}>
+                          {rule.calculation_type === 'multiply' ? '×' : '÷'}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Niveles de Precio - Solo para arbitrary */}
+          {service.type === 'arbitrary' && service.pricing_tiers && service.pricing_tiers.length > 0 && (
+            <Card className="border-0 shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
+                  Niveles de Precio
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {service.pricing_tiers.map((tier) => (
+                    <div key={tier.id} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+                      <span className="text-gray-600">
+                        {tier.min_people} - {tier.max_people} personas
+                      </span>
+                      <span className="font-bold" style={{ color: '#085f24' }}>
+                        {formatPrice(tier.total_price)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Acciones */}
           <Card className="border-0 shadow-md">

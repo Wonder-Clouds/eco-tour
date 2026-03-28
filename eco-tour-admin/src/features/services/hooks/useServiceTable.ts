@@ -55,6 +55,7 @@ export const useServiceTable = (data: SummaryService[], options: UseServiceTable
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    autoResetPageIndex: false,
     filterFns: {
       fuzzy: fuzzyFilter,
     },

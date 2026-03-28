@@ -1,0 +1,25 @@
+meta {
+  name: Bulk Add Tags
+  type: http
+  seq: 12
+}
+
+post {
+  url: http://localhost:8000/api/service/51b0c356-79d2-4b1f-9951-650fb438aa3d/bulk-add-tags/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "items": [
+      "fb997f80-ec11-42e7-b248-c868501aadf2",
+      "368af562-79dd-44a5-ae84-af057346a381"
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -29,7 +29,7 @@ class PackageViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_class = PackageFilter
     search_fields = ['title', 'description']
-    ordering_fields = ['price', 'total_duration_hours', 'created_at']
+    ordering_fields = ['total_duration_hours', 'created_at']
     ordering = ['-created_at']
 
     def get_serializer_class(self):
@@ -137,7 +137,7 @@ class PackageViewSet(viewsets.ModelViewSet):
         return Response({
             'total_duration': package.total_duration,
             'total_duration_hours': package.total_duration_hours,
-            'price': package.price,
+            'reference_price': package.reference_price,
             'services': [
                 {
                     'id': str(ps.service.id),
@@ -146,7 +146,7 @@ class PackageViewSet(viewsets.ModelViewSet):
                     'duration_value': ps.service.duration_value,
                     'duration_unit': ps.service.duration_unit,
                     'duration_in_hours': ps.service.duration_in_hours,
-                    'price': float(ps.service.price)
+                    'reference_price': float(ps.service.reference_price)
                 }
                 for ps in package.package_services.select_related('service').all()
             ]

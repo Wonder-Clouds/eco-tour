@@ -1,0 +1,22 @@
+meta {
+  name: Patch Tag
+  type: http
+  seq: 1
+}
+
+patch {
+  url: http://127.0.0.1:8000/api/tag/46f43e61-0d27-4285-971d-2ed6ce13e5ad/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Naturaleza"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

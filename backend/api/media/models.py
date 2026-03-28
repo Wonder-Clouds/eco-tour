@@ -7,18 +7,17 @@ import uuid
 
 from shared.functions import validate_file_type, validate_image_type
 
+class TypeMedia(models.TextChoices):
+    IMAGE = 'image', 'Image'
+    POST = 'post', 'Post'
+    DOCUMENT = 'document', 'Document'
+
 # Create your models here.
 class Media(SafeDeleteModel):
     _safedelete_policy = SOFT_DELETE
 
-    TYPE_MEDIA_CHOICES = [
-        ('image', 'Image'),
-        ('post', 'Post'),
-        ('document', 'Document'),
-    ]
-
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
-    type_media = models.CharField(max_length=255, choices=TYPE_MEDIA_CHOICES)
+    type_media = models.CharField(max_length=255, choices=TypeMedia.choices)
     title = models.CharField(max_length=255)
     description = models.TextField()
     url = models.URLField(max_length=500, null=True, blank=True)

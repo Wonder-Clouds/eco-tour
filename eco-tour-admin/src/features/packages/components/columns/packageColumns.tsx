@@ -18,11 +18,12 @@ const PackageIconCell = () => {
 }
 
 // Función para formatear el precio
-const formatPrice = (price: number) => {
-  return new Intl.NumberFormat('es-PE', {
+const formatPrice = (price: string | number) => {
+  const numPrice = typeof price === 'string' ? parseFloat(price) : price
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'PEN',
-  }).format(price)
+    currency: 'USD',
+  }).format(numPrice)
 }
 
 // Función para limpiar HTML y obtener texto plano
@@ -76,8 +77,8 @@ export const createPackageColumns = (options: PackageColumnsOptions = {}): Colum
     header: 'Duración',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('price', {
-    header: 'Precio',
+  columnHelper.accessor('reference_price', {
+    header: 'Precio Ref.',
     cell: (info) => (
       <span className="font-bold" style={{ color: '#000000' }}>
         {formatPrice(info.getValue())}

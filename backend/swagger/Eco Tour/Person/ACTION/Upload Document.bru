@@ -5,21 +5,17 @@ meta {
 }
 
 post {
-  url: http://127.0.0.1:8000/api/person/f5c80b3f-efe7-4fd9-a1d8-0429035b5567/upload-document/
+  url: http://127.0.0.1:8000/api/person/22c72505-860c-4e5d-88a0-2913473ca879/upload-document/
   body: multipartForm
-  auth: bearer
+  auth: inherit
 }
 
 params:query {
   ~: 
 }
 
-auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5ODI1NTE5LCJpYXQiOjE3Njk4MjE5MTksImp0aSI6IjUyYjU5MDgzMzcwMjQ3MzE5NzM4Yjg0NGU4MzkwMmQzIiwidXNlcl9pZCI6IjEifQ.F6pIkFAfdtbkHPKho22sUrcr3sq7A8YDm4Ke7Sa4k3Y
-}
-
 body:multipart-form {
-  file: @file(/home/monchi789/Documents/Tesis/PROYECTO DE TESIS - MONZON Y ROZAS.pdf)
+  file: @file(/home/monchi789/Documents/Sindicato/CONTRATO DE PRESTACIÓN DE SERVICIOS DE DESARROLLO WEB.pdf)
   ~title: Passport
   ~description: 
 }

@@ -15,7 +15,7 @@ from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load enviroments
+# Load environments
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,40 +26,48 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-pfg@8zgf@e_#m4rcpf1+fu32b3pi8$&u3d-c7537%9-(i0@0hc')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-pfg@8zgf@e_#m4rcpf1+fu32b3pi8$&u3d-c7537%9-(i0@0hc')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
+
+# CORS settings
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if os.getenv('CORS_ALLOWED_ORIGINS') else []
 CORS_ALLOW_CREDENTIALS = True
 
-# CORS: Permitir todos los orígenes
-CORS_ALLOW_ALL_ORIGINS = True
+# Allowed hosts
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+
+# CSRF trusted origins
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if os.getenv('CSRF_TRUSTED_ORIGINS') else []
+
+# On development allow all origins
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
 
 CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
 ]
 
 CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
 ]
 
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -69,19 +77,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Local apps
-    'api.data',
-    'api.expense',
-    'api.group',
-    'api.service',
-    'api.package',
-    'api.itinerary',
-    'api.media',
-    'api.person',
-    'api.quote',
-    'api.reserve',
-    'api.supplier',
-    'api.pay',
-    'api.todo',
+    'data',
+    'expense',
+    'group',
+    'service',
+    'package',
+    'itinerary',
+    'media',
+    'person',
+    'quote',
+    'reserve',
+    'supplier',
+    'pay',
+    'tag',
+    'todo',
+    'authentication',
 
     # Third party apps
     'corsheaders',
@@ -131,12 +141,12 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': os.getenv('ENGINE'),
         'NAME': os.getenv('POSTGRES_DB'),
         'USER': os.getenv('POSTGRES_USER'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('HOST_DB', 'localhost'),
-        'PORT': os.getenv('PORT_DB', '5432'),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': os.getenv('POSTGRES_PORT'),
     }
 }
 
@@ -165,7 +175,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Lima'
 
 USE_I18N = True
 
@@ -216,9 +226,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media_files/')
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME':  timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME':  timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': False,
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
+    'SIGNING_KEY': os.getenv('SIGNING_KEY'),
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'TOKEN_OBTAIN_PAIR_SERIALIZER': 'authentication.serializers.CustomTokenObtainPairSerializer',
 }

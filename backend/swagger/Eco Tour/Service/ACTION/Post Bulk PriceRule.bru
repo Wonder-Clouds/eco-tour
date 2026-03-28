@@ -1,0 +1,39 @@
+meta {
+  name: Post Bulk PriceRule
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:8000/api/service/51b0c356-79d2-4b1f-9951-650fb438aa3d/bulk-add-price-rules/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "items": [
+      {
+        "concept": "Autos",
+        "calculation_type": "divide",
+        "amount": 600
+      },
+      {
+        "concept": "Guia",
+        "calculation_type": "divide",
+        "amount": 600
+      },
+      {
+        "concept": "Tickets",
+        "calculation_type": "multiply",
+        "amount": 600
+      }
+    ]
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -96,3 +96,8 @@ class BulkCreateItinerarySerializer(serializers.Serializer):
         
         return validated_data
 
+
+class ItineraryCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Itinerary
+        fields = ['title', 'description']

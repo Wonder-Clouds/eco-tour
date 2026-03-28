@@ -1,0 +1,22 @@
+meta {
+  name: Post Tag
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:8000/api/tag/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Deportes"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
