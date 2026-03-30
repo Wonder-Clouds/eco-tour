@@ -1,43 +1,36 @@
 # ---------- Stage 1: Build ----------
-FROM node:20-bookworm AS build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Argumentos de construcción
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
+# pnpm via corepack
+RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
 
-# Habilitar pnpm de forma eficiente
-RUN corepack enable && corepack prepare pnpm@9.12.0 --activate
-
-# Solo copiar archivos de dependencias primero
+# Dependencias primero — mejor cache de layers
 COPY package.json pnpm-lock.yaml ./
-
-# Instalación limpia
 RUN pnpm install --frozen-lockfile
 
-# Copiar el resto del código y construir
+# Código fuente
 COPY . .
+
+# Build sin VITE_API_URL hardcodeada — se inyecta en runtime via process.env
 RUN pnpm run build
 
 # ---------- Stage 2: Production ----------
-# Usamos slim para reducir el tamaño de la imagen (aprox 150MB menos)
-FROM node:20-bookworm-slim
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Definir entorno
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Copiar el build desde la etapa anterior
-# Nota: Nos aseguramos de copiar la carpeta .output completa
+# Solo el output de Nitro
 COPY --from=build /app/.output ./.output
 
-# Seguridad: No ejecutar como root
-USER node
+# No correr como root
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
 
 EXPOSE 3000
 
-# Usar el path estándar de Nitro/Nuxt
 CMD ["node", ".output/server/index.mjs"]

@@ -1,46 +1,55 @@
 #!/bin/sh
 set -e
 
-# Valores por defecto
 ENV=${ENV:-dev}
 DB_HOST="database-${ENV}"
 DB_PORT=${POSTGRES_PORT:-5432}
+MAX_WAIT=60
+WAITED=0
 
 echo "Iniciando entorno: ${ENV}"
-echo "Intentando conectar a: $DB_HOST:$DB_PORT"
+echo "Conectando a: $DB_HOST:$DB_PORT"
 
-# Esperar a que la base de datos esté lista
-until nc -z -v -w30 "$DB_HOST" "$DB_PORT"; do
-  echo "Esperando a que la base de datos ($DB_HOST) esté disponible..."
+until nc -z "$DB_HOST" "$DB_PORT" 2>/dev/null; do
+  if [ "$WAITED" -ge "$MAX_WAIT" ]; then
+    echo "Timeout: la base de datos no respondió en ${MAX_WAIT}s. Abortando."
+    exit 1
+  fi
+  echo "Esperando base de datos... (${WAITED}s)"
   sleep 2
+  WAITED=$((WAITED + 2))
 done
 
-echo "Base de datos lista. Ejecutando migraciones..."
-# Solo migraciones, no makemigrations en producción
+echo "Base de datos lista."
+
+echo "Ejecutando migraciones..."
 python manage.py migrate --noinput
 
-# Crear o actualizar superusuario
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ]; then
   echo "Verificando superusuario: $DJANGO_SUPERUSER_USERNAME"
-  python manage.py shell <<EOF
+  python manage.py shell -c "
+import os
 from django.contrib.auth import get_user_model
 User = get_user_model()
-username = '$DJANGO_SUPERUSER_USERNAME'
-email = '$DJANGO_SUPERUSER_EMAIL'
-password = '$DJANGO_SUPERUSER_PASSWORD'
-
-if not User.objects.filter(username=username).exists():
-    print(f"Creando superusuario {username}...")
-    User.objects.create_superuser(username=username, email=email, password=password)
+username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
+email    = os.environ.get('DJANGO_SUPERUSER_EMAIL')
+password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
+if User.objects.filter(username=username).exists():
+    u = User.objects.get(username=username)
+    u.email = email
+    u.set_password(password)
+    u.save()
+    print(f'Superusuario {username} actualizado.')
 else:
-    print(f"El superusuario {username} ya existe. Actualizando contraseña...")
-    user = User.objects.get(username=username)
-    user.email = email
-    user.set_password(password)
-    user.save()
-EOF
+    User.objects.create_superuser(username=username, email=email, password=password)
+    print(f'Superusuario {username} creado.')
+"
 fi
 
-# Ejecutar el comando pasado (por ejemplo Gunicorn)
-echo "Iniciando Gunicorn..."
-exec "$@"
+echo "Iniciando Gunicorn con ${GUNICORN_WORKERS:-2} workers..."
+exec gunicorn server.wsgi:application \
+  --bind 0.0.0.0:8000 \
+  --workers "${GUNICORN_WORKERS:-2}" \
+  --timeout 120 \
+  --access-logfile - \
+  --error-logfile -

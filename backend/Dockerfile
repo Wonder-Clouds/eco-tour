@@ -1,26 +1,29 @@
-FROM python:3.10-bookworm
+FROM python:3.10-alpine
 
 WORKDIR /app
+
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Dependencias de sistema
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apk add --no-cache \
     netcat-openbsd \
-    libmagic1 \
-    && rm -rf /var/lib/apt/lists/*
+    libmagic \
+    && rm -rf /var/cache/apk/*
 
-# Instalar dependencias de Python + Gunicorn
+# Dependencias Python en layer separado
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
-# Copiar todo el código
+# Código
 COPY . .
-
-# Dar permisos de ejecución al entrypoint
 RUN chmod +x /app/entrypoint.sh
+
+# No correr como root
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
 
 EXPOSE 8000
 
-# CMD final: entrypoint se encarga de migraciones y luego lanza Gunicorn
-CMD ["/app/entrypoint.sh", "gunicorn", "server.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "1"]
+# Workers se controla via GUNICORN_WORKERS en el .env (2 para main, 1 para dev)
+CMD ["/app/entrypoint.sh"]

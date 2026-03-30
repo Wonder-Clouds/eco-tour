@@ -44,10 +44,20 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const apiUrl =
+    typeof process !== 'undefined'
+      ? process.env.VITE_API_URL ?? ''
+      : ''
+
   return (
     <html lang="es">
       <head>
         <HeadContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.__API_URL__ = ${JSON.stringify(apiUrl)};`,
+          }}
+        />
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
@@ -79,7 +89,6 @@ function RootLayout({ children }: { children: React.ReactNode }) {
     )
   }
 
-  // Public pages don't need authentication or dashboard layout
   if (isPublicPage) {
     return children
   }

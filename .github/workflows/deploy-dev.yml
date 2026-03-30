@@ -1,53 +1,57 @@
-name: Deploy Development (Dev)
+name: Deploy Dev
 
 on:
   push:
     branches: [dev]
 
+env:
+  REGISTRY: ghcr.io
+  REPO: ${{ github.repository }}
+
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    env:
-      TARGET_DIR: "eco-tour-dev"
-      PROJECT_NAME: "eco-tour"
+    permissions:
+      contents: read
+      packages: write
 
     steps:
-      - name: Deploy to VPS (Development)
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login a GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build y push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ghcr.io/${{ github.repository }}/backend:dev
+          cache-from: type=gha,scope=backend-dev
+          cache-to: type=gha,mode=max,scope=backend-dev
+
+      - name: Build y push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./eco-tour-admin
+          push: true
+          tags: ghcr.io/${{ github.repository }}/frontend:dev
+          cache-from: type=gha,scope=frontend-dev
+          cache-to: type=gha,mode=max,scope=frontend-dev
+
+      - name: Deploy en VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          envs: TARGET_DIR, PROJECT_NAME, ENV_DATA
-          script: |
-            set -e
-            cd "$HOME/$TARGET_DIR"
-            
-            echo "🚀 Sincronizando código..."
-            git fetch origin dev
-            git reset --hard origin/dev
-
-            echo "$ENV_DATA" > .env
-            
-            echo "🛑 Bajando contenedores anteriores..."
-            podman-compose down || true
-
-            echo "⚙️ Reconstruyendo Backend..."
-            podman build -t ${PROJECT_NAME}_backend:latest ./backend
-            
-            echo "⚙️ Reconstruyendo Frontend (Sin parches de mrd)..."
-            # El UNICO comando extra necesario es este ulimit para que Vite no se ahogue
-            podman build \
-              --ulimit nofile=65536:65536 \
-              -t ${PROJECT_NAME}_frontend:latest ./eco-tour-admin
-
-            echo "🚀 Levantando servicios..."
-            podman-compose up -d
-            
-            echo "🧹 Limpiando imágenes viejas..."
-            podman image prune -f
-            
-            echo "✅ Todo listo y limpio"
-        env:
-          ENV_DATA: ${{ secrets.ENV_DEV }}
+          script: bash ~/scripts/deploy.sh dev

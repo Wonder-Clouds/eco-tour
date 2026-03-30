@@ -1,6 +1,15 @@
 import axios, { AxiosError } from 'axios'
 
-const apiBaseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+declare global {
+  interface Window {
+    __API_URL__?: string
+  }
+}
+
+export const apiBaseURL =
+  (typeof window !== 'undefined' ? window.__API_URL__ : undefined) ||
+  import.meta.env.VITE_API_URL ||
+  'http://localhost:8000/api'
 
 const api = axios.create({
   baseURL: apiBaseURL,
@@ -10,7 +19,6 @@ const api = axios.create({
   withCredentials: true,
 })
 
-// Variables para manejar el refresh token de forma segura
 let isRefreshing = false
 let failedQueue: Array<{
   resolve: (value?: unknown) => void
@@ -46,12 +54,10 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as any
 
-    // Si el error no es 401 o ya se intentó reintentar, rechazar
     if (error.response?.status !== 401 || originalRequest._retry) {
       return Promise.reject(error)
     }
 
-    // Si ya se está refrescando el token, encolar esta petición
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
         failedQueue.push({ resolve, reject })
@@ -66,7 +72,6 @@ api.interceptors.response.use(
     originalRequest._retry = true
     isRefreshing = true
 
-    // Verificar que estamos en el cliente
     if (typeof window === 'undefined') {
       isRefreshing = false
       return Promise.reject(new Error('Window is undefined'))
@@ -81,7 +86,6 @@ api.interceptors.response.use(
     }
 
     try {
-      // Usar axios directamente para evitar el interceptor
       const response = await axios.post(`${apiBaseURL}/token/refresh/`, {
         refresh: refreshToken,
       })
@@ -92,9 +96,7 @@ api.interceptors.response.use(
         localStorage.setItem('refreshToken', refresh)
       }
 
-      // Procesar la cola de peticiones pendientes
       processQueue(null, access)
-
       originalRequest.headers.Authorization = `Bearer ${access}`
       return api(originalRequest)
     } catch (refreshError) {

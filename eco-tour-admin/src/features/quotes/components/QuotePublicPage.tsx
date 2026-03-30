@@ -12,12 +12,14 @@ import {
   Clock,
   Plane,
 } from 'lucide-react'
+import { apiBaseURL } from '@/config/axios'
+
 
 interface Props {
   quoteId: string
 }
 
-const MEDIA_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:8000'
+const MEDIA_BASE = apiBaseURL.replace('/api', '')
 
 const formatPrice = (price?: string | number) => {
   if (price === undefined || price === null) return 'US$ 0'
@@ -87,7 +89,7 @@ export const QuotePublicPage = ({ quoteId }: Props) => {
   useEffect(() => {
     const fetchQuote = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+        const apiUrl = apiBaseURL || 'http://localhost:8000/api'
         const response = await fetch(`${apiUrl}/quote/public/${quoteId}/`)
         if (!response.ok) {
           setError('Esta cotización no está disponible o ha expirado.')
@@ -286,7 +288,7 @@ const ServiceSection = ({ service }: { service: ServiceDetail }) => {
                 <img
                   src={`${MEDIA_BASE}${photo.file}`}
                   alt={`${service.title} ${idx + 1}`}
-                  className="w-full h-[7.75rem] object-cover rounded-lg print:h-24"
+                  className="w-full h-31 object-cover rounded-lg print:h-24"
                 />
               </div>
             ))}
