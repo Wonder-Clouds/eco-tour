@@ -12,7 +12,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - ${POSTGRES_VOLUME}:/var/lib/postgresql/data
+      - postgresql_${ENV}:/var/lib/postgresql/data
     # Limitar consumo de RAM — dos instancias de PG en el mismo VPS
     command: >
       postgres
