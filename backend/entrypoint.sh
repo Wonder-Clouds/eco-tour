@@ -8,6 +8,10 @@ MAX_WAIT=60
 WAITED=0
 
 echo "Iniciando entorno: ${ENV}"
+
+echo "Generando los archivos estáticos..."
+python manage.py collectstatic --noinput --clear
+
 echo "Conectando a: $DB_HOST:$DB_PORT"
 
 until nc -z "$DB_HOST" "$DB_PORT" 2>/dev/null; do
