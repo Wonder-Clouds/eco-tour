@@ -1,4 +1,4 @@
-import api from '@/config/axios'
+import api, { apiBaseURL } from '@/config/axios'
 import { PaginatedResponse } from '@/types/response.type'
 import {
   Quote,
@@ -216,7 +216,7 @@ export const toggleQuotePublic = async (id: string): Promise<TogglePublicRespons
 
 export const getQuotePublic = async (id: string): Promise<QuoteFullDetail> => {
   // Use raw axios without auth interceptor for public endpoint
-  const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+  const baseURL = apiBaseURL || 'http://localhost:8000/api'
   const response = await fetch(`${baseURL}/quote/public/${id}/`)
   if (!response.ok) {
     throw new Error('Quote not found or not public')
