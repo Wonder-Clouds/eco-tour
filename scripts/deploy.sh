@@ -5,7 +5,7 @@ ENV=${1:?Uso: deploy.sh [main|dev]}
 APP_DIR="$HOME/eco-tour-${ENV}"
 ENV_FILE="$HOME/.env.${ENV}"
 # Reemplazá con tu org/repo real: ej. "miusuario/eco-tour"
-GITHUB_REPO="Wonder-Clouds/eco-tour"
+GITHUB_REPO="wonder-clouds/eco-tour"
 
 echo "▶ Deploy entorno: $ENV"
 
