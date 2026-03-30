@@ -2,9 +2,9 @@ from django.db import models
 from safedelete.models import SafeDeleteModel, SOFT_DELETE
 from auditlog.registry import auditlog
 import uuid
-from supplier.models import Supplier
+from api.supplier.models import Supplier
 from shared.enums import CoinChoices
-from quote.models import Quote
+from api.quote.models import Quote
 
 
 class StatusReserve(models.TextChoices):

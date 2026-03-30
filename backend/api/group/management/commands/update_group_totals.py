@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from group.models import Group
+from api.group.models import Group
 
 
 class Command(BaseCommand):

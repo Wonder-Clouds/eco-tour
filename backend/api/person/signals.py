@@ -11,7 +11,7 @@ def update_group_total_people(sender, instance, action, pk_set, **kwargs):
     """
     if action in ['post_add', 'post_remove', 'post_clear']:
         # Get all groups affected
-        from group.models import Group
+        from api.group.models import Group
         
         if action == 'post_clear':
             # If clearing all groups, we need to update all groups the person was in

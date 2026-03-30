@@ -13,9 +13,9 @@ from .serializers import (
     QuoteSerializer, SimpleQuoteSerializer, ServiceQuotePersonSerializer,
     QuoteFullDetailSerializer, QuoteVersionEditSerializer, QuotePublicDetailSerializer
 )
-from person.models import Person
-from group.models import Group
-from service.models import Service
+from api.person.models import Person
+from api.group.models import Group
+from api.service.models import Service
 
 class QuoteViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]

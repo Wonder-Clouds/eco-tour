@@ -3,7 +3,7 @@ from safedelete.models import SafeDeleteModel, SOFT_DELETE
 from auditlog.registry import auditlog
 import uuid
 from shared.enums import CoinChoices
-from group.models import Group
+from api.group.models import Group
 
 
 # Create your models here.

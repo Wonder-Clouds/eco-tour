@@ -1,7 +1,7 @@
 from django.db.models.signals import m2m_changed, post_save, post_delete
 from django.dispatch import receiver
-from person.models import Person
-from group.models import Group
+from api.person.models import Person
+from api.group.models import Group
 
 @receiver(m2m_changed, sender=Person.group.through)
 def update_group_people_count(sender, instance, action, reverse, model, pk_set, **kwargs):

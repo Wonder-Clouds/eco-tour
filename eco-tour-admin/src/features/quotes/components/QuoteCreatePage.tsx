@@ -102,6 +102,32 @@ export const QuoteCreatePage = () => {
     },
   ])
 
+  const [participantsCount, setParticipantsCount] = useState(1)
+
+  const handleGenerateParticipants = () => {
+    const newParticipants: Participant[] = [
+      participants[0], // mantener contacto
+    ]
+
+    for (let i = 1; i < participantsCount; i++) {
+      newParticipants.push({
+        id: `temp-${Date.now()}-${i}`,
+        tempId: `temp-${i}`,
+        name: `Pasajero #${i}`,
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone_number: '',
+        passport_number: '',
+        birth_date: '',
+        nationality: '',
+        isContact: false,
+      })
+    }
+
+    setParticipants(newParticipants)
+  }
+
   // Estado - Actividades asignadas
   const [activities, setActivities] = useState<ActivityAssignment[]>([])
 
@@ -186,28 +212,49 @@ export const QuoteCreatePage = () => {
 
   // Seleccionar actividad (servicio)
   const handleSelectService = (service: SummaryService) => {
+    console.log(service)
     const newActivity: ActivityAssignment = {
       id: `activity-${Date.now()}`,
       service: service,
+
+      defaultDepartureTime: service.departure_time || '',
+
       defaultDepartureDate: '',
-      defaultDepartureTime: '',
       defaultArriveDate: '',
       defaultArriveTime: '',
       defaultNotes: '',
       participantAssignments: [],
     }
+
     setActivities([...activities, newActivity])
     setSelectedActivity(newActivity)
   }
 
   // Actualizar campos por defecto de la actividad
   const handleActivityDefaultChange = (activityId: string, field: string, value: string) => {
-    const updated = activities.map((a) =>
-      a.id === activityId ? { ...a, [field]: value } : a
-    )
+    const updated = activities.map((a) => {
+      if (a.id !== activityId) return a
+
+      const updatedActivity = { ...a, [field]: value }
+
+      // 🔥 aplicar automáticamente a todos
+      updatedActivity.participantAssignments = updatedActivity.participantAssignments.map((pa) => ({
+        ...pa,
+        departure_date: field === 'defaultDepartureDate' ? value : pa.departure_date,
+        departure_time: field === 'defaultDepartureTime' ? value : pa.departure_time,
+        arrive_date: field === 'defaultArriveDate' ? value : pa.arrive_date,
+        arrive_time: field === 'defaultArriveTime' ? value : pa.arrive_time,
+        notes: field === 'defaultNotes' ? value : pa.notes,
+      }))
+
+      return updatedActivity
+    })
+
     setActivities(updated)
+
     if (selectedActivity?.id === activityId) {
-      setSelectedActivity({ ...selectedActivity, [field]: value } as ActivityAssignment)
+      const updatedActivity = updated.find((a) => a.id === activityId)
+      if (updatedActivity) setSelectedActivity(updatedActivity)
     }
   }
 
@@ -516,11 +563,10 @@ export const QuoteCreatePage = () => {
                     <div
                       key={activity.id}
                       onClick={() => setSelectedActivity(activity)}
-                      className={`p-3 rounded-lg border cursor-pointer transition ${
-                        isSelected
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
+                      className={`p-3 rounded-lg border cursor-pointer transition ${isSelected
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                        }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
@@ -547,7 +593,7 @@ export const QuoteCreatePage = () => {
                           <span className="text-sm font-medium" style={{ color: '#00932c' }}>
                             {formatPrice(
                               parseFloat(activity.service.reference_price || '0') *
-                                activity.participantAssignments.length
+                              activity.participantAssignments.length
                             )}
                           </span>
                           <button
@@ -780,6 +826,22 @@ export const QuoteCreatePage = () => {
                     </Button>
                   </div>
 
+                  <div className="flex gap-2 items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        value={participantsCount}
+                        onChange={(e) => setParticipantsCount(Number(e.target.value))}
+                        className="w-15"
+                      />
+                      <span>Participantes</span>
+                    </div>
+
+                    <Button variant="outline" size="sm" onClick={handleGenerateParticipants}>
+                      Generar
+                    </Button>
+                  </div>
+
                   <div className="space-y-3">
                     {participants.map((participant) => {
                       const assignment = selectedActivity.participantAssignments.find(
@@ -792,9 +854,8 @@ export const QuoteCreatePage = () => {
                         <div key={participant.id} className="border rounded-lg overflow-hidden">
                           {/* Header del participante */}
                           <div
-                            className={`flex items-center gap-3 p-3 transition ${
-                              isInActivity ? 'bg-green-50' : 'bg-white hover:bg-gray-50'
-                            }`}
+                            className={`flex items-center gap-3 p-3 transition ${isInActivity ? 'bg-green-50' : 'bg-white hover:bg-gray-50'
+                              }`}
                           >
                             <input
                               type="checkbox"
@@ -1116,7 +1177,7 @@ export const QuoteCreatePage = () => {
                           <span className="font-medium" style={{ color: '#00932c' }}>
                             {formatPrice(
                               parseFloat(activity.service.reference_price || '0') *
-                                activity.participantAssignments.length
+                              activity.participantAssignments.length
                             )}
                           </span>
                         </div>

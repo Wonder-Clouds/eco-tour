@@ -2,12 +2,12 @@ from rest_framework import serializers
 from django.db import transaction
 from django.contrib.contenttypes.models import ContentType
 
-from itinerary.serializers import ItinerarySerializer, ItineraryCreateSerializer
-from itinerary.models import Itinerary
-from data.serializers import DataSerializer, DataCreateSerializer
-from data.models import Data
-from media.models import Media
-from media.serializers import MediaSerializer
+from api.itinerary.serializers import ItinerarySerializer, ItineraryCreateSerializer
+from api.itinerary.models import Itinerary
+from api.data.serializers import DataSerializer, DataCreateSerializer
+from api.data.models import Data
+from api.media.models import Media
+from api.media.serializers import MediaSerializer
 from tag.serializers import ListTagSerializer
 from tag.models import Tag
 from .models import Service, PricingTier, PriceRule
@@ -67,6 +67,35 @@ class PricingTierCreateSerializer(serializers.ModelSerializer):
         fields = ['id', 'min_people', 'max_people', 'total_price', 'service', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
+    def validate(self, data):
+        service = data.get('service') or self.context.get('service')
+        min_people = data.get('min_people')
+        max_people = data.get('max_people')
+
+        if not service:
+            raise serializers.ValidationError({
+                'service': 'This field is required.'
+            })
+
+        if min_people > max_people:
+            raise serializers.ValidationError(
+                "min_people no puede ser mayor que max_people"
+            )
+
+        existing_tiers = PricingTier.objects.filter(service=service)
+
+        for tier in existing_tiers:
+            if (
+                min_people <= tier.max_people and
+                max_people >= tier.min_people
+            ):
+                raise serializers.ValidationError(
+                    f"El rango {min_people}-{max_people} se cruza con "
+                    f"{tier.min_people}-{tier.max_people}"
+                )
+
+        return data
+    
     def create(self, validated_data):
         service = validated_data.pop('service', None) or self.context.get('service')
         if not service:

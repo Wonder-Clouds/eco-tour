@@ -61,6 +61,7 @@ export interface SummaryService {
   id: string
   title: string
   type: TypeService
+  departure_time?: string
   reference_price?: string
   cover?: string
   duration: string

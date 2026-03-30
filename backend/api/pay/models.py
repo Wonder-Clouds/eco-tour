@@ -3,7 +3,7 @@ from safedelete.models import SafeDeleteModel, SOFT_DELETE
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 import uuid
-from quote.models import Quote
+from api.quote.models import Quote
 from shared.enums import CoinChoices
 
 # Create your models here.
@@ -12,7 +12,7 @@ class Pay(SafeDeleteModel):
 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    currency = models.CharField(choices=CoinChoices.choices)
+    currency = models.CharField(max_length=3, choices=CoinChoices.choices)
     method = models.CharField(max_length=100)
     payment_date = models.DateTimeField()
     notes = HTMLField()

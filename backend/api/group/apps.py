@@ -6,4 +6,4 @@ class GroupConfig(AppConfig):
     name = 'api.group'
 
     def ready(self):
-        import group.signals
+        import api.group.signals

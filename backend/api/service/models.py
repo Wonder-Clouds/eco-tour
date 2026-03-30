@@ -4,7 +4,7 @@ from safedelete.models import SafeDeleteModel, SOFT_DELETE_CASCADE
 from tinymce.models import HTMLField
 from auditlog.registry import auditlog
 import uuid
-from media.models import Media
+from api.media.models import Media
 from tag.models import Tag
 
 class DurationUnit(models.TextChoices):

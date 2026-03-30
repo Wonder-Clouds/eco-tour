@@ -233,13 +233,32 @@ export const QuoteDetailPage = ({ quoteId }: Props) => {
     }
   }
 
-  const copyToClipboard = () => {
-    if (publicUrl) {
-      navigator.clipboard.writeText(publicUrl)
-      setLinkCopied(true)
-      setTimeout(() => setLinkCopied(false), 2000)
-    }
-  }
+  // const copyToClipboard = () => {
+  //   if (publicUrl) {
+  //     navigator.clipboard.writeText(publicUrl)
+  //     setLinkCopied(true)
+  //     setTimeout(() => setLinkCopied(false), 2000)
+  //   }
+  // }
+
+  const groupedSchedule = Object.values(
+    quote?.itinerary_schedule.reduce((acc: Record<string, any>, item: any) => {
+      const key = `${item.service.id}-${item.departure_date}-${item.departure_time}`
+
+      if (!acc[key]) {
+        acc[key] = {
+          ...item,
+          persons: [item.person],
+          total_cost: item.cost,
+        }
+      } else {
+        acc[key].persons.push(item.person)
+        acc[key].total_cost += item.cost
+      }
+
+      return acc
+    }, {}) || {}
+  )
 
   // Descargar PDF de la vista pública
   const handleDownloadPdf = () => {
@@ -625,7 +644,7 @@ export const QuoteDetailPage = ({ quoteId }: Props) => {
                   </p>
                 ) : (
                   <div className="space-y-4">
-                    {quote.itinerary_schedule.map((item) => {
+                    {groupedSchedule.map((item) => {
                       const typeStyles = getTypeStyles(item.service.type)
                       return (
                         <div
@@ -659,10 +678,12 @@ export const QuoteDetailPage = ({ quoteId }: Props) => {
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <User size={14} />
-                              <span>{item.person.full_name}</span>
-                              <span className="font-semibold" style={{ color: '#00932c' }}>
-                                {formatPrice(item.cost)}
+                              <span>
+                                {item.persons.map((p: any) => p.full_name).join(', ')}
                               </span>
+                              {/* <span className="font-semibold" style={{ color: '#00932c' }}>
+                                {formatPrice(item.cost)}
+                              </span> */}
                             </div>
                             {item.notes && (
                               <p className="text-xs text-gray-400 mt-1 italic">{item.notes}</p>
@@ -970,9 +991,8 @@ export const QuoteDetailPage = ({ quoteId }: Props) => {
                     <a
                       key={version.id}
                       href={isCurrent ? '#' : `/quotes/${version.id}`}
-                      className={`flex items-center justify-between p-3 rounded-lg border ${
-                        isCurrent ? 'border-green-500 bg-green-50' : 'hover:bg-gray-50'
-                      }`}
+                      className={`flex items-center justify-between p-3 rounded-lg border ${isCurrent ? 'border-green-500 bg-green-50' : 'hover:bg-gray-50'
+                        }`}
                     >
                       <div className="flex items-center gap-2">
                         <span className="font-medium">v{version.version}</span>

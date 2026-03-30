@@ -2,10 +2,10 @@ from .models import Quote, ServiceQuotePerson
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_field
 from drf_spectacular.types import OpenApiTypes
-from person.models import Person
-from service.models import Service
-from itinerary.models import Itinerary
-from media.models import Media
+from api.person.models import Person
+from api.service.models import Service
+from api.itinerary.models import Itinerary
+from api.media.models import Media
 from django.contrib.contenttypes.models import ContentType
 from typing import List, Dict, Any, Optional
 
