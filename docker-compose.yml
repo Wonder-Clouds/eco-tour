@@ -45,8 +45,6 @@ services:
       DEBUG: ${DEBUG}
       SIGNING_KEY: ${SIGNING_KEY}
       GUNICORN_WORKERS: ${GUNICORN_WORKERS}
-    volumes:
-      - ./static:/app/staticfiles
     ports:
       - "${BACKEND_PORT}:8000"
     depends_on:
