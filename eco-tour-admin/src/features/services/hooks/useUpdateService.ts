@@ -38,7 +38,8 @@ export function useUpdateService(serviceId: string) {
 
   // Actualizar datos básicos del servicio
   const updateBasicMutation = useMutation({
-    mutationFn: (data: UpdateServiceBasicData) => updateService(serviceId, data),
+    mutationFn: (data: UpdateServiceBasicData) =>
+      updateService(serviceId, data),
     onSuccess: invalidateService,
   })
 
@@ -106,8 +107,13 @@ export function useUpdateService(serviceId: string) {
   })
 
   const updateMediaMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: { title?: string; description?: string } }) =>
-      updateMedia(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string
+      data: { title?: string; description?: string }
+    }) => updateMedia(id, data),
     onSuccess: invalidateService,
   })
 
@@ -132,11 +138,21 @@ export function useUpdateService(serviceId: string) {
   const addPricingTierMutation = useMutation({
     mutationFn: (data: PricingTierInput) => addPricingTier(serviceId, data),
     onSuccess: invalidateService,
+    onError: (error: any) => {
+      error.message =
+        error?.response?.data?.non_field_errors?.[0] ||
+        'Error al crear pricing tier'
+    },
   })
 
   const updatePricingTierMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<PricingTierInput> }) =>
-      updatePricingTier(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string
+      data: Partial<PricingTierInput>
+    }) => updatePricingTier(id, data),
     onSuccess: invalidateService,
   })
 

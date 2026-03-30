@@ -245,7 +245,10 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
   // ==================== PRICING TIER HANDLERS ====================
 
   const handleAddPricingTier = () => {
+    mutations.addPricingTier.reset()
+
     if (!newTierMinPeople || !newTierMaxPeople || !newTierPrice) return
+
     mutations.addPricingTier.mutate(
       {
         min_people: Number(newTierMinPeople),
@@ -336,6 +339,9 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
   const coverImage = service.media?.find((m) => m.is_cover)
   const galleryImages = service.media?.filter((m) => !m.is_cover) || []
 
+  const pricingError =
+    mutations.addPricingTier.error?.response?.data?.non_field_errors?.[0]
+
   const modalContent = (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
       <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
@@ -359,11 +365,10 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`py-3 px-4 font-medium transition-colors border-b-2 -mb-px ${
-                  activeTab === tab.key
-                    ? 'border-green-600 text-green-700'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
+                className={`py-3 px-4 font-medium transition-colors border-b-2 -mb-px ${activeTab === tab.key
+                  ? 'border-green-600 text-green-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
               >
                 {tab.label}
               </button>
@@ -1077,6 +1082,11 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
                         {mutations.addPricingTier.isPending ? 'Agregando...' : 'Agregar'}
                       </button>
                     </div>
+                    {pricingError && (
+                      <div className="mt-2 p-2 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg">
+                        {pricingError}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -1101,11 +1111,10 @@ export const EditServiceModal = ({ isOpen, onClose, service }: EditServiceModalP
                     <button
                       key={tag.id}
                       onClick={() => handleToggleTag(tag.id)}
-                      className={`px-3 py-1.5 rounded-full text-sm font-medium border transition ${
-                        selectedTagIds.includes(tag.id)
-                          ? 'border-green-500 bg-green-50 text-green-700'
-                          : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400'
-                      }`}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium border transition ${selectedTagIds.includes(tag.id)
+                        ? 'border-green-500 bg-green-50 text-green-700'
+                        : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400'
+                        }`}
                     >
                       {tag.name}
                       {selectedTagIds.includes(tag.id) && <Check size={14} className="inline ml-1" />}

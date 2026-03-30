@@ -56,10 +56,10 @@ export const PersonsListPage = () => {
   }
 
   return (
-    <div className="p-8" style={{ backgroundColor: '#fafafa', minHeight: '100%' }}>
+    <div className="p-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: '#085f24' }}>
+          <h1 className="text-3xl font-bold mb-2">
             Clientes
           </h1>
           <p className="text-gray-600">Gestiona los clientes registrados</p>
@@ -76,7 +76,7 @@ export const PersonsListPage = () => {
         </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
+      <div className="space-y-6">
         <PersonFiltersComponent filters={filters} onFiltersChange={setFilters} />
 
         {isLoading ? (
