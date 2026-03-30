@@ -493,7 +493,7 @@ export const QuoteEditPage = ({ quoteId }: Props) => {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
-          <a href={`/quotes/${quoteId}`} className="p-2 rounded-lg hover:bg-gray-200">
+          <a href={`/quotes`} className="p-2 rounded-lg hover:bg-gray-200">
             <ArrowLeft size={24} />
           </a>
           <div>

@@ -239,7 +239,7 @@ export const CreateServiceModal = ({ isOpen, onClose }: CreateServiceModalProps)
           {/* Resumen */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Resumen *
+              Resumen
             </label>
             <ReactQuill
               theme="snow"
@@ -252,7 +252,7 @@ export const CreateServiceModal = ({ isOpen, onClose }: CreateServiceModalProps)
           {/* Incluye */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Incluye *
+              Incluye
             </label>
             <ReactQuill
               theme="snow"
@@ -265,7 +265,7 @@ export const CreateServiceModal = ({ isOpen, onClose }: CreateServiceModalProps)
           {/* No Incluye */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              No Incluye *
+              No Incluye
             </label>
             <ReactQuill
               theme="snow"

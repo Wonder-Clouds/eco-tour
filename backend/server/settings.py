@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-pfg@8zgf@e_#m4rcpf1+fu32b3pi8$&u3d-c7537%9-(i0@0hc')
-
+print("SECRET_KEY VALUE:", SECRET_KEY, type(SECRET_KEY))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
@@ -77,20 +77,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Local apps
-    'data',
-    'expense',
-    'group',
-    'service',
-    'package',
-    'itinerary',
-    'media',
-    'person',
-    'quote',
-    'reserve',
-    'supplier',
-    'pay',
+    'api.data',
+    'api.expense',
+    'api.group',
+    'api.service',
+    'api.package',
+    'api.itinerary',
+    'api.media',
+    'api.person',
+    'api.quote',
+    'api.reserve',
+    'api.supplier',
+    'api.pay',
     'tag',
-    'todo',
+    'api.todo',
     'authentication',
 
     # Third party apps
