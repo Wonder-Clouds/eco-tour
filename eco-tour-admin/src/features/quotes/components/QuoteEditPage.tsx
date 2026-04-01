@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useQuoteFullDetail } from '../hooks/useQuotes'
 import {
   useUpdateQuote,
@@ -9,15 +9,13 @@ import {
   useUpdateGroup,
   useCreatePerson,
   useAddPersonToGroup,
+  useRemovePersonFromGroup,
 } from '../hooks/useQuoteMutations'
-import { useServicesFull } from '@/features/services/hooks/useServices'
-import { usePersonsSummary } from '@/features/persons/hooks/usePersonsSummary'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { useServices } from '@/features/services/hooks/useServices'
+import { useCountries } from '@/features/persons/hooks/useCountries'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
 import {
   Select,
   SelectContent,
@@ -25,24 +23,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { QuoteStatus } from '@/types/quote.type'
+import { QuoteFullDetail, QuoteStatus } from '@/types/quote.type'
+import { SummaryService, TypeService } from '@/types/service.type'
 import {
   ArrowLeft,
-  Users,
-  Package,
-  Calendar,
-  DollarSign,
-  Clock,
-  Loader2,
-  User,
-  Save,
-  AlertCircle,
-  Trash2,
+  Search,
   Plus,
-  UserPlus,
-  ChevronDown,
-  ChevronUp,
-  Edit3,
+  Trash2,
+  Save,
+  Loader2,
+  X,
+  Calendar,
+  Users,
+  ChevronRight,
+  MapPin,
+  Clock,
+  User,
+  AlertCircle,
 } from 'lucide-react'
 
 interface Props {
@@ -61,68 +58,131 @@ const getStatusStyles = (status: QuoteStatus) => {
   return found || STATUS_OPTIONS[0]
 }
 
+interface Participant {
+  id: string
+  tempId: string
+  name: string
+  first_name: string
+  last_name: string
+  email: string
+  phone_number: string
+  passport_number: string
+  birth_date: string
+  nationality: string
+  isContact: boolean
+  is_generic: boolean
+}
+
+interface ParticipantAssignment {
+  participantId: string
+  departure_date: string
+  departure_time: string
+  arrive_date: string
+  arrive_time: string
+  notes: string
+  service_quote_person_id?: string
+}
+
+interface ActivityAssignment {
+  id: string
+  service: SummaryService
+  defaultDepartureDate: string
+  defaultDepartureTime: string
+  defaultArriveDate: string
+  defaultArriveTime: string
+  defaultNotes: string
+  participantAssignments: ParticipantAssignment[]
+}
+
 const formatPrice = (price?: string | number) => {
   if (price === undefined || price === null) return '$0.00'
   const numPrice = typeof price === 'string' ? parseFloat(price) : price
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(numPrice)
 }
 
-const getTypeLabel = (type: string) => {
-  const types: Record<string, string> = {
-    group: 'Grupal',
-    private: 'Privado',
-    arbitrary: 'Arbitrario',
-  }
+const formatServiceType = (type: string) => {
+  const types: Record<string, string> = { group: 'Grupal', private: 'Privado', arbitrary: 'Arbitrario' }
   return types[type] || type
 }
 
-const getTypeColor = (type: string) => {
-  const colors: Record<string, { bg: string; text: string }> = {
-    group: { bg: '#edfff2', text: '#00932c' },      // Verde
-    private: { bg: '#fef2f2', text: '#dc2626' },    // Rojo
-    arbitrary: { bg: '#fef3c7', text: '#d97706' },  // Ámbar
+const getTypeStyles = (type: string) => {
+  const styles: Record<string, { bg: string; text: string }> = {
+    private: { bg: '#fef2f2', text: '#dc2626' },
+    group: { bg: '#edfff2', text: '#00932c' },
+    arbitrary: { bg: '#fffbeb', text: '#d97706' },
   }
-  return colors[type] || { bg: '#f3f4f6', text: '#374151' }
+  return styles[type] || { bg: '#f3f4f6', text: '#374151' }
 }
 
-// Form data types
-interface QuoteFormData {
+function hydrateFromQuote(quote: QuoteFullDetail): {
+  participants: Participant[]
+  activities: ActivityAssignment[]
   notes: string
-  valid_until: string
-  status: QuoteStatus
-}
+  validUntil: string
+  quoteStatus: QuoteStatus
+  groupContactInfo: string
+  groupDescription: string
+} {
+  const participants: Participant[] = (quote.persons_detail || []).map((p, idx) => ({
+    id: p.id,
+    tempId: p.id,
+    name: p.full_name || (idx === 0 ? 'Contacto Principal' : `Pasajero #${idx}`),
+    first_name: p.first_name || '',
+    last_name: p.last_name || '',
+    email: p.email || '',
+    phone_number: p.phone_number || '',
+    passport_number: p.passport_number || '',
+    birth_date: p.birth_date || '',
+    nationality: p.nationality || '',
+    isContact: idx === 0,
+    is_generic: p.is_generic ?? true,
+  }))
 
-interface GroupFormData {
-  contact_info: string
-  description: string
-}
+  const activities: ActivityAssignment[] = (quote.services_detail || []).map((svc) => {
+    const first = svc.persons_in_service[0]
+    return {
+      id: `svc-${svc.id}`,
+      service: {
+        id: svc.id,
+        title: svc.title,
+        type: svc.type as TypeService,
+        departure_time: svc.departure_time,
+        reference_price: String(svc.reference_price ?? ''),
+        duration: `${svc.duration_value} ${svc.duration_unit}`,
+      },
+      defaultDepartureDate: first?.departure_date?.slice(0, 10) || '',
+      defaultDepartureTime: first?.departure_time?.slice(0, 5) || svc.departure_time?.slice(0, 5) || '',
+      defaultArriveDate: first?.arrive_date?.slice(0, 10) || '',
+      defaultArriveTime: first?.arrive_time?.slice(0, 5) || '',
+      defaultNotes: first?.notes || '',
+      participantAssignments: svc.persons_in_service.map((ps) => ({
+        participantId: ps.person_id,
+        departure_date: ps.departure_date?.slice(0, 10) || '',
+        departure_time: ps.departure_time?.slice(0, 5) || '',
+        arrive_date: ps.arrive_date?.slice(0, 10) || '',
+        arrive_time: ps.arrive_time?.slice(0, 5) || '',
+        notes: ps.notes || '',
+        service_quote_person_id: ps.service_quote_person_id,
+      })),
+    }
+  })
 
-interface PersonFormData {
-  id: string
-  first_name: string
-  last_name: string
-  email: string
-  phone_number: string
-  passport_number: string
-  nationality: string
-  is_generic: boolean
-}
-
-interface ServiceFormData {
-  service_quote_person_id: string
-  departure_date: string
-  departure_time: string
-  arrive_date: string
-  arrive_time: string
-  notes: string
+  return {
+    participants,
+    activities,
+    notes: quote.notes || '',
+    validUntil: quote.valid_until || '',
+    quoteStatus: quote.status,
+    groupContactInfo: quote.group_info?.contact_info || '',
+    groupDescription: quote.group_info?.description || '',
+  }
 }
 
 export const QuoteEditPage = ({ quoteId }: Props) => {
   const { data: quote, isLoading, error, refetch } = useQuoteFullDetail(quoteId)
-  const { data: services = [] } = useServicesFull()
-  const { data: existingPersons = [] } = usePersonsSummary()
+  const { data: services = [], isLoading: isLoadingServices } = useServices()
+  const { data: countries = [] } = useCountries()
 
-  // Mutations
   const updateQuoteMutation = useUpdateQuote(quoteId)
   const updatePersonMutation = useUpdatePerson()
   const updateGroupMutation = useUpdateGroup()
@@ -131,341 +191,450 @@ export const QuoteEditPage = ({ quoteId }: Props) => {
   const createServiceQuotePersonMutation = useCreateServiceQuotePerson()
   const createPersonMutation = useCreatePerson()
   const addPersonToGroupMutation = useAddPersonToGroup()
+  const removePersonFromGroupMutation = useRemovePersonFromGroup()
 
-  // Form States
-  const [quoteForm, setQuoteForm] = useState<QuoteFormData>({
-    notes: '',
-    valid_until: '',
-    status: 'draft',
-  })
+  const [participants, setParticipants] = useState<Participant[]>([])
+  const [participantsCount, setParticipantsCount] = useState(1)
+  const [activities, setActivities] = useState<ActivityAssignment[]>([])
+  const [serviceSearch, setServiceSearch] = useState('')
+  const [selectedActivity, setSelectedActivity] = useState<ActivityAssignment | null>(null)
+  const [editingParticipant, setEditingParticipant] = useState<string | null>(null)
+  const [notes, setNotes] = useState('')
+  const [validUntil, setValidUntil] = useState('')
+  const [quoteStatus, setQuoteStatus] = useState<QuoteStatus>('draft')
+  const [groupContactInfo, setGroupContactInfo] = useState('')
+  const [groupDescription, setGroupDescription] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [pendingDeleteSqpIds, setPendingDeleteSqpIds] = useState<string[]>([])
+  const [removedPersonIds, setRemovedPersonIds] = useState<string[]>([])
 
-  const [groupForm, setGroupForm] = useState<GroupFormData>({
-    contact_info: '',
-    description: '',
-  })
+  const queueDeleteSqp = useCallback((id: string | undefined) => {
+    if (!id) return
+    setPendingDeleteSqpIds((prev) => (prev.includes(id) ? prev : [...prev, id]))
+  }, [])
 
-  const [personsForm, setPersonsForm] = useState<PersonFormData[]>([])
-  const [servicesForm, setServicesForm] = useState<ServiceFormData[]>([])
-
-  // UI States
-  const [expandedPersons, setExpandedPersons] = useState<Set<string>>(new Set())
-
-  // Add service state
-  const [addingToPersonId, setAddingToPersonId] = useState<string | null>(null)
-  const [newServiceData, setNewServiceData] = useState({
-    service_id: '',
-    departure_date: '',
-    departure_time: '',
-    arrive_date: '',
-    arrive_time: '',
-    notes: '',
-  })
-
-  // Add person state
-  const [showAddPerson, setShowAddPerson] = useState(false)
-  const [addPersonMode, setAddPersonMode] = useState<'new' | 'existing'>('new')
-  const [selectedExistingPersonId, setSelectedExistingPersonId] = useState('')
-  const [newPersonData, setNewPersonData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    phone_number: '',
-    passport_number: '',
-    nationality: '',
-  })
-
-  // Loading states
-  const [savingQuote, setSavingQuote] = useState(false)
-  const [savingGroup, setSavingGroup] = useState(false)
-  const [savingPersonId, setSavingPersonId] = useState<string | null>(null)
-  const [savingServiceId, setSavingServiceId] = useState<string | null>(null)
-  const [deletingServiceId, setDeletingServiceId] = useState<string | null>(null)
-  const [addingService, setAddingService] = useState(false)
-  const [addingPerson, setAddingPerson] = useState(false)
-
-  // Initialize form data when quote loads
   useEffect(() => {
-    if (quote) {
-      setQuoteForm({
-        notes: quote.notes || '',
-        valid_until: quote.valid_until || '',
-        status: quote.status,
-      })
+    if (!quote) return
+    const h = hydrateFromQuote(quote)
+    setParticipants(h.participants)
+    setActivities(h.activities)
+    setNotes(h.notes)
+    setValidUntil(h.validUntil)
+    setQuoteStatus(h.quoteStatus)
+    setGroupContactInfo(h.groupContactInfo)
+    setGroupDescription(h.groupDescription)
+    setPendingDeleteSqpIds([])
+    setRemovedPersonIds([])
+    setSelectedActivity(null)
+    setParticipantsCount(Math.max(1, h.participants.length))
+  }, [quote?.id, quote?.updated_at])
 
-      setGroupForm({
-        contact_info: quote.group_info?.contact_info || '',
-        description: quote.group_info?.description || '',
-      })
+  const filteredServices = services.filter(
+    (s) =>
+      s.title.toLowerCase().includes(serviceSearch.toLowerCase()) ||
+      s.type.toLowerCase().includes(serviceSearch.toLowerCase())
+  )
 
-      const persons: PersonFormData[] = quote.persons_detail?.map((p) => ({
-        id: p.id,
-        first_name: p.first_name || '',
-        last_name: p.last_name || '',
-        email: p.email || '',
-        phone_number: p.phone_number || '',
-        passport_number: p.passport_number || '',
-        nationality: p.nationality || '',
-        is_generic: p.is_generic ?? true,
-      })) || []
-      setPersonsForm(persons)
+  const availableServices = filteredServices.filter((s) => !activities.some((a) => a.service.id === s.id))
 
-      const allServices: ServiceFormData[] = []
-      quote.persons_detail?.forEach((p) => {
-        p.services?.forEach((s) => {
-          allServices.push({
-            service_quote_person_id: s.service_quote_person_id,
-            departure_date: s.departure_date || '',
-            departure_time: s.departure_time?.slice(0, 5) || '',
-            arrive_date: s.arrive_date || '',
-            arrive_time: s.arrive_time?.slice(0, 5) || '',
-            notes: s.notes || '',
-          })
-        })
-      })
-      setServicesForm(allServices)
-
-      // Expand all persons by default
-      const allPersonIds = new Set(quote.persons_detail?.map(p => p.id) || [])
-      setExpandedPersons(allPersonIds)
+  const handleAddParticipant = () => {
+    const newNum = participants.length
+    const newParticipant: Participant = {
+      id: `temp-${Date.now()}`,
+      tempId: `temp-${newNum}`,
+      name: `Pasajero #${newNum}`,
+      first_name: '',
+      last_name: '',
+      email: '',
+      phone_number: '',
+      passport_number: '',
+      birth_date: '',
+      nationality: '',
+      isContact: false,
+      is_generic: true,
     }
-  }, [quote])
-
-  // ==================== SAVE HANDLERS ====================
-
-  const handleSaveQuote = async () => {
-    setSavingQuote(true)
-    try {
-      await updateQuoteMutation.mutateAsync({
-        notes: quoteForm.notes || undefined,
-        valid_until: quoteForm.valid_until || undefined,
-        status: quoteForm.status,
-      })
-      await refetch()
-    } catch (err) {
-      console.error('Error saving quote:', err)
-      alert('Error al guardar la cotización')
-    } finally {
-      setSavingQuote(false)
-    }
+    setParticipants([...participants, newParticipant])
   }
 
-  const handleSaveGroup = async () => {
-    if (!quote?.group_info?.id) return
-    setSavingGroup(true)
-    try {
-      await updateGroupMutation.mutateAsync({
-        id: quote.group_info.id,
-        data: {
-          contact_info: groupForm.contact_info || undefined,
-          description: groupForm.description || undefined,
-        },
-      })
-      await refetch()
-    } catch (err) {
-      console.error('Error saving group:', err)
-      alert('Error al guardar el grupo')
-    } finally {
-      setSavingGroup(false)
-    }
-  }
+  const hasPersistedPassengers = participants.some((p) => !p.isContact && !p.id.startsWith('temp-'))
 
-  const handleSavePerson = async (personId: string) => {
-    const personData = personsForm.find((p) => p.id === personId)
-    if (!personData) return
-
-    setSavingPersonId(personId)
-    try {
-      await updatePersonMutation.mutateAsync({
-        id: personId,
-        data: {
-          first_name: personData.first_name || undefined,
-          last_name: personData.last_name || undefined,
-          email: personData.email || undefined,
-          phone_number: personData.phone_number || undefined,
-          passport_number: personData.passport_number || undefined,
-          nationality: personData.nationality || undefined,
-          is_generic: personData.is_generic,
-        },
-      })
-      await refetch()
-    } catch (err) {
-      console.error('Error saving person:', err)
-      alert('Error al guardar la persona')
-    } finally {
-      setSavingPersonId(null)
-    }
-  }
-
-  const handleSaveService = async (serviceQuotePersonId: string) => {
-    const serviceData = servicesForm.find((s) => s.service_quote_person_id === serviceQuotePersonId)
-    if (!serviceData) return
-
-    setSavingServiceId(serviceQuotePersonId)
-    try {
-      await updateServiceQuotePersonMutation.mutateAsync({
-        id: serviceQuotePersonId,
-        data: {
-          departure_date: serviceData.departure_date || undefined,
-          departure_time: serviceData.departure_time || undefined,
-          arrive_date: serviceData.arrive_date || undefined,
-          arrive_time: serviceData.arrive_time || undefined,
-          notes: serviceData.notes,
-        },
-      })
-      await refetch()
-    } catch (err) {
-      console.error('Error saving service:', err)
-      alert('Error al guardar el servicio')
-    } finally {
-      setSavingServiceId(null)
-    }
-  }
-
-  const handleDeleteService = async (serviceQuotePersonId: string) => {
-    if (!confirm('¿Eliminar este servicio de la persona?')) return
-
-    setDeletingServiceId(serviceQuotePersonId)
-    try {
-      await deleteServiceQuotePersonMutation.mutateAsync(serviceQuotePersonId)
-      await refetch()
-    } catch (err) {
-      console.error('Error deleting service:', err)
-      alert('Error al eliminar el servicio')
-    } finally {
-      setDeletingServiceId(null)
-    }
-  }
-
-  const handleAddService = async (personId: string) => {
-    if (!newServiceData.service_id || !newServiceData.departure_date) {
-      alert('Selecciona un servicio y fecha de salida')
+  const handleGenerateParticipants = () => {
+    if (hasPersistedPassengers) {
+      alert(
+        'Ya hay pasajeros guardados en esta cotización. Usa «Nuevo» para agregar más o la papelera para quitar pasajeros temporales.'
+      )
       return
     }
 
-    setAddingService(true)
-    try {
-      await createServiceQuotePersonMutation.mutateAsync({
-        person_id: personId,
-        service_id: newServiceData.service_id,
-        quote_id: quoteId,
-        departure_date: newServiceData.departure_date,
-        departure_time: newServiceData.departure_time || undefined,
-        arrive_date: newServiceData.arrive_date || undefined,
-        arrive_time: newServiceData.arrive_time || undefined,
-        notes: newServiceData.notes || undefined,
-      })
-      setAddingToPersonId(null)
-      setNewServiceData({
-        service_id: '',
-        departure_date: '',
-        departure_time: '',
-        arrive_date: '',
-        arrive_time: '',
-        notes: '',
-      })
-      await refetch()
-    } catch (err) {
-      console.error('Error adding service:', err)
-      alert('Error al agregar el servicio')
-    } finally {
-      setAddingService(false)
-    }
-  }
+    const contact = participants.find((p) => p.isContact)
+    const newParticipants: Participant[] = contact ? [contact] : []
 
-  const handleAddPerson = async () => {
-    if (!quote?.group_info?.id) {
-      alert('No hay grupo asociado a esta cotización')
-      return
-    }
-
-    setAddingPerson(true)
-    try {
-      let personId: string
-
-      if (addPersonMode === 'existing') {
-        if (!selectedExistingPersonId) {
-          alert('Selecciona una persona')
-          setAddingPerson(false)
-          return
-        }
-        personId = selectedExistingPersonId
-      } else {
-        if (!newPersonData.first_name || !newPersonData.last_name) {
-          alert('Nombre y apellido son requeridos')
-          setAddingPerson(false)
-          return
-        }
-
-        const newPerson = await createPersonMutation.mutateAsync({
-          first_name: newPersonData.first_name,
-          last_name: newPersonData.last_name,
-          email: newPersonData.email || undefined,
-          phone_number: newPersonData.phone_number || undefined,
-          passport_number: newPersonData.passport_number || undefined,
-          nationality: newPersonData.nationality || undefined,
-        })
-        personId = newPerson.id
-      }
-
-      await addPersonToGroupMutation.mutateAsync({
-        groupId: quote.group_info.id,
-        personId: personId,
-      })
-
-      setShowAddPerson(false)
-      setNewPersonData({
+    for (let i = 1; i < participantsCount; i++) {
+      newParticipants.push({
+        id: `temp-${Date.now()}-${i}`,
+        tempId: `temp-${i}`,
+        name: `Pasajero #${i}`,
         first_name: '',
         last_name: '',
         email: '',
         phone_number: '',
         passport_number: '',
+        birth_date: '',
         nationality: '',
+        isContact: false,
+        is_generic: true,
       })
-      setSelectedExistingPersonId('')
-      setAddPersonMode('new')
+    }
 
+    setParticipants(newParticipants)
+    setActivities(
+      activities.map((a) => ({
+        ...a,
+        participantAssignments: a.participantAssignments.filter((pa) =>
+          newParticipants.some((np) => np.id === pa.participantId)
+        ),
+      }))
+    )
+    if (selectedActivity) {
+      setSelectedActivity({
+        ...selectedActivity,
+        participantAssignments: selectedActivity.participantAssignments.filter((pa) =>
+          newParticipants.some((np) => np.id === pa.participantId)
+        ),
+      })
+    }
+  }
+
+  const handleRemoveParticipant = (participantId: string) => {
+    const p = participants.find((x) => x.id === participantId)
+    if (!p || p.isContact) return
+
+    activities.forEach((a) => {
+      const pa = a.participantAssignments.find((x) => x.participantId === participantId)
+      if (pa?.service_quote_person_id) queueDeleteSqp(pa.service_quote_person_id)
+    })
+
+    setParticipants(participants.filter((x) => x.id !== participantId))
+    setActivities(
+      activities.map((a) => ({
+        ...a,
+        participantAssignments: a.participantAssignments.filter((pa) => pa.participantId !== participantId),
+      }))
+    )
+    if (selectedActivity) {
+      setSelectedActivity({
+        ...selectedActivity,
+        participantAssignments: selectedActivity.participantAssignments.filter(
+          (pa) => pa.participantId !== participantId
+        ),
+      })
+    }
+
+    if (!participantId.startsWith('temp-')) {
+      setRemovedPersonIds((prev) => (prev.includes(participantId) ? prev : [...prev, participantId]))
+    }
+  }
+
+  const handleParticipantChange = (participantId: string, field: keyof Participant, value: string | boolean) => {
+    setParticipants(
+      participants.map((p) => {
+        if (p.id !== participantId) return p
+        const updated = { ...p, [field]: value }
+        if (field === 'first_name' || field === 'last_name') {
+          const firstName = field === 'first_name' ? (value as string) : p.first_name
+          const lastName = field === 'last_name' ? (value as string) : p.last_name
+          updated.name =
+            `${firstName} ${lastName}`.trim() ||
+            (p.isContact ? 'Contacto Principal' : `Pasajero #${participants.indexOf(p)}`)
+        }
+        return updated
+      })
+    )
+  }
+
+  const handleSelectService = (service: SummaryService) => {
+    const newActivity: ActivityAssignment = {
+      id: `new-${Date.now()}`,
+      service,
+      defaultDepartureTime: service.departure_time || '',
+      defaultDepartureDate: '',
+      defaultArriveDate: '',
+      defaultArriveTime: '',
+      defaultNotes: '',
+      participantAssignments: [],
+    }
+    setActivities([...activities, newActivity])
+    setSelectedActivity(newActivity)
+  }
+
+  const handleActivityDefaultChange = (activityId: string, field: string, value: string) => {
+    const updated = activities.map((a) => {
+      if (a.id !== activityId) return a
+      const updatedActivity = { ...a, [field]: value }
+      updatedActivity.participantAssignments = updatedActivity.participantAssignments.map((pa) => ({
+        ...pa,
+        departure_date: field === 'defaultDepartureDate' ? value : pa.departure_date,
+        departure_time: field === 'defaultDepartureTime' ? value : pa.departure_time,
+        arrive_date: field === 'defaultArriveDate' ? value : pa.arrive_date,
+        arrive_time: field === 'defaultArriveTime' ? value : pa.arrive_time,
+        notes: field === 'defaultNotes' ? value : pa.notes,
+      }))
+      return updatedActivity
+    })
+    setActivities(updated)
+    if (selectedActivity?.id === activityId) {
+      const ua = updated.find((x) => x.id === activityId)
+      if (ua) setSelectedActivity(ua)
+    }
+  }
+
+  const handleToggleParticipantInActivity = (activityId: string, participantId: string) => {
+    const activity = activities.find((a) => a.id === activityId)
+    if (!activity) return
+
+    const existingAssignment = activity.participantAssignments.find((pa) => pa.participantId === participantId)
+
+    let newAssignments: ParticipantAssignment[]
+
+    if (existingAssignment) {
+      if (existingAssignment.service_quote_person_id) {
+        queueDeleteSqp(existingAssignment.service_quote_person_id)
+      }
+      newAssignments = activity.participantAssignments.filter((pa) => pa.participantId !== participantId)
+    } else {
+      newAssignments = [
+        ...activity.participantAssignments,
+        {
+          participantId,
+          departure_date: activity.defaultDepartureDate,
+          departure_time: activity.defaultDepartureTime,
+          arrive_date: activity.defaultArriveDate,
+          arrive_time: activity.defaultArriveTime,
+          notes: activity.defaultNotes,
+        },
+      ]
+    }
+
+    const updated = activities.map((a) =>
+      a.id === activityId ? { ...a, participantAssignments: newAssignments } : a
+    )
+    setActivities(updated)
+    if (selectedActivity?.id === activityId) {
+      setSelectedActivity({ ...selectedActivity, participantAssignments: newAssignments })
+    }
+  }
+
+  const handleParticipantAssignmentChange = (
+    activityId: string,
+    participantId: string,
+    field: keyof ParticipantAssignment,
+    value: string
+  ) => {
+    const updated = activities.map((a) => {
+      if (a.id !== activityId) return a
+      return {
+        ...a,
+        participantAssignments: a.participantAssignments.map((pa) =>
+          pa.participantId === participantId ? { ...pa, [field]: value } : pa
+        ),
+      }
+    })
+    setActivities(updated)
+    if (selectedActivity?.id === activityId) {
+      const ua = updated.find((x) => x.id === activityId)
+      if (ua) setSelectedActivity(ua)
+    }
+  }
+
+  const handleApplyDefaultsToAll = (activityId: string) => {
+    const activity = activities.find((a) => a.id === activityId)
+    if (!activity) return
+    const updated = activities.map((a) => {
+      if (a.id !== activityId) return a
+      return {
+        ...a,
+        participantAssignments: a.participantAssignments.map((pa) => ({
+          ...pa,
+          departure_date: a.defaultDepartureDate,
+          departure_time: a.defaultDepartureTime,
+          arrive_date: a.defaultArriveDate,
+          arrive_time: a.defaultArriveTime,
+          notes: a.defaultNotes,
+        })),
+      }
+    })
+    setActivities(updated)
+    const ua = updated.find((x) => x.id === activityId)
+    if (selectedActivity?.id === activityId && ua) setSelectedActivity(ua)
+  }
+
+  const handleRemoveActivity = (activityId: string) => {
+    const act = activities.find((a) => a.id === activityId)
+    if (act) {
+      act.participantAssignments.forEach((pa) => queueDeleteSqp(pa.service_quote_person_id))
+    }
+    setActivities(activities.filter((a) => a.id !== activityId))
+    if (selectedActivity?.id === activityId) setSelectedActivity(null)
+  }
+
+  const calculateTotal = () => {
+    return activities.reduce((sum, a) => {
+      const pricePerPerson = parseFloat(a.service.reference_price || '0')
+      return sum + pricePerPerson * a.participantAssignments.length
+    }, 0)
+  }
+
+  const getContactName = () => {
+    const contact = participants.find((p) => p.isContact)
+    if (contact?.first_name || contact?.last_name) {
+      return `${contact.first_name} ${contact.last_name}`.trim()
+    }
+    return ''
+  }
+
+  const canSubmit = () => {
+    const contactName = getContactName()
+    if (!contactName) return false
+    if (activities.length === 0) return false
+    return activities.every(
+      (a) =>
+        a.participantAssignments.length > 0 &&
+        a.participantAssignments.every((pa) => pa.departure_date)
+    )
+  }
+
+  const handleSubmit = async () => {
+    if (isSubmitting || !quote?.group_info?.id) return
+    if (!canSubmit()) {
+      alert('Completa el contacto principal, actividades y fechas de salida de cada asignación.')
+      return
+    }
+
+    setIsSubmitting(true)
+    const uniqueDeletes = [...new Set(pendingDeleteSqpIds)]
+
+    try {
+      for (const id of uniqueDeletes) {
+        await deleteServiceQuotePersonMutation.mutateAsync(id)
+      }
+
+      for (const rid of removedPersonIds) {
+        await removePersonFromGroupMutation.mutateAsync({
+          groupId: quote.group_info.id,
+          personId: rid,
+        })
+      }
+
+      await updateQuoteMutation.mutateAsync({
+        notes: notes || undefined,
+        valid_until: validUntil || undefined,
+        status: quoteStatus,
+      })
+
+      await updateGroupMutation.mutateAsync({
+        id: quote.group_info.id,
+        data: {
+          contact_info: groupContactInfo || undefined,
+          description: groupDescription || undefined,
+        },
+      })
+
+      const idMap: Record<string, string> = {}
+      for (const p of participants) {
+        if (!p.id.startsWith('temp-')) continue
+        if (!p.first_name?.trim() || !p.last_name?.trim()) {
+          throw new Error('Pasajeros nuevos: nombre y apellido son obligatorios.')
+        }
+        const created = await createPersonMutation.mutateAsync({
+          first_name: p.first_name,
+          last_name: p.last_name,
+          email: p.email || undefined,
+          phone_number: p.phone_number || undefined,
+          passport_number: p.passport_number || undefined,
+          birth_date: p.birth_date || undefined,
+          nationality: p.nationality || undefined,
+        })
+        idMap[p.id] = created.id
+        await addPersonToGroupMutation.mutateAsync({
+          groupId: quote.group_info.id,
+          personId: created.id,
+        })
+      }
+
+      const resolveId = (id: string) => idMap[id] ?? id
+
+      for (const p of participants) {
+        const pid = resolveId(p.id)
+        if (p.id.startsWith('temp-')) {
+          await updatePersonMutation.mutateAsync({
+            id: pid,
+            data: {
+              email: p.email || undefined,
+              phone_number: p.phone_number || undefined,
+              passport_number: p.passport_number || undefined,
+              nationality: p.nationality || undefined,
+              birth_date: p.birth_date || undefined,
+              is_generic: p.is_generic,
+            },
+          })
+        } else {
+          await updatePersonMutation.mutateAsync({
+            id: pid,
+            data: {
+              first_name: p.first_name || undefined,
+              last_name: p.last_name || undefined,
+              email: p.email || undefined,
+              phone_number: p.phone_number || undefined,
+              passport_number: p.passport_number || undefined,
+              nationality: p.nationality || undefined,
+              birth_date: p.birth_date || undefined,
+              is_generic: p.is_generic,
+            },
+          })
+        }
+      }
+
+      for (const activity of activities) {
+        for (const pa of activity.participantAssignments) {
+          const pid = resolveId(pa.participantId)
+          if (pa.service_quote_person_id) {
+            if (uniqueDeletes.includes(pa.service_quote_person_id)) continue
+            await updateServiceQuotePersonMutation.mutateAsync({
+              id: pa.service_quote_person_id,
+              data: {
+                departure_date: pa.departure_date || undefined,
+                departure_time: pa.departure_time || undefined,
+                arrive_date: pa.arrive_date || undefined,
+                arrive_time: pa.arrive_time || undefined,
+                notes: pa.notes || undefined,
+              },
+            })
+          } else {
+            if (!pa.departure_date) continue
+            await createServiceQuotePersonMutation.mutateAsync({
+              person_id: pid,
+              service_id: activity.service.id,
+              quote_id: quoteId,
+              departure_date: pa.departure_date,
+              departure_time: pa.departure_time || undefined,
+              arrive_date: pa.arrive_date || undefined,
+              arrive_time: pa.arrive_time || undefined,
+              notes: pa.notes || undefined,
+            })
+          }
+        }
+      }
+
+      setPendingDeleteSqpIds([])
+      setRemovedPersonIds([])
       await refetch()
     } catch (err) {
-      console.error('Error adding person:', err)
-      alert('Error al agregar la persona')
+      console.error('Error al guardar cotización:', err)
+      alert(err instanceof Error ? err.message : 'Error al guardar la cotización')
     } finally {
-      setAddingPerson(false)
+      setIsSubmitting(false)
     }
   }
-
-  // ==================== FORM UPDATE HANDLERS ====================
-
-  const updatePersonForm = (personId: string, field: keyof PersonFormData, value: string | boolean) => {
-    setPersonsForm((prev) =>
-      prev.map((p) => (p.id === personId ? { ...p, [field]: value } : p))
-    )
-  }
-
-  const updateServiceForm = (serviceId: string, field: keyof ServiceFormData, value: string) => {
-    setServicesForm((prev) =>
-      prev.map((s) => (s.service_quote_person_id === serviceId ? { ...s, [field]: value } : s))
-    )
-  }
-
-  const getServiceForm = (serviceQuotePersonId: string) => {
-    return servicesForm.find((s) => s.service_quote_person_id === serviceQuotePersonId)
-  }
-
-  const getPersonForm = (personId: string) => {
-    return personsForm.find((p) => p.id === personId)
-  }
-
-  const togglePerson = (personId: string) => {
-    const newExpanded = new Set(expandedPersons)
-    if (newExpanded.has(personId)) {
-      newExpanded.delete(personId)
-    } else {
-      newExpanded.add(personId)
-    }
-    setExpandedPersons(newExpanded)
-  }
-
-  // ==================== LOADING / ERROR ====================
 
   if (isLoading) {
     return (
@@ -481,764 +650,730 @@ export const QuoteEditPage = ({ quoteId }: Props) => {
       <div className="p-8 flex flex-col items-center justify-center min-h-screen" style={{ backgroundColor: '#fafafa' }}>
         <AlertCircle size={48} className="text-red-500 mb-4" />
         <p className="text-red-600 text-lg">Error al cargar la cotización</p>
-        <a href="/quotes" className="mt-4 text-green-600 hover:underline">Volver al listado</a>
+        <a href="/quotes" className="mt-4 text-green-600 hover:underline">
+          Volver al listado
+        </a>
       </div>
     )
   }
 
-  const statusStyle = getStatusStyles(quote.status)
+  const statusStyle = getStatusStyles(quoteStatus)
 
   return (
-    <div className="p-8" style={{ backgroundColor: '#fafafa', minHeight: '100vh' }}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <a href={`/quotes`} className="p-2 rounded-lg hover:bg-gray-200">
-            <ArrowLeft size={24} />
-          </a>
-          <div>
-            <h1 className="text-3xl font-bold" style={{ color: '#085f24' }}>
-              Editar Cotización
-            </h1>
-            <div className="flex items-center gap-4 mt-1">
-              <span className="text-gray-600">{quote.contact_info}</span>
-              <span
-                className="px-3 py-1 rounded-full text-xs font-medium border"
-                style={{ backgroundColor: statusStyle.bg, color: statusStyle.text, borderColor: statusStyle.border }}
-              >
-                {statusStyle.label}
-              </span>
-              <span className="text-sm text-gray-500">v{quote.version}</span>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#fafafa' }}>
+      <div className="sticky top-0 z-20 bg-white border-b shadow-sm">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-4">
+            <a href="/quotes" className="p-2 rounded-lg hover:bg-gray-100">
+              <ArrowLeft size={20} />
+            </a>
+            <div>
+              <h1 className="text-xl font-bold" style={{ color: '#085f24' }}>
+                Editar Cotización
+              </h1>
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                <p className="text-sm text-gray-500">
+                  Misma vista que al crear: actividades a la izquierda, participantes y fechas a la derecha
+                </p>
+                <span
+                  className="px-2 py-0.5 rounded-full text-xs font-medium border"
+                  style={{
+                    backgroundColor: statusStyle.bg,
+                    color: statusStyle.text,
+                    borderColor: statusStyle.border,
+                  }}
+                >
+                  {statusStyle.label}
+                </span>
+                <span className="text-xs text-gray-400">v{quote.version}</span>
+                <a href={`/quotes/${quoteId}`} className="text-xs text-green-600 hover:underline">
+                  Ver ficha
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-gray-500">Total</p>
-          <p className="text-2xl font-bold" style={{ color: '#00932c' }}>{formatPrice(quote.total_price)}</p>
+
+          <div className="flex items-center gap-4">
+            <div className="text-right mr-4">
+              <p className="text-xs text-gray-500">Total (estimado)</p>
+              <p className="text-xl font-bold" style={{ color: '#00932c' }}>
+                {formatPrice(calculateTotal())}
+              </p>
+            </div>
+
+            <Button
+              onClick={handleSubmit}
+              disabled={!canSubmit() || isSubmitting}
+              style={{
+                backgroundColor: canSubmit() && !isSubmitting ? '#00bf35' : '#9ca3af',
+              }}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="animate-spin mr-2" size={16} />
+                  Guardando...
+                </>
+              ) : (
+                <>
+                  <Save size={16} className="mr-2" />
+                  Guardar cambios
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Main Content */}
-        <div className="xl:col-span-2 space-y-6">
+      <div className="flex-1 flex">
+        <div className="w-1/2 border-r bg-white flex flex-col">
+          <div className="p-4 border-b">
+            <div className="bg-gray-50 rounded-lg p-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Contacto Principal</label>
+              <Input value={getContactName()} placeholder="Se actualiza desde el panel derecho" className="bg-white" readOnly />
+            </div>
+          </div>
 
-          {/* ==================== QUOTE CARD ==================== */}
-          <Card className="border-0 shadow-md">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
-                <DollarSign size={20} />
-                Datos de la Cotización
-              </CardTitle>
-              <Button
-                onClick={handleSaveQuote}
-                disabled={savingQuote}
-                size="sm"
-                style={{ backgroundColor: '#00bf35' }}
-              >
-                {savingQuote ? <Loader2 className="animate-spin mr-1" size={16} /> : <Save size={16} className="mr-1" />}
-                Guardar
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="quote-status">Estado</Label>
-                  <Select
-                    value={quoteForm.status}
-                    onValueChange={(v: QuoteStatus) => setQuoteForm((prev) => ({ ...prev, status: v }))}
-                  >
-                    <SelectTrigger id="quote-status" className="w-full mt-1">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {STATUS_OPTIONS.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="quote-valid">Válido hasta</Label>
-                  <Input
-                    id="quote-valid"
-                    type="date"
-                    value={quoteForm.valid_until}
-                    onChange={(e) => setQuoteForm((prev) => ({ ...prev, valid_until: e.target.value }))}
-                    className="mt-1"
-                  />
-                </div>
+          <div className="p-6 border-b">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-semibold" style={{ color: '#085f24' }}>
+                Actividades ({activities.length})
+              </h2>
+            </div>
+
+            {activities.length === 0 ? (
+              <div className="text-center py-8 text-gray-400">
+                <MapPin size={32} className="mx-auto mb-2 opacity-50" />
+                <p>No hay actividades</p>
+                <p className="text-sm">Busca y agrega actividades abajo</p>
               </div>
-              <div>
-                <Label htmlFor="quote-notes">Notas</Label>
-                <Textarea
-                  id="quote-notes"
-                  value={quoteForm.notes}
-                  onChange={(e) => setQuoteForm((prev) => ({ ...prev, notes: e.target.value }))}
-                  rows={3}
-                  className="mt-1"
-                  placeholder="Notas de la cotización..."
-                />
-              </div>
-            </CardContent>
-          </Card>
+            ) : (
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {activities.map((activity) => {
+                  const typeStyles = getTypeStyles(activity.service.type)
+                  const isSelected = selectedActivity?.id === activity.id
+                  const hasParticipants = activity.participantAssignments.length > 0
+                  const allHaveDates = activity.participantAssignments.every((pa) => pa.departure_date)
 
-          {/* ==================== GROUP CARD ==================== */}
-          <Card className="border-0 shadow-md">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
-                <Users size={20} />
-                Información del Grupo
-              </CardTitle>
-              <Button
-                onClick={handleSaveGroup}
-                disabled={savingGroup}
-                size="sm"
-                style={{ backgroundColor: '#00bf35' }}
-              >
-                {savingGroup ? <Loader2 className="animate-spin mr-1" size={16} /> : <Save size={16} className="mr-1" />}
-                Guardar
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Nombre del Grupo</Label>
-                  <Input value={quote.group_info?.name || ''} disabled className="mt-1 bg-gray-100" />
-                </div>
-                <div>
-                  <Label>Total Personas</Label>
-                  <Input value={quote.group_info?.total_people || 0} disabled className="mt-1 bg-gray-100" />
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="group-contact">Información de Contacto</Label>
-                <Input
-                  id="group-contact"
-                  value={groupForm.contact_info}
-                  onChange={(e) => setGroupForm((prev) => ({ ...prev, contact_info: e.target.value }))}
-                  className="mt-1"
-                  placeholder="Nombre del contacto principal"
-                />
-              </div>
-              <div>
-                <Label htmlFor="group-desc">Descripción</Label>
-                <Textarea
-                  id="group-desc"
-                  value={groupForm.description}
-                  onChange={(e) => setGroupForm((prev) => ({ ...prev, description: e.target.value }))}
-                  rows={2}
-                  className="mt-1"
-                  placeholder="Descripción del grupo..."
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* ==================== PERSONS & SERVICES ==================== */}
-          <Card className="border-0 shadow-md">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
-                <User size={20} />
-                Personas y Servicios ({quote.persons_detail?.length || 0})
-              </CardTitle>
-              {!showAddPerson && (
-                <Button
-                  onClick={() => setShowAddPerson(true)}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2 text-green-600 border-green-300 hover:bg-green-50"
-                >
-                  <UserPlus size={16} />
-                  Agregar Persona
-                </Button>
-              )}
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Add Person Form */}
-              {showAddPerson && (
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-blue-800 flex items-center gap-2">
-                      <UserPlus size={18} />
-                      Agregar Persona al Grupo
-                    </h4>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setShowAddPerson(false)
-                          setNewPersonData({
-                            first_name: '',
-                            last_name: '',
-                            email: '',
-                            phone_number: '',
-                            passport_number: '',
-                            nationality: '',
-                          })
-                          setSelectedExistingPersonId('')
-                        }}
-                        disabled={addingPerson}
-                      >
-                        Cancelar
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={handleAddPerson}
-                        disabled={addingPerson}
-                        style={{ backgroundColor: '#00bf35' }}
-                      >
-                        {addingPerson ? (
-                          <Loader2 className="animate-spin mr-1" size={16} />
-                        ) : (
-                          <Plus size={16} className="mr-1" />
-                        )}
-                        Agregar
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Mode selector */}
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="addPersonMode"
-                        checked={addPersonMode === 'new'}
-                        onChange={() => setAddPersonMode('new')}
-                        className="w-4 h-4 text-green-600"
-                      />
-                      <span className="text-sm">Crear nueva persona</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="addPersonMode"
-                        checked={addPersonMode === 'existing'}
-                        onChange={() => setAddPersonMode('existing')}
-                        className="w-4 h-4 text-green-600"
-                      />
-                      <span className="text-sm">Usar persona existente</span>
-                    </label>
-                  </div>
-
-                  {addPersonMode === 'new' ? (
-                    <div className="grid grid-cols-3 gap-3">
-                      <div>
-                        <Label className="text-xs">Nombre *</Label>
-                        <Input
-                          value={newPersonData.first_name}
-                          onChange={(e) => setNewPersonData((prev) => ({ ...prev, first_name: e.target.value }))}
-                          className="mt-1"
-                          placeholder="Nombre"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Apellido *</Label>
-                        <Input
-                          value={newPersonData.last_name}
-                          onChange={(e) => setNewPersonData((prev) => ({ ...prev, last_name: e.target.value }))}
-                          className="mt-1"
-                          placeholder="Apellido"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Email</Label>
-                        <Input
-                          type="email"
-                          value={newPersonData.email}
-                          onChange={(e) => setNewPersonData((prev) => ({ ...prev, email: e.target.value }))}
-                          className="mt-1"
-                          placeholder="email@ejemplo.com"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Teléfono</Label>
-                        <Input
-                          value={newPersonData.phone_number}
-                          onChange={(e) => setNewPersonData((prev) => ({ ...prev, phone_number: e.target.value }))}
-                          className="mt-1"
-                          placeholder="+51 999 999 999"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Pasaporte</Label>
-                        <Input
-                          value={newPersonData.passport_number}
-                          onChange={(e) => setNewPersonData((prev) => ({ ...prev, passport_number: e.target.value }))}
-                          className="mt-1"
-                          placeholder="Número de pasaporte"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Nacionalidad</Label>
-                        <Input
-                          value={newPersonData.nationality}
-                          onChange={(e) => setNewPersonData((prev) => ({ ...prev, nationality: e.target.value }))}
-                          className="mt-1"
-                          placeholder="PE, US, CO..."
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <Label className="text-xs">Seleccionar persona existente</Label>
-                      <Select
-                        value={selectedExistingPersonId}
-                        onValueChange={setSelectedExistingPersonId}
-                      >
-                        <SelectTrigger className="w-full mt-1">
-                          <SelectValue placeholder="Seleccionar persona..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {existingPersons
-                            .filter((p) => !quote.persons_detail?.some((pd) => pd.id === p.id))
-                            .map((person) => (
-                              <SelectItem key={person.id} value={person.id}>
-                                {person.first_name} {person.last_name} - {person.email || person.phone_number || 'Sin contacto'}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Persons List */}
-              {quote.persons_detail?.map((person) => {
-                const personData = getPersonForm(person.id)
-                const isExpanded = expandedPersons.has(person.id)
-
-                return (
-                  <div key={person.id} className="border rounded-lg overflow-hidden">
-                    {/* Person Header */}
-                    <button
-                      onClick={() => togglePerson(person.id)}
-                      className="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition"
+                  return (
+                    <div
+                      key={activity.id}
+                      onClick={() => setSelectedActivity(activity)}
+                      className={`p-3 rounded-lg border cursor-pointer transition ${isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300'
+                        }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                          <User size={18} style={{ color: '#00932c' }} />
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium text-sm">{activity.service.title}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span
+                              className="text-xs px-2 py-0.5 rounded-full"
+                              style={{ backgroundColor: typeStyles.bg, color: typeStyles.text }}
+                            >
+                              {formatServiceType(activity.service.type)}
+                            </span>
+                            <span className="text-xs text-gray-500">{activity.participantAssignments.length} pax</span>
+                            {!hasParticipants && <span className="text-xs text-red-500">Sin participantes</span>}
+                            {hasParticipants && !allHaveDates && (
+                              <span className="text-xs text-red-500">Faltan fechas</span>
+                            )}
+                          </div>
                         </div>
-                        <div className="text-left">
-                          <p className="font-medium">{person.full_name}</p>
-                          <p className="text-xs text-gray-500">
-                            {person.services_count} servicio(s) - Total: {formatPrice(person.total_cost)}
-                          </p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium" style={{ color: '#00932c' }}>
+                            {formatPrice(
+                              parseFloat(activity.service.reference_price || '0') * activity.participantAssignments.length
+                            )}
+                          </span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleRemoveActivity(activity.id)
+                            }}
+                            className="p-1 rounded hover:bg-red-100"
+                          >
+                            <Trash2 size={14} className="text-red-500" />
+                          </button>
+                          <ChevronRight size={16} className="text-gray-400" />
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        {person.is_generic && (
-                          <span className="px-2 py-1 text-xs rounded bg-gray-200 text-gray-600">Temporal</span>
-                        )}
-                        {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                      </div>
-                    </button>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
 
-                    {/* Expanded Content */}
-                    {isExpanded && (
-                      <div className="border-t">
-                        {/* Person Editable Fields */}
-                        <div className="p-4 bg-gray-50 border-b">
-                          <div className="flex items-center justify-between mb-3">
-                            <h5 className="text-sm font-medium text-gray-700">Datos de la persona</h5>
+          <div className="p-6 flex-1 overflow-hidden flex flex-col">
+            <h3 className="font-semibold mb-4" style={{ color: '#085f24' }}>
+              Agregar Actividad
+            </h3>
+
+            <div className="relative mb-4">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Input
+                value={serviceSearch}
+                onChange={(e) => setServiceSearch(e.target.value)}
+                placeholder="Buscar actividad..."
+                className="pl-10"
+              />
+            </div>
+
+            <div className="flex-1 overflow-y-auto">
+              {isLoadingServices ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="animate-spin mr-2" size={20} />
+                  <span className="text-gray-500">Cargando...</span>
+                </div>
+              ) : availableServices.length === 0 ? (
+                <div className="text-center py-8 text-gray-400">
+                  <MapPin size={32} className="mx-auto mb-2 opacity-50" />
+                  <p>No hay más actividades disponibles</p>
+                  <p className="text-sm">Todas las actividades ya fueron agregadas</p>
+                </div>
+              ) : (
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 sticky top-0">
+                    <tr>
+                      <th className="text-left p-2 font-medium text-gray-600">Título</th>
+                      <th className="text-left p-2 font-medium text-gray-600">Duración</th>
+                      <th className="text-left p-2 font-medium text-gray-600">Precio Ref.</th>
+                      <th className="text-left p-2 font-medium text-gray-600">Tipo</th>
+                      <th className="p-2"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {availableServices.map((service) => {
+                      const typeStyles = getTypeStyles(service.type)
+                      return (
+                        <tr key={service.id} className="border-b hover:bg-gray-50">
+                          <td className="p-2">
+                            <p className="font-medium">{service.title}</p>
+                          </td>
+                          <td className="p-2 text-gray-600">{service.duration}</td>
+                          <td className="p-2 font-medium" style={{ color: '#00932c' }}>
+                            {formatPrice(service.reference_price)}
+                          </td>
+                          <td className="p-2">
+                            <span
+                              className="text-xs px-2 py-1 rounded-full"
+                              style={{ backgroundColor: typeStyles.bg, color: typeStyles.text }}
+                            >
+                              {formatServiceType(service.type)}
+                            </span>
+                          </td>
+                          <td className="p-2">
                             <Button
-                              onClick={() => handleSavePerson(person.id)}
-                              disabled={savingPersonId === person.id}
                               size="sm"
+                              onClick={() => handleSelectService(service)}
                               style={{ backgroundColor: '#00bf35' }}
                             >
-                              {savingPersonId === person.id ? (
-                                <Loader2 className="animate-spin mr-1" size={16} />
-                              ) : (
-                                <Save size={16} className="mr-1" />
-                              )}
-                              Guardar
+                              <Plus size={14} className="mr-1" />
+                              Agregar
                             </Button>
-                          </div>
-                          <div className="grid grid-cols-3 gap-3">
-                            <div>
-                              <Label className="text-xs">Nombre</Label>
-                              <Input
-                                value={personData?.first_name || ''}
-                                onChange={(e) => updatePersonForm(person.id, 'first_name', e.target.value)}
-                                className="mt-1"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-xs">Apellido</Label>
-                              <Input
-                                value={personData?.last_name || ''}
-                                onChange={(e) => updatePersonForm(person.id, 'last_name', e.target.value)}
-                                className="mt-1"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-xs">Email</Label>
-                              <Input
-                                type="email"
-                                value={personData?.email || ''}
-                                onChange={(e) => updatePersonForm(person.id, 'email', e.target.value)}
-                                className="mt-1"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-xs">Teléfono</Label>
-                              <Input
-                                value={personData?.phone_number || ''}
-                                onChange={(e) => updatePersonForm(person.id, 'phone_number', e.target.value)}
-                                className="mt-1"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-xs">Pasaporte</Label>
-                              <Input
-                                value={personData?.passport_number || ''}
-                                onChange={(e) => updatePersonForm(person.id, 'passport_number', e.target.value)}
-                                className="mt-1"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-xs">Nacionalidad</Label>
-                              <Input
-                                value={personData?.nationality || ''}
-                                onChange={(e) => updatePersonForm(person.id, 'nationality', e.target.value)}
-                                className="mt-1"
-                              />
-                            </div>
-                          </div>
-                          {/* Temporal/Real Switch */}
-                          <div className="flex items-center justify-between mt-3 p-3 bg-white rounded-lg border">
-                            <div>
-                              <Label className="text-sm font-medium">Estado de la persona</Label>
-                              <p className="text-xs text-gray-500">
-                                {personData?.is_generic ? 'Temporal (pasajero genérico)' : 'Real (datos confirmados)'}
-                              </p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs text-gray-500">Temporal</span>
-                              <Switch
-                                checked={!personData?.is_generic}
-                                onCheckedChange={(checked) => updatePersonForm(person.id, 'is_generic', !checked)}
-                              />
-                              <span className="text-xs text-gray-500">Real</span>
-                            </div>
-                          </div>
-                        </div>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        </div>
 
-                        {/* Services Section */}
-                        <div className="p-4 space-y-4">
-                          <div className="flex items-center justify-between">
-                            <p className="font-medium text-gray-700">Servicios asignados:</p>
-                            {addingToPersonId !== person.id && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setAddingToPersonId(person.id)}
-                                className="text-green-600 border-green-300 hover:bg-green-50"
+        <div className="w-1/2 flex flex-col">
+          {selectedActivity ? (
+            <>
+              <div className="p-6 border-b bg-white">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-lg font-bold" style={{ color: '#085f24' }}>
+                    {selectedActivity.service.title}
+                  </h2>
+                  <button onClick={() => setSelectedActivity(null)} className="p-2 rounded-lg hover:bg-gray-100">
+                    <X size={20} />
+                  </button>
+                </div>
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <span>{selectedActivity.service.duration}</span>
+                  <span className="font-medium" style={{ color: '#00932c' }}>
+                    {formatPrice(selectedActivity.service.reference_price)} / persona
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <div className="bg-white rounded-lg p-4 border">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-medium flex items-center gap-2">
+                      <Calendar size={16} />
+                      Valores por defecto
+                    </h3>
+                    {selectedActivity.participantAssignments.length > 0 && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleApplyDefaultsToAll(selectedActivity.id)}
+                        className="text-xs"
+                      >
+                        Aplicar a todos
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Fecha de salida</label>
+                      <Input
+                        type="date"
+                        value={selectedActivity.defaultDepartureDate}
+                        onChange={(e) =>
+                          handleActivityDefaultChange(selectedActivity.id, 'defaultDepartureDate', e.target.value)
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Hora de salida</label>
+                      <Input
+                        type="time"
+                        value={selectedActivity.defaultDepartureTime}
+                        onChange={(e) =>
+                          handleActivityDefaultChange(selectedActivity.id, 'defaultDepartureTime', e.target.value)
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Fecha de llegada</label>
+                      <Input
+                        type="date"
+                        value={selectedActivity.defaultArriveDate}
+                        onChange={(e) =>
+                          handleActivityDefaultChange(selectedActivity.id, 'defaultArriveDate', e.target.value)
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Hora de llegada</label>
+                      <Input
+                        type="time"
+                        value={selectedActivity.defaultArriveTime}
+                        onChange={(e) =>
+                          handleActivityDefaultChange(selectedActivity.id, 'defaultArriveTime', e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <label className="block text-xs text-gray-500 mb-1">Notas por defecto</label>
+                    <Input
+                      value={selectedActivity.defaultNotes}
+                      onChange={(e) =>
+                        handleActivityDefaultChange(selectedActivity.id, 'defaultNotes', e.target.value)
+                      }
+                      placeholder="Notas para nuevos participantes..."
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg p-4 border">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-medium flex items-center gap-2">
+                      <Users size={16} />
+                      Participantes ({selectedActivity.participantAssignments.length})
+                    </h3>
+                    <Button variant="outline" size="sm" onClick={handleAddParticipant}>
+                      <Plus size={14} className="mr-1" />
+                      Nuevo
+                    </Button>
+                  </div>
+
+                  {!hasPersistedPassengers && (
+                    <div className="flex gap-2 items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          min={1}
+                          value={participantsCount}
+                          onChange={(e) => setParticipantsCount(Number(e.target.value))}
+                          className="w-20"
+                        />
+                        <span className="text-sm">Participantes</span>
+                      </div>
+                      <Button variant="outline" size="sm" onClick={handleGenerateParticipants}>
+                        Generar
+                      </Button>
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    {participants.map((participant) => {
+                      const assignment = selectedActivity.participantAssignments.find(
+                        (pa) => pa.participantId === participant.id
+                      )
+                      const isInActivity = !!assignment
+                      const isEditing = editingParticipant === participant.id
+
+                      return (
+                        <div key={participant.id} className="border rounded-lg overflow-hidden">
+                          <div
+                            className={`flex items-center gap-3 p-3 transition ${isInActivity ? 'bg-green-50' : 'bg-white hover:bg-gray-50'
+                              }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isInActivity}
+                              onChange={() =>
+                                handleToggleParticipantInActivity(selectedActivity.id, participant.id)
+                              }
+                              className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                            />
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <User size={14} className="text-gray-400" />
+                                <span className="font-medium">
+                                  {participant.first_name || participant.last_name
+                                    ? `${participant.first_name} ${participant.last_name}`.trim()
+                                    : participant.name}
+                                </span>
+                                {participant.isContact && (
+                                  <span className="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">Líder</span>
+                                )}
+                              </div>
+                              {!participant.first_name && !participant.last_name && (
+                                <p className="text-xs text-gray-400">Sin datos personales</p>
+                              )}
+                            </div>
+                            <button
+                              onClick={() => setEditingParticipant(isEditing ? null : participant.id)}
+                              className="text-xs text-blue-600 hover:underline"
+                            >
+                              {isEditing ? 'Cerrar' : 'Editar datos'}
+                            </button>
+                            {!participant.isContact && (
+                              <button
+                                onClick={() => handleRemoveParticipant(participant.id)}
+                                className="p-1 rounded hover:bg-red-100"
                               >
-                                <Plus size={14} className="mr-1" /> Agregar Servicio
-                              </Button>
+                                <Trash2 size={14} className="text-red-500" />
+                              </button>
                             )}
                           </div>
 
-                          {/* Add Service Form */}
-                          {addingToPersonId === person.id && (
-                            <div className="p-4 bg-green-50 rounded-lg border border-green-200 space-y-3">
+                          {isInActivity && assignment && (
+                            <div className="p-3 bg-gray-50 border-t space-y-3">
                               <div className="flex items-center justify-between">
-                                <p className="font-medium text-green-800">Agregar nuevo servicio</p>
-                                <div className="flex gap-2">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setAddingToPersonId(null)}
-                                    disabled={addingService}
-                                  >
-                                    Cancelar
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handleAddService(person.id)}
-                                    disabled={addingService}
-                                    style={{ backgroundColor: '#00bf35' }}
-                                  >
-                                    {addingService ? <Loader2 className="animate-spin mr-1" size={16} /> : <Plus size={16} className="mr-1" />}
-                                    Agregar
-                                  </Button>
+                                <span className="text-xs font-medium text-gray-600 flex items-center gap-1">
+                                  <Clock size={12} />
+                                  Fechas y horas individuales
+                                </span>
+                                {!assignment.departure_date && (
+                                  <span className="text-xs text-red-500">* Fecha requerida</span>
+                                )}
+                              </div>
+                              <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                  <label className="block text-xs text-gray-500 mb-1">Fecha salida *</label>
+                                  <Input
+                                    type="date"
+                                    value={assignment.departure_date}
+                                    onChange={(e) =>
+                                      handleParticipantAssignmentChange(
+                                        selectedActivity.id,
+                                        participant.id,
+                                        'departure_date',
+                                        e.target.value
+                                      )
+                                    }
+                                    className="h-8 text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-500 mb-1">Hora salida</label>
+                                  <Input
+                                    type="time"
+                                    value={assignment.departure_time}
+                                    onChange={(e) =>
+                                      handleParticipantAssignmentChange(
+                                        selectedActivity.id,
+                                        participant.id,
+                                        'departure_time',
+                                        e.target.value
+                                      )
+                                    }
+                                    className="h-8 text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-500 mb-1">Fecha llegada</label>
+                                  <Input
+                                    type="date"
+                                    value={assignment.arrive_date}
+                                    onChange={(e) =>
+                                      handleParticipantAssignmentChange(
+                                        selectedActivity.id,
+                                        participant.id,
+                                        'arrive_date',
+                                        e.target.value
+                                      )
+                                    }
+                                    className="h-8 text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-500 mb-1">Hora llegada</label>
+                                  <Input
+                                    type="time"
+                                    value={assignment.arrive_time}
+                                    onChange={(e) =>
+                                      handleParticipantAssignmentChange(
+                                        selectedActivity.id,
+                                        participant.id,
+                                        'arrive_time',
+                                        e.target.value
+                                      )
+                                    }
+                                    className="h-8 text-sm"
+                                  />
                                 </div>
                               </div>
-                              <div className="grid grid-cols-3 gap-3">
-                                <div className="col-span-3">
-                                  <Label className="text-xs">Servicio</Label>
-                                  <Select
-                                    value={newServiceData.service_id}
-                                    onValueChange={(v) => {
-                                      const selectedService = services.find((s) => s.id === v)
-                                      setNewServiceData((prev) => ({
-                                        ...prev,
-                                        service_id: v,
-                                        departure_time: selectedService?.departure_time
-                                          ? selectedService.departure_time.slice(0, 5)
-                                          : prev.departure_time,
-                                      }))
-                                    }}
-                                  >
-                                    <SelectTrigger className="w-full mt-1">
-                                      <SelectValue placeholder="Seleccionar servicio..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {services.map((s) => {
-                                        const typeColor = getTypeColor(s.type)
-                                        return (
-                                          <SelectItem key={s.id} value={s.id}>
-                                            <div className="flex items-center gap-2">
-                                              <span
-                                                className="px-1.5 py-0.5 rounded text-xs font-medium"
-                                                style={{ backgroundColor: typeColor.bg, color: typeColor.text }}
-                                              >
-                                                {getTypeLabel(s.type)}
-                                              </span>
-                                              <span>{s.title}</span>
-                                              <span className="text-gray-500">- {formatPrice(s.reference_price)}</span>
-                                              {s.departure_time && (
-                                                <span className="text-xs text-gray-400">({s.departure_time.slice(0, 5)})</span>
-                                              )}
-                                            </div>
-                                          </SelectItem>
-                                        )
-                                      })}
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                                <div>
-                                  <Label className="text-xs">Fecha Salida *</Label>
-                                  <Input
-                                    type="date"
-                                    value={newServiceData.departure_date}
-                                    onChange={(e) => setNewServiceData((prev) => ({ ...prev, departure_date: e.target.value }))}
-                                    className="mt-1"
-                                  />
-                                </div>
-                                <div>
-                                  <Label className="text-xs">Hora Salida</Label>
-                                  <Input
-                                    type="time"
-                                    value={newServiceData.departure_time}
-                                    onChange={(e) => setNewServiceData((prev) => ({ ...prev, departure_time: e.target.value }))}
-                                    className="mt-1"
-                                    placeholder="Auto-cargado del servicio"
-                                  />
-                                </div>
-                                <div>
-                                  <Label className="text-xs">Fecha Llegada</Label>
-                                  <Input
-                                    type="date"
-                                    value={newServiceData.arrive_date}
-                                    onChange={(e) => setNewServiceData((prev) => ({ ...prev, arrive_date: e.target.value }))}
-                                    className="mt-1"
-                                  />
-                                </div>
-                                <div>
-                                  <Label className="text-xs">Hora Llegada</Label>
-                                  <Input
-                                    type="time"
-                                    value={newServiceData.arrive_time}
-                                    onChange={(e) => setNewServiceData((prev) => ({ ...prev, arrive_time: e.target.value }))}
-                                    className="mt-1"
-                                  />
-                                </div>
-                                <div className="col-span-2">
-                                  <Label className="text-xs">Notas</Label>
-                                  <Input
-                                    value={newServiceData.notes}
-                                    onChange={(e) => setNewServiceData((prev) => ({ ...prev, notes: e.target.value }))}
-                                    className="mt-1"
-                                    placeholder="Notas adicionales..."
-                                  />
-                                </div>
+                              <div>
+                                <label className="block text-xs text-gray-500 mb-1">Notas</label>
+                                <Input
+                                  value={assignment.notes}
+                                  onChange={(e) =>
+                                    handleParticipantAssignmentChange(
+                                      selectedActivity.id,
+                                      participant.id,
+                                      'notes',
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="Notas para este participante..."
+                                  className="h-8 text-sm"
+                                />
                               </div>
                             </div>
                           )}
 
-                          {/* Service List */}
-                          {person.services?.map((service) => {
-                            const serviceData = getServiceForm(service.service_quote_person_id)
-                            const typeColor = getTypeColor(service.service_type)
-
-                            return (
-                              <div
-                                key={service.service_quote_person_id}
-                                className="p-4 bg-white border rounded-lg space-y-3"
-                              >
-                                {/* Service Header */}
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                    <Package size={18} className="text-gray-400" />
-                                    <div>
-                                      <p className="font-medium">{service.service_name}</p>
-                                      <div className="flex items-center gap-2 text-xs text-gray-500">
-                                        <span
-                                          className="px-2 py-0.5 rounded"
-                                          style={{ backgroundColor: typeColor.bg, color: typeColor.text }}
-                                        >
-                                          {getTypeLabel(service.service_type)}
-                                        </span>
-                                        <span className="font-semibold" style={{ color: '#00932c' }}>
-                                          {formatPrice(service.individual_cost)}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <Button
-                                      onClick={() => handleSaveService(service.service_quote_person_id)}
-                                      disabled={savingServiceId === service.service_quote_person_id}
-                                      size="sm"
-                                      style={{ backgroundColor: '#00bf35' }}
-                                    >
-                                      {savingServiceId === service.service_quote_person_id ? (
-                                        <Loader2 className="animate-spin" size={16} />
-                                      ) : (
-                                        <Save size={16} />
-                                      )}
-                                    </Button>
-                                    <Button
-                                      onClick={() => handleDeleteService(service.service_quote_person_id)}
-                                      disabled={deletingServiceId === service.service_quote_person_id}
-                                      size="sm"
-                                      variant="outline"
-                                      className="text-red-600 border-red-300 hover:bg-red-50"
-                                    >
-                                      {deletingServiceId === service.service_quote_person_id ? (
-                                        <Loader2 className="animate-spin" size={16} />
-                                      ) : (
-                                        <Trash2 size={16} />
-                                      )}
-                                    </Button>
-                                  </div>
+                          {isEditing && (
+                            <div className="p-4 bg-blue-50 border-t border-l-4 border-l-blue-500">
+                              <p className="text-xs font-medium text-blue-700 mb-3">Datos personales</p>
+                              <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                  <label className="block text-xs text-gray-500 mb-1">Nombre</label>
+                                  <Input
+                                    value={participant.first_name}
+                                    onChange={(e) =>
+                                      handleParticipantChange(participant.id, 'first_name', e.target.value)
+                                    }
+                                    placeholder="Nombre"
+                                    className="h-9"
+                                  />
                                 </div>
-
-                                {/* Service Editable Fields */}
-                                <div className="grid grid-cols-4 gap-3">
-                                  <div>
-                                    <Label className="text-xs flex items-center gap-1">
-                                      <Calendar size={12} /> Fecha Salida
-                                    </Label>
-                                    <Input
-                                      type="date"
-                                      value={serviceData?.departure_date || ''}
-                                      onChange={(e) => updateServiceForm(service.service_quote_person_id, 'departure_date', e.target.value)}
-                                      className="mt-1"
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label className="text-xs flex items-center gap-1">
-                                      <Clock size={12} /> Hora Salida
-                                    </Label>
-                                    <Input
-                                      type="time"
-                                      value={serviceData?.departure_time || ''}
-                                      onChange={(e) => updateServiceForm(service.service_quote_person_id, 'departure_time', e.target.value)}
-                                      className="mt-1"
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label className="text-xs flex items-center gap-1">
-                                      <Calendar size={12} /> Fecha Llegada
-                                    </Label>
-                                    <Input
-                                      type="date"
-                                      value={serviceData?.arrive_date || ''}
-                                      onChange={(e) => updateServiceForm(service.service_quote_person_id, 'arrive_date', e.target.value)}
-                                      className="mt-1"
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label className="text-xs flex items-center gap-1">
-                                      <Clock size={12} /> Hora Llegada
-                                    </Label>
-                                    <Input
-                                      type="time"
-                                      value={serviceData?.arrive_time || ''}
-                                      onChange={(e) => updateServiceForm(service.service_quote_person_id, 'arrive_time', e.target.value)}
-                                      className="mt-1"
-                                    />
-                                  </div>
-                                  <div className="col-span-4">
-                                    <Label className="text-xs">Notas del servicio</Label>
-                                    <Input
-                                      value={serviceData?.notes || ''}
-                                      onChange={(e) => updateServiceForm(service.service_quote_person_id, 'notes', e.target.value)}
-                                      className="mt-1"
-                                      placeholder="Notas adicionales..."
-                                    />
-                                  </div>
+                                <div>
+                                  <label className="block text-xs text-gray-500 mb-1">Apellido</label>
+                                  <Input
+                                    value={participant.last_name}
+                                    onChange={(e) =>
+                                      handleParticipantChange(participant.id, 'last_name', e.target.value)
+                                    }
+                                    placeholder="Apellido"
+                                    className="h-9"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-500 mb-1">Email</label>
+                                  <Input
+                                    type="email"
+                                    value={participant.email}
+                                    onChange={(e) =>
+                                      handleParticipantChange(participant.id, 'email', e.target.value)
+                                    }
+                                    placeholder="Email"
+                                    className="h-9"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-500 mb-1">Teléfono</label>
+                                  <Input
+                                    value={participant.phone_number}
+                                    onChange={(e) =>
+                                      handleParticipantChange(participant.id, 'phone_number', e.target.value)
+                                    }
+                                    placeholder="Teléfono"
+                                    className="h-9"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-500 mb-1">Pasaporte</label>
+                                  <Input
+                                    value={participant.passport_number}
+                                    onChange={(e) =>
+                                      handleParticipantChange(participant.id, 'passport_number', e.target.value)
+                                    }
+                                    placeholder="Pasaporte"
+                                    className="h-9"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-500 mb-1">Nacionalidad</label>
+                                  <select
+                                    value={participant.nationality}
+                                    onChange={(e) =>
+                                      handleParticipantChange(participant.id, 'nationality', e.target.value)
+                                    }
+                                    className="w-full h-9 px-3 border border-gray-300 rounded-md text-sm"
+                                  >
+                                    <option value="">Seleccionar...</option>
+                                    {countries.map((c) => (
+                                      <option key={c.value} value={c.value}>
+                                        {c.label}
+                                      </option>
+                                    ))}
+                                  </select>
                                 </div>
                               </div>
-                            )
-                          })}
-
-                          {person.services?.length === 0 && (
-                            <p className="text-gray-400 text-sm italic">Sin servicios asignados</p>
+                            </div>
                           )}
                         </div>
-                      </div>
-                    )}
+                      )
+                    })}
                   </div>
-                )
-              })}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          <Card className="border-0 shadow-md sticky top-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2" style={{ color: '#085f24' }}>
-                <DollarSign size={20} />
-                Resumen
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-green-50 rounded-lg p-4 text-center">
-                <p className="text-sm text-green-700 mb-1">Total de la Cotización</p>
-                <p className="text-3xl font-bold" style={{ color: '#00932c' }}>{formatPrice(quote.total_price)}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-gray-50 rounded-lg p-3 text-center">
-                  <Users size={20} className="mx-auto mb-1 text-gray-400" />
-                  <p className="text-2xl font-bold">{quote.persons_detail?.length || 0}</p>
-                  <p className="text-xs text-gray-500">Personas</p>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3 text-center">
-                  <Package size={20} className="mx-auto mb-1 text-gray-400" />
-                  <p className="text-2xl font-bold">{quote.cost_summary?.total_services || 0}</p>
-                  <p className="text-xs text-gray-500">Servicios</p>
                 </div>
               </div>
-
-              <div className="space-y-2 pt-4 border-t">
-                <a
-                  href={`/quotes/${quoteId}`}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition"
-                >
-                  Ver Detalle Completo
-                </a>
-                <a
-                  href="/quotes"
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white transition"
-                  style={{ backgroundColor: '#00bf35' }}
-                >
-                  Volver al Listado
-                </a>
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col bg-gray-50">
+              <div className="p-6 bg-white border-b">
+                <h2 className="text-lg font-bold mb-4" style={{ color: '#085f24' }}>
+                  Información General
+                </h2>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="edit-quote-status">Estado</Label>
+                      <Select
+                        value={quoteStatus}
+                        onValueChange={(v: QuoteStatus) => setQuoteStatus(v)}
+                      >
+                        <SelectTrigger id="edit-quote-status" className="w-full mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {STATUS_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-quote-valid">Válido hasta</Label>
+                      <Input
+                        id="edit-quote-valid"
+                        type="date"
+                        value={validUntil}
+                        onChange={(e) => setValidUntil(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                  {/* <div>
+                    <Label htmlFor="edit-group-contact">Información de contacto (grupo)</Label>
+                    <Input
+                      id="edit-group-contact"
+                      value={groupContactInfo}
+                      onChange={(e) => setGroupContactInfo(e.target.value)}
+                      className="mt-1"
+                      placeholder="Texto de contacto del grupo"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-group-desc">Descripción del grupo</Label>
+                    <textarea
+                      id="edit-group-desc"
+                      value={groupDescription}
+                      onChange={(e) => setGroupDescription(e.target.value)}
+                      placeholder="Descripción del grupo..."
+                      className="w-full p-3 border rounded-md text-sm resize-none h-20 mt-1"
+                    />
+                  </div> */}
+                  <div>
+                    <label className="block text-sm text-gray-500 mb-1">Notas de la cotización</label>
+                    <textarea
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      placeholder="Notas de la cotización..."
+                      className="w-full p-3 border rounded-md text-sm resize-none h-24"
+                    />
+                  </div>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+
+              <div className="p-6 flex-1">
+                <h2 className="text-lg font-bold mb-4" style={{ color: '#085f24' }}>
+                  Resumen de Costos
+                </h2>
+
+                {activities.length === 0 ? (
+                  <div className="text-center py-12 text-gray-400">
+                    <MapPin size={48} className="mx-auto mb-4 opacity-50" />
+                    <p className="text-lg">No hay actividades</p>
+                    <p className="text-sm mt-2">Busca y agrega actividades desde el panel izquierdo</p>
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-lg border p-4">
+                    <div className="space-y-3">
+                      {activities.map((activity) => (
+                        <div
+                          key={activity.id}
+                          className="flex justify-between text-sm p-2 rounded hover:bg-gray-50 cursor-pointer"
+                          onClick={() => setSelectedActivity(activity)}
+                        >
+                          <div>
+                            <p className="font-medium">{activity.service.title}</p>
+                            <p className="text-xs text-gray-500">
+                              {activity.participantAssignments.length} participante(s)
+                            </p>
+                          </div>
+                          <span className="font-medium" style={{ color: '#00932c' }}>
+                            {formatPrice(
+                              parseFloat(activity.service.reference_price || '0') *
+                              activity.participantAssignments.length
+                            )}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <hr className="my-4" />
+
+                    <div
+                      className="p-4 rounded-lg flex justify-between items-center"
+                      style={{ backgroundColor: '#edfff2' }}
+                    >
+                      <span className="font-semibold" style={{ color: '#085f24' }}>
+                        TOTAL
+                      </span>
+                      <span className="text-2xl font-bold" style={{ color: '#00932c' }}>
+                        {formatPrice(calculateTotal())}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {!canSubmit() && (
+                <div className="p-4 bg-white border-t text-center">
+                  <p className="text-sm text-gray-400">
+                    Completa el contacto principal, agrega actividades con participantes y fechas individuales, luego
+                    guarda
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
   )
 }
-
